@@ -10,6 +10,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { StatsSection } from "@/components/sections/stats-section";
+import { PartnersSection } from "@/components/sections/partners-section";
+import { SpotlightsSection } from "@/components/sections/spotlights-section";
+import { ContactSection } from "@/components/sections/contact-section";
 
 export default function Home() {
   // Featured athletes slider data
@@ -226,6 +230,18 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* Stats Section */}
+        <StatsSection />
+
+        {/* Partners Section */}
+        <PartnersSection />
+
+        {/* Spotlights Section */}
+        <SpotlightsSection />
+
+        {/* Contact Section */}
+        <ContactSection />
       </div>
     </MobileLayout>
   );
