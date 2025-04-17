@@ -1,12 +1,39 @@
-
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Trophy, Clock, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function Home() {
-  // Mock data - in a real app, this would come from an API
+  // Featured athletes slider data
+  const athletes = [
+    {
+      id: 1,
+      name: "Cricket Star",
+      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
+      sport: "Cricket"
+    },
+    {
+      id: 2,
+      name: "Football Legend",
+      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80",
+      sport: "Football"
+    },
+    {
+      id: 3,
+      name: "Tennis Champion",
+      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+      sport: "Tennis"
+    }
+  ];
+
   const upcomingTournaments = [
     {
       id: 1,
@@ -44,25 +71,55 @@ export default function Home() {
   return (
     <MobileLayout title="Home" isLoggedIn={true}>
       <div className="p-4 space-y-6">
-        {/* Hero Banner */}
-        <div className="relative h-48 rounded-xl overflow-hidden">
-          <img 
-            src="https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" 
-            alt="Khelmanch Sports" 
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-4">
-            <h2 className="text-white text-xl font-bold">Play. Compete. Win.</h2>
-            <p className="text-white/90 text-sm">Book grounds or join tournaments</p>
-            <div className="flex space-x-2 mt-2">
-              <Button asChild size="sm" variant="secondary">
-                <Link to="/booking">Book Ground</Link>
-              </Button>
-              <Button asChild size="sm" variant="outline" className="text-white border-white">
-                <Link to="/tournaments">View Tournaments</Link>
-              </Button>
-            </div>
-          </div>
+        {/* Featured Athletes Carousel */}
+        <div className="relative">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {athletes.map((athlete) => (
+                <CarouselItem key={athlete.id}>
+                  <div className="relative h-64 overflow-hidden rounded-xl">
+                    <img 
+                      src={athlete.image} 
+                      alt={athlete.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-4">
+                      <h3 className="text-white text-xl font-bold">{athlete.name}</h3>
+                      <p className="text-white/90">{athlete.sport}</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
+          </Carousel>
+        </div>
+
+        {/* Primary Actions */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button 
+            asChild 
+            size="lg" 
+            variant="default"
+            className="h-24 flex flex-col items-center justify-center space-y-2"
+          >
+            <Link to="/booking">
+              <Calendar className="h-8 w-8" />
+              <span className="text-lg font-semibold">Book Ground</span>
+            </Link>
+          </Button>
+          <Button 
+            asChild 
+            size="lg" 
+            variant="secondary"
+            className="h-24 flex flex-col items-center justify-center space-y-2"
+          >
+            <Link to="/tournaments">
+              <Trophy className="h-8 w-8" />
+              <span className="text-lg font-semibold">Tournaments</span>
+            </Link>
+          </Button>
         </div>
 
         {/* Upcoming Tournaments */}
