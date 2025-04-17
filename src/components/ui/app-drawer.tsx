@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -26,7 +25,7 @@ export function AppDrawer({ isLoggedIn }: AppDrawerProps) {
       <SheetContent side="left" className="bg-background">
         <SheetHeader>
           <SheetTitle className="flex justify-center py-4">
-            <img src="/src/assets/logos/khelmanch-logo.svg" alt="Khelmanch Logo" className="h-10" />
+            <img src="/src/assets/logos/khelmanch-logo.png" alt="Khelmanch Logo" className="h-10" />
           </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 py-4">

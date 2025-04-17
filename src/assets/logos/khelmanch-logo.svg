@@ -1,12 +1,7 @@
 
 <svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="200" height="50" fill="#1E2539"/>
-  <path d="M40 15H45V35H40V26H30V35H25V15H30V21H40V15Z" fill="#DFE61C"/>
-  <path d="M55 15H60L70 35H65L63 30H52L50 35H45L55 15ZM61 25L57.5 17L54 25H61Z" fill="#DFE61C"/>
-  <path d="M75 15H80V30H90V35H75V15Z" fill="#DFE61C"/>
-  <path d="M95 15H110V20H100V22.5H108V27.5H100V30H110V35H95V15Z" fill="#DFE61C"/>
-  <path d="M118 15H122L130 25V15H135V35H131L123 25V35H118V15Z" fill="#DFE61C"/>
-  <path d="M143 15H148L160 25V15H165V35H160V30L150 21.5V35H145V15H143Z" fill="#DFE61C"/>
-  <path d="M170 30C172.5 30 175 27.5 175 25C175 22.5 172.5 20 170 20H165V30H170Z" fill="#2AA9DD"/>
-  <circle cx="170" cy="25" r="7.5" stroke="#2AA9DD" stroke-width="2.5"/>
+  <text x="10" y="35" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#DFE61C">
+    KHELMANCH
+  </text>
 </svg>

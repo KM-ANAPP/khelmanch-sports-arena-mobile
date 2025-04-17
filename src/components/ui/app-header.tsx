@@ -14,7 +14,7 @@ export function AppHeader({ title, isLoggedIn }: AppHeaderProps) {
         <div className="flex items-center">
           <AppDrawer isLoggedIn={isLoggedIn} />
           <Link to="/" className="ml-3">
-            <img src="/src/assets/logos/khelmanch-logo.svg" alt="Khelmanch Logo" className="h-8" />
+            <img src="/src/assets/logos/khelmanch-logo.png" alt="Khelmanch Logo" className="h-8" />
           </Link>
         </div>
         <h1 className="text-xl font-semibold">{title}</h1>
