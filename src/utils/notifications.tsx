@@ -103,27 +103,23 @@ export class NotificationService {
         };
 
         // Also show in-app toast
-        toast({
-          description: (
-            <div>
-              <strong>{title}</strong>
-              <p>{body}</p>
-            </div>
-          )
-        });
+        toast(
+          <div>
+            <strong>{title}</strong>
+            <p>{body}</p>
+          </div>
+        );
 
         return true;
       }
       
       // Fallback to just toast if notifications aren't supported
-      toast({
-        description: (
-          <div>
-            <strong>{title}</strong>
-            <p>{body}</p>
-          </div>
-        )
-      });
+      toast(
+        <div>
+          <strong>{title}</strong>
+          <p>{body}</p>
+        </div>
+      );
       
       return true;
     } catch (error) {

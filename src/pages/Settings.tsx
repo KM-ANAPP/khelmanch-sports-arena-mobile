@@ -29,7 +29,12 @@ export default function Settings() {
   useEffect(() => {
     // Load notification preferences
     const savedPreferences = notificationService.getPreferences();
-    setNotificationPreferences(savedPreferences as NotificationPreferences);
+    setNotificationPreferences({
+      transactions: savedPreferences.transactions ?? true,
+      bookings: savedPreferences.bookings ?? true,
+      tournaments: savedPreferences.tournaments ?? true,
+      promotions: savedPreferences.promotions ?? true,
+    });
   }, []);
 
   const handleNotificationChange = (channel: keyof NotificationPreferences) => {
@@ -49,9 +54,7 @@ export default function Settings() {
     document.documentElement.classList.toggle("dark", newTheme === "dark");
     localStorage.setItem("theme", newTheme);
     
-    toast({
-      description: `Theme changed to ${newTheme} mode`,
-    });
+    toast(`Theme changed to ${newTheme} mode`);
   };
 
   const requestLocationPermission = async () => {
@@ -59,32 +62,22 @@ export default function Settings() {
       const permission = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
       
       if (permission.state === 'granted') {
-        toast({
-          description: "Location permission already granted",
-        });
+        toast("Location permission already granted");
       } else if (permission.state === 'prompt') {
         navigator.geolocation.getCurrentPosition(
           () => {
-            toast({
-              description: "Location permission granted",
-            });
+            toast("Location permission granted");
           },
           () => {
-            toast({
-              description: "Location permission denied",
-            });
+            toast("Location permission denied");
           }
         );
       } else {
-        toast({
-          description: "Location permission blocked. Please update your browser settings",
-        });
+        toast("Location permission blocked. Please update your browser settings");
       }
     } catch (error) {
       console.error("Error requesting location permission:", error);
-      toast({
-        description: "Error requesting location permission",
-      });
+      toast("Error requesting location permission");
     }
   };
 

@@ -64,13 +64,11 @@ export class LocationService {
     console.log("Using IP-based geolocation as fallback");
     // In a real app, you would call an IP geolocation service
     // For demo purposes, we'll use a hardcoded Mumbai location
-    toast({
-      description: (
-        <div>
-          <p>Location permission denied. Using approximate location.</p>
-        </div>
-      )
-    });
+    toast(
+      <div>
+        <p>Location permission denied. Using approximate location.</p>
+      </div>
+    );
   }
 
   private updateCurrentLocation(coords: GeolocationCoordinates): void {
