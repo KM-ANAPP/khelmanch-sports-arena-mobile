@@ -1,9 +1,10 @@
+
+import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 
 // Pages
 import NotFound from "./pages/NotFound";
@@ -15,6 +16,7 @@ import TournamentDetails from "./pages/TournamentDetails";
 import Booking from "./pages/Booking";
 import GroundDetails from "./pages/GroundDetails";
 import Profile from "./pages/Profile";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -57,7 +59,7 @@ const App = () => {
             <Route path="/my-tickets" element={<Profile />} />
             
             {/* For any old Index page route, redirect to Home */}
-            <Route path="/index" element={<Navigate to="/" replace />} />
+            <Route path="/index" element={<Index />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
