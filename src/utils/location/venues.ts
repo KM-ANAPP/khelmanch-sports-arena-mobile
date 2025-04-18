@@ -16,3 +16,4 @@ class VenuesService {
 }
 
 export const venuesService = new VenuesService();
+export type { Venue };

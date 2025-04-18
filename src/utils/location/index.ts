@@ -16,13 +16,19 @@ class LocationService {
   }
 
   public async initialize(): Promise<void> {
-    const permissionGranted = await this.requestPermission();
-    if (permissionGranted) {
-      this.startLocationUpdates();
-    } else {
+    try {
+      const permissionGranted = await this.requestPermission();
+      if (permissionGranted) {
+        this.startLocationUpdates();
+      } else {
+        this.fallbackToIpGeolocation();
+      }
+      console.log("Location service initialized");
+    } catch (error) {
+      console.error("Error initializing location service:", error);
+      // Fallback to default behavior
       this.fallbackToIpGeolocation();
     }
-    console.log("Location service initialized");
   }
 
   public requestPermission(): Promise<boolean> {
@@ -69,5 +75,6 @@ class LocationService {
   }
 }
 
-export default LocationService.getInstance();
+const locationService = LocationService.getInstance();
+export default locationService;
 export type { LocationData, Geofence };
