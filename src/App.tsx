@@ -29,6 +29,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashCompleted, setSplashCompleted] = useState(false);
   const [servicesInitialized, setServicesInitialized] = useState(false);
 
   // Initialize services
@@ -53,51 +54,50 @@ const App = () => {
     initializeServices();
   }, []);
 
-  useEffect(() => {
-    // Show splash screen for a brief period
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2800); // Match with the animation duration in SplashScreen
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (showSplash) {
-    return <SplashScreen />;
-  }
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    setSplashCompleted(true);
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Authentication Routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Main App Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/tournaments" element={<Tournaments />} />
-            <Route path="/tournaments/:id" element={<TournamentDetails />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/booking/:id" element={<GroundDetails />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* My Items Routes */}
-            <Route path="/my-bookings" element={<Profile />} />
-            <Route path="/my-tickets" element={<Profile />} />
-            
-            {/* For any old Index page route, redirect to Home */}
-            <Route path="/index" element={<Index />} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        {showSplash ? (
+          <SplashScreen onComplete={handleSplashComplete} />
+        ) : (
+          <BrowserRouter>
+            <Routes>
+              {/* Redirect to login after splash screen completes */}
+              {splashCompleted && <Route path="/" element={<Navigate to="/login" replace />} />}
+              
+              {/* Authentication Routes */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Main App Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/tournaments" element={<Tournaments />} />
+              <Route path="/tournaments/:id" element={<TournamentDetails />} />
+              <Route path="/booking" element={<Booking />} />
+              <Route path="/booking/:id" element={<GroundDetails />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/settings" element={<Settings />} />
+              
+              {/* My Items Routes */}
+              <Route path="/my-bookings" element={<Profile />} />
+              <Route path="/my-tickets" element={<Profile />} />
+              
+              {/* For any old Index page route, redirect to Home */}
+              <Route path="/index" element={<Index />} />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        )}
       </TooltipProvider>
     </QueryClientProvider>
   );

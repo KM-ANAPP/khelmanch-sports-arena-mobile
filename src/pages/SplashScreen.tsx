@@ -1,21 +1,18 @@
 
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function SplashScreen() {
-  const [redirect, setRedirect] = useState(false);
-  
+interface SplashScreenProps {
+  onComplete: () => void;
+}
+
+export default function SplashScreen({ onComplete }: SplashScreenProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      setRedirect(true);
+      onComplete();
     }, 2800);
     return () => clearTimeout(timer);
-  }, []);
-  
-  if (redirect) {
-    return <Navigate to="/login" replace />;
-  }
+  }, [onComplete]);
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-primary overflow-hidden relative">
