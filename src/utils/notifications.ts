@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { toast } from "@/components/ui/sonner";
 
 // Mock implementation for FCM since we can't use actual Firebase in this environment
@@ -103,23 +102,19 @@ export class NotificationService {
         };
 
         // Also show in-app toast
-        toast(
-          <div>
-            <strong>{title}</strong>
-            <p>{body}</p>
-          </div>
-        );
+        toast({
+          title,
+          description: body,
+        });
 
         return true;
       }
       
       // Fallback to just toast if notifications aren't supported
-      toast(
-        <div>
-          <strong>{title}</strong>
-          <p>{body}</p>
-        </div>
-      );
+      toast({
+        title,
+        description: body,
+      });
       
       return true;
     } catch (error) {
