@@ -99,7 +99,7 @@ export default function Checkout() {
     try {
       console.log("Initializing Razorpay payment...");
       const options = {
-        key: 'rzp_test_CK0TDf8SMau2cQ', // Your test mode API key
+        key: 'rzp_live_fwYQqk5vvi3epz', // Your test mode API key
         amount: mockOrderDetails.amount,
         currency: mockOrderDetails.currency,
         name: 'Khelmanch Sports',
