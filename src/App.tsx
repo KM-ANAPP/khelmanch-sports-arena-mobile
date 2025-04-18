@@ -1,9 +1,14 @@
+
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Services
+import notificationService from "./utils/notifications";
+import locationService from "./utils/location";
 
 // Pages
 import NotFound from "./pages/NotFound";
@@ -18,11 +23,35 @@ import Profile from "./pages/Profile";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [servicesInitialized, setServicesInitialized] = useState(false);
+
+  // Initialize services
+  useEffect(() => {
+    const initializeServices = async () => {
+      try {
+        // Initialize notification service
+        await notificationService.initialize();
+        
+        // Initialize location service
+        await locationService.initialize();
+        
+        setServicesInitialized(true);
+        console.log("All services initialized successfully");
+      } catch (error) {
+        console.error("Error initializing services:", error);
+        // Continue even if services fail to initialize
+        setServicesInitialized(true);
+      }
+    };
+
+    initializeServices();
+  }, []);
 
   useEffect(() => {
     // Show splash screen for a brief period
@@ -56,6 +85,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/settings" element={<Settings />} />
             
             {/* My Items Routes */}
             <Route path="/my-bookings" element={<Profile />} />
