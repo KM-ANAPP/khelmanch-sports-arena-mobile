@@ -1,4 +1,3 @@
-
 import { toast } from "@/components/ui/sonner";
 
 // Interfaces
@@ -39,10 +38,8 @@ export class LocationService {
     try {
       if (!navigator.geolocation) {
         console.log("Geolocation is not supported by this browser");
-        toast({
-          title: "Location Services Unavailable",
-          description: "Your device doesn't support location services.",
-          variant: "destructive"
+        toast("Location Services Unavailable", {
+          description: "Your device doesn't support location services."
         });
         return false;
       }

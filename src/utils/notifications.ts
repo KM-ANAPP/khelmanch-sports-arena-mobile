@@ -102,8 +102,7 @@ export class NotificationService {
         };
 
         // Also show in-app toast
-        toast({
-          title,
+        toast(title, {
           description: body,
         });
 
@@ -111,10 +110,7 @@ export class NotificationService {
       }
       
       // Fallback to just toast if notifications aren't supported
-      toast({
-        title,
-        description: body,
-      });
+      toast(body);
       
       return true;
     } catch (error) {

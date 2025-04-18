@@ -5,17 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { Bell, MapPin, Lock, User, Info, LogOut } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
 import notificationService from "@/utils/notifications";
 import locationService from "@/utils/location";
 
+// Define a type for notification preferences
+interface NotificationPreferences {
+  transactions: boolean;
+  bookings: boolean;
+  tournaments: boolean;
+  promotions: boolean;
+}
+
 export default function Settings() {
-  const { toast } = useToast();
   const [isLoggedIn] = useState(true);
   
-  // Notification settings
-  const [notificationPrefs, setNotificationPrefs] = useState({
+  // Notification settings with proper typing
+  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
     transactions: true,
     bookings: true,
     tournaments: true,
@@ -29,14 +36,20 @@ export default function Settings() {
   useEffect(() => {
     // Load notification preferences
     const prefs = notificationService.getPreferences();
-    setNotificationPrefs(prefs);
+    // Ensure we're setting the state with a properly typed object
+    setNotificationPrefs({
+      transactions: prefs.transactions ?? true,
+      bookings: prefs.bookings ?? true,
+      tournaments: prefs.tournaments ?? true,
+      promotions: prefs.promotions ?? true
+    });
     
     // Check location status
     const currentLocation = locationService.getCurrentLocation();
     setLocationEnabled(!!currentLocation);
   }, []);
   
-  const handleNotificationChange = (channel: keyof typeof notificationPrefs) => {
+  const handleNotificationChange = (channel: keyof NotificationPreferences) => {
     const newPrefs = {
       ...notificationPrefs,
       [channel]: !notificationPrefs[channel]
@@ -45,10 +58,7 @@ export default function Settings() {
     setNotificationPrefs(newPrefs);
     notificationService.savePreferences(newPrefs);
     
-    toast({
-      title: "Preferences Updated",
-      description: `${channel.charAt(0).toUpperCase() + channel.slice(1)} notifications ${newPrefs[channel] ? 'enabled' : 'disabled'}.`
-    });
+    toast(`${channel.charAt(0).toUpperCase() + channel.slice(1)} notifications ${newPrefs[channel] ? 'enabled' : 'disabled'}.`);
   };
   
   const requestLocationPermission = async () => {
@@ -56,16 +66,13 @@ export default function Settings() {
     setLocationEnabled(granted);
     
     if (granted) {
-      toast({
-        title: "Location Access Granted",
+      toast("Location Access Granted", {
         description: "You'll now receive location-based recommendations."
       });
       locationService.initialize();
     } else {
-      toast({
-        title: "Location Access Denied",
-        description: "Enable location in your device settings to use this feature.",
-        variant: "destructive"
+      toast("Location Access Denied", {
+        description: "Enable location in your device settings to use this feature."
       });
     }
   };
@@ -74,8 +81,7 @@ export default function Settings() {
     // In a real app, this would request additional permissions
     setBackgroundLocationEnabled(!backgroundLocationEnabled);
     
-    toast({
-      title: "Background Location",
+    toast("Background Location", {
       description: `Background location ${!backgroundLocationEnabled ? 'enabled' : 'disabled'}.`
     });
   };
