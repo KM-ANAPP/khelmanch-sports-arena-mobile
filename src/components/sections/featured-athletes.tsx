@@ -54,7 +54,12 @@ export const FeaturedAthletes = () => {
     <div className="relative">
       <Carousel 
         className="w-full"
-        onSelect={(index) => setActiveIndex(index)}
+        onSelect={(index) => {
+          // Ensure we're getting a number for the active index
+          if (typeof index === 'number') {
+            setActiveIndex(index);
+          }
+        }}
       >
         <CarouselContent>
           {athletes.map((athlete, index) => (
