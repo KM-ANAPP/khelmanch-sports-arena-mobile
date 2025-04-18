@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, Mail, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "@/hooks/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,29 +18,64 @@ export default function Login() {
   const [otp, setOtp] = useState("");
 
   const handleSendOTP = () => {
+    // Validate phone number
+    if (phoneNumber.length !== 10) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid 10-digit phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // In a real app, this would call an API to send OTP
     setIsGeneratingOTP(true);
     setTimeout(() => {
       setIsGeneratingOTP(false);
       setOtpSent(true);
-      // For demo, we would display a success message here
+      toast({
+        title: "OTP Sent",
+        description: `OTP has been sent to +91 ${phoneNumber}`,
+      });
     }, 1500);
   };
 
   const handleLoginWithOTP = () => {
+    // Validate OTP
+    if (otp.length !== 6) {
+      toast({
+        title: "Invalid OTP",
+        description: "Please enter a valid 6-digit OTP",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // In a real app, this would verify the OTP with an API
     // For demo, we'll just navigate to home
-    navigate("/");
+    toast({
+      title: "Login Successful",
+      description: "Welcome to Khelmanch",
+    });
+    navigate("/home");
   };
 
   const handleGoogleLogin = () => {
     // In a real app, this would initiate Google OAuth
     // For demo, we'll just navigate to home
-    navigate("/");
+    toast({
+      title: "Google Login Successful",
+      description: "Welcome to Khelmanch",
+    });
+    navigate("/home");
   };
 
   const handleSkipLogin = () => {
-    navigate("/");
+    toast({
+      title: "Guest Mode",
+      description: "You are browsing as a guest. Some features may be limited.",
+    });
+    navigate("/home");
   };
 
   return (

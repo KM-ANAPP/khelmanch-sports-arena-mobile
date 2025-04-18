@@ -69,14 +69,19 @@ const App = () => {
         ) : (
           <BrowserRouter>
             <Routes>
-              {/* Redirect to login after splash screen completes */}
-              {splashCompleted && <Route path="/" element={<Navigate to="/login" replace />} />}
+              {/* Redirect to login after splash screen completes if necessary */}
+              {splashCompleted && (
+                <Route 
+                  path="/" 
+                  element={<Navigate to="/login" replace />} 
+                />
+              )}
               
               {/* Authentication Routes */}
               <Route path="/login" element={<Login />} />
               
-              {/* Main App Routes */}
-              <Route path="/" element={<Home />} />
+              {/* Main App Routes - Important: Order matters! */}
+              <Route path="/home" element={<Home />} />
               <Route path="/tournaments" element={<Tournaments />} />
               <Route path="/tournaments/:id" element={<TournamentDetails />} />
               <Route path="/booking" element={<Booking />} />

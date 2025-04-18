@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface LoginBottomSheetProps {
 }
 
 export function LoginBottomSheet({ open, onDismiss, onLogin }: LoginBottomSheetProps) {
+  const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
