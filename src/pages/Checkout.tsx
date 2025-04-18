@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -30,7 +29,7 @@ export default function Checkout() {
     setIsLoading(true);
 
     const options = {
-      key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your Razorpay Key ID
+      key: 'rzp_test_CK0TDf8SMau2cQ', // Your test mode API key
       amount: mockOrderDetails.amount,
       currency: mockOrderDetails.currency,
       name: 'Khelmanch Sports',
@@ -124,4 +123,3 @@ export default function Checkout() {
     </MobileLayout>
   );
 }
-
