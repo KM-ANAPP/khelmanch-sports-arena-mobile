@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
@@ -13,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -29,9 +29,9 @@ export default function TournamentDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedTicketType, setSelectedTicketType] = useState<string>("");
+  const [ticketQuantity, setTicketQuantity] = useState<string>("1");
   
-  // In a real app, you would fetch tournament details based on the ID
-  // This is mock data for the demo
   const tournament = {
     id: Number(id),
     title: "Summer Cricket Championship",
@@ -108,10 +108,13 @@ export default function TournamentDetails() {
     navigate(`/tournaments/${id}/register`);
   };
 
+  const proceedToCheckout = () => {
+    navigate('/checkout');
+  };
+
   return (
     <MobileLayout title="Tournament Details" isLoggedIn={true}>
       <div className="pb-4">
-        {/* Header Image */}
         <div className="relative h-48">
           <img 
             src={tournament.image} 
@@ -128,7 +131,6 @@ export default function TournamentDetails() {
           )}
         </div>
 
-        {/* Tournament Info */}
         <div className="p-4 pb-2">
           <h1 className="text-xl font-bold text-primary">{tournament.title}</h1>
           <p className="text-sm text-muted-foreground mb-2">Organized by {tournament.organizer}</p>
@@ -148,7 +150,6 @@ export default function TournamentDetails() {
             </div>
           </div>
 
-          {/* Description */}
           <div className="mt-4">
             <p className={`text-sm ${!isExpanded && 'line-clamp-3'}`}>
               {tournament.description}
@@ -165,7 +166,6 @@ export default function TournamentDetails() {
             </button>
           </div>
 
-          {/* Register/Get Tickets Button */}
           <div className="mt-4 grid grid-cols-2 gap-2">
             <Button 
               onClick={registrationHandler}
@@ -183,11 +183,14 @@ export default function TournamentDetails() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Buy Tickets</DialogTitle>
+                  <DialogDescription>
+                    Select your ticket type and quantity to proceed.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
                     <Label htmlFor="ticket-type">Ticket Type</Label>
-                    <Select>
+                    <Select value={selectedTicketType} onValueChange={setSelectedTicketType}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select ticket type" />
                       </SelectTrigger>
@@ -202,7 +205,13 @@ export default function TournamentDetails() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="quantity">Quantity</Label>
-                    <Input id="quantity" type="number" min="1" defaultValue="1" />
+                    <Input 
+                      id="quantity" 
+                      type="number" 
+                      min="1" 
+                      value={ticketQuantity}
+                      onChange={(e) => setTicketQuantity(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
@@ -218,7 +227,7 @@ export default function TournamentDetails() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit">
+                  <Button onClick={proceedToCheckout}>
                     Proceed to Payment
                   </Button>
                 </DialogFooter>
@@ -227,7 +236,6 @@ export default function TournamentDetails() {
           </div>
         </div>
 
-        {/* Tabs for Details */}
         <Tabs defaultValue="details" className="w-full px-4">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="details">Details</TabsTrigger>
