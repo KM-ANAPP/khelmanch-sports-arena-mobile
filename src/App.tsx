@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,8 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Services
-import notificationService from "./utils/notifications";
-import locationService from "./utils/location";
+import notificationService from "./utils/notifications"; // Updated import path
+import locationService from "./utils/location"; // Updated import path
 
 // Pages
 import NotFound from "./pages/NotFound";

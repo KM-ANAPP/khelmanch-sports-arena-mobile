@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { toast } from "@/components/ui/sonner";
 
 // Mock implementation for FCM since we can't use actual Firebase in this environment

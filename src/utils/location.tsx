@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { toast } from "@/components/ui/sonner";
 
 // Mock implementation for location services
@@ -68,7 +69,7 @@ export class LocationService {
         <div>
           <p>Location permission denied. Using approximate location.</p>
         </div>
-      ),
+      )
     });
   }
 

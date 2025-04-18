@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
-import notificationService from "@/utils/notifications";
+import notificationService from "@/utils/notifications"; // Updated import path
 import { Bell, MapPin, Moon, Sun } from "lucide-react";
 
 interface NotificationPreferences {
