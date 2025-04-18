@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function SplashScreen() {
@@ -13,8 +12,9 @@ export default function SplashScreen() {
     return () => clearTimeout(timer);
   }, []);
   
+  // Instead of using Navigate, we'll use a flag to tell App.tsx when to move on
   if (redirect) {
-    return <Navigate to="/login" replace />;
+    return null; // Return nothing, let App.tsx handle the navigation
   }
   
   return (

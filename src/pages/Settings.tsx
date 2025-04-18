@@ -1,225 +1,207 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { Bell, MapPin, Lock, User, Info, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/sonner";
 import notificationService from "@/utils/notifications";
-import locationService from "@/utils/location";
+import { Bell, MapPin, Moon, Sun } from "lucide-react";
+
+interface NotificationPreferences {
+  transactions: boolean;
+  bookings: boolean;
+  tournaments: boolean;
+  promotions: boolean;
+}
 
 export default function Settings() {
-  const { toast } = useToast();
-  const [isLoggedIn] = useState(true);
-  
-  // Notification settings
-  const [notificationPrefs, setNotificationPrefs] = useState({
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({
     transactions: true,
     bookings: true,
     tournaments: true,
-    promotions: true
+    promotions: true,
   });
-  
-  // Location settings
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [backgroundLocationEnabled, setBackgroundLocationEnabled] = useState(false);
-  
+
   useEffect(() => {
     // Load notification preferences
-    const prefs = notificationService.getPreferences();
-    setNotificationPrefs(prefs);
-    
-    // Check location status
-    const currentLocation = locationService.getCurrentLocation();
-    setLocationEnabled(!!currentLocation);
+    const savedPreferences = notificationService.getPreferences();
+    setNotificationPreferences(savedPreferences as NotificationPreferences);
   }, []);
-  
-  const handleNotificationChange = (channel: keyof typeof notificationPrefs) => {
-    const newPrefs = {
-      ...notificationPrefs,
-      [channel]: !notificationPrefs[channel]
+
+  const handleNotificationChange = (channel: keyof NotificationPreferences) => {
+    const updatedPreferences = {
+      ...notificationPreferences,
+      [channel]: !notificationPreferences[channel],
     };
+    setNotificationPreferences(updatedPreferences);
     
-    setNotificationPrefs(newPrefs);
-    notificationService.savePreferences(newPrefs);
+    // Save to notification service
+    notificationService.savePreferences(updatedPreferences);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("theme", newTheme);
     
     toast({
-      title: "Preferences Updated",
-      description: `${channel.charAt(0).toUpperCase() + channel.slice(1)} notifications ${newPrefs[channel] ? 'enabled' : 'disabled'}.`
+      description: `Theme changed to ${newTheme} mode`,
     });
   };
-  
+
   const requestLocationPermission = async () => {
-    const granted = await locationService.requestPermission();
-    setLocationEnabled(granted);
-    
-    if (granted) {
+    try {
+      const permission = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+      
+      if (permission.state === 'granted') {
+        toast({
+          description: "Location permission already granted",
+        });
+      } else if (permission.state === 'prompt') {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            toast({
+              description: "Location permission granted",
+            });
+          },
+          () => {
+            toast({
+              description: "Location permission denied",
+            });
+          }
+        );
+      } else {
+        toast({
+          description: "Location permission blocked. Please update your browser settings",
+        });
+      }
+    } catch (error) {
+      console.error("Error requesting location permission:", error);
       toast({
-        title: "Location Access Granted",
-        description: "You'll now receive location-based recommendations."
-      });
-      locationService.initialize();
-    } else {
-      toast({
-        title: "Location Access Denied",
-        description: "Enable location in your device settings to use this feature.",
-        variant: "destructive"
+        description: "Error requesting location permission",
       });
     }
   };
-  
-  const toggleBackgroundLocation = () => {
-    // In a real app, this would request additional permissions
-    setBackgroundLocationEnabled(!backgroundLocationEnabled);
-    
-    toast({
-      title: "Background Location",
-      description: `Background location ${!backgroundLocationEnabled ? 'enabled' : 'disabled'}.`
-    });
-  };
-  
-  const handleTestNotification = () => {
-    notificationService.sendNotification(
-      "Test Notification",
-      "This is a test notification from Khelmanch Sports",
-      "promotions",
-      "https://lovableproject.com/assets/logos/khelmanch-logo.png",
-      "/home"
-    );
-  };
 
   return (
-    <MobileLayout isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-6">
-        <h1 className="text-2xl font-bold">Settings</h1>
-        
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Notification Preferences
-          </h2>
-          <Separator className="my-4" />
-          
-          <div className="space-y-4">
+    <MobileLayout isLoggedIn={true}>
+      <div className="container p-4">
+        <h1 className="text-2xl font-bold mb-4">Settings</h1>
+
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <Bell className="mr-2 h-5 w-5" /> Notification Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Transaction Updates</h3>
-                <p className="text-sm text-muted-foreground">Payment confirmations and receipts</p>
-              </div>
-              <Switch 
-                checked={notificationPrefs.transactions} 
-                onCheckedChange={() => handleNotificationChange('transactions')}
+              <Label htmlFor="transactions" className="flex-1">
+                Transaction Updates
+              </Label>
+              <Switch
+                id="transactions"
+                checked={notificationPreferences.transactions}
+                onCheckedChange={() => handleNotificationChange("transactions")}
               />
             </div>
-            
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Booking Reminders</h3>
-                <p className="text-sm text-muted-foreground">Upcoming ground bookings and check-ins</p>
-              </div>
-              <Switch 
-                checked={notificationPrefs.bookings} 
-                onCheckedChange={() => handleNotificationChange('bookings')}
+              <Label htmlFor="bookings" className="flex-1">
+                Booking Reminders
+              </Label>
+              <Switch
+                id="bookings"
+                checked={notificationPreferences.bookings}
+                onCheckedChange={() => handleNotificationChange("bookings")}
               />
             </div>
-            
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Tournament Announcements</h3>
-                <p className="text-sm text-muted-foreground">New tournaments and updates</p>
-              </div>
-              <Switch 
-                checked={notificationPrefs.tournaments} 
-                onCheckedChange={() => handleNotificationChange('tournaments')}
+              <Label htmlFor="tournaments" className="flex-1">
+                Tournament Announcements
+              </Label>
+              <Switch
+                id="tournaments"
+                checked={notificationPreferences.tournaments}
+                onCheckedChange={() => handleNotificationChange("tournaments")}
               />
             </div>
-            
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Promotional Messages</h3>
-                <p className="text-sm text-muted-foreground">Offers and special events</p>
-              </div>
-              <Switch 
-                checked={notificationPrefs.promotions} 
-                onCheckedChange={() => handleNotificationChange('promotions')}
+              <Label htmlFor="promotions" className="flex-1">
+                Promotional Messages
+              </Label>
+              <Switch
+                id="promotions"
+                checked={notificationPreferences.promotions}
+                onCheckedChange={() => handleNotificationChange("promotions")}
               />
             </div>
-            
-            <Button 
-              variant="outline" 
-              className="mt-2 w-full"
-              onClick={handleTestNotification}
-            >
-              Send Test Notification
-            </Button>
-          </div>
+          </CardContent>
         </Card>
-        
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Location Services
-          </h2>
-          <Separator className="my-4" />
-          
-          <div className="space-y-4">
+
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <MapPin className="mr-2 h-5 w-5" /> Location Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={requestLocationPermission} className="w-full">
+              Update Location Permissions
+            </Button>
+            <p className="text-sm text-muted-foreground mt-2">
+              Enable location services for venue recommendations and nearby events
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              {theme === "light" ? (
+                <Sun className="mr-2 h-5 w-5" />
+              ) : (
+                <Moon className="mr-2 h-5 w-5" />
+              )}{" "}
+              Appearance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Enable Location Access</h3>
-                <p className="text-sm text-muted-foreground">For venue recommendations and directions</p>
-              </div>
-              <Switch 
-                checked={locationEnabled} 
-                onCheckedChange={requestLocationPermission}
+              <Label htmlFor="theme-toggle" className="flex-1">
+                Dark Mode
+              </Label>
+              <Switch
+                id="theme-toggle"
+                checked={theme === "dark"}
+                onCheckedChange={toggleTheme}
               />
             </div>
-            
-            {locationEnabled && (
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Background Location</h3>
-                  <p className="text-sm text-muted-foreground">For venue check-ins when app is closed</p>
-                </div>
-                <Switch 
-                  checked={backgroundLocationEnabled} 
-                  onCheckedChange={toggleBackgroundLocation}
-                />
-              </div>
-            )}
-            
-            <div className="bg-muted/50 p-3 rounded-md text-sm">
-              <p>Current location data is only used to enhance your experience with venue recommendations and check-ins. We do not share your location with third parties.</p>
-            </div>
-          </div>
+          </CardContent>
         </Card>
-        
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <User className="h-5 w-5" />
-            Account Settings
-          </h2>
-          <Separator className="my-4" />
-          
-          <div className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
-              <User className="mr-2 h-4 w-4" />
-              Edit Profile
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Lock className="mr-2 h-4 w-4" />
-              Change Password
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Info className="mr-2 h-4 w-4" />
-              Privacy Policy
-            </Button>
-            <Button variant="destructive" className="w-full">
-              <LogOut className="mr-2 h-4 w-4" />
-              Log Out
-            </Button>
-          </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">About</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm">
+              <strong>Version:</strong> 1.0.0
+            </p>
+            <Separator />
+            <div className="flex justify-between">
+              <Button variant="link" className="p-0 h-auto">
+                Privacy Policy
+              </Button>
+              <Button variant="link" className="p-0 h-auto">
+                Terms of Service
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </MobileLayout>
