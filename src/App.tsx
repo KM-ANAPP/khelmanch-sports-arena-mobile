@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,6 +16,8 @@ import Booking from "./pages/Booking";
 import GroundDetails from "./pages/GroundDetails";
 import Profile from "./pages/Profile";
 import Index from "./pages/Index";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,8 @@ const App = () => {
             <Route path="/booking" element={<Booking />} />
             <Route path="/booking/:id" element={<GroundDetails />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             
             {/* My Items Routes */}
             <Route path="/my-bookings" element={<Profile />} />
