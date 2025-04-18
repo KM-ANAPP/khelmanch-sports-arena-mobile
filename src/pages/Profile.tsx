@@ -1,174 +1,187 @@
 
 import { useState } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Phone, Mail, Edit, LogOut, Ticket, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { User, Camera, Phone, Mail, Save } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export default function Profile() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  
-  // Mock user data - would come from auth state in a real app
-  const user = {
-    name: "Rajesh Kumar",
-    phone: "+91 9876543210",
-    email: "rajesh@example.com",
-    image: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleLogout = () => {
-    // In a real app, this would clear auth state
-    setIsLoggedIn(false);
-    navigate("/login");
+  const handleSaveProfile = () => {
+    // Validation
+    if (!name.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!phone || phone.length !== 10) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid 10-digit phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Submit profile data
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated",
+      });
+    }, 1500);
   };
 
   return (
-    <MobileLayout title="My Profile" isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-4">
-        {/* Profile Header */}
+    <MobileLayout isLoggedIn={true}>
+      <div className="p-4 space-y-6">
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden">
-                <img 
-                  src={user.image} 
-                  alt={user.name} 
-                  className="w-full h-full object-cover"
-                />
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">My Profile</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Profile Picture */}
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <Avatar className="h-24 w-24 border-2 border-primary">
+                  {profileImage ? (
+                    <AvatarImage src={profileImage} alt="Profile" />
+                  ) : (
+                    <AvatarFallback className="bg-secondary text-white">
+                      <User className="h-10 w-10" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                
+                <label htmlFor="profile-image" className="absolute -bottom-2 -right-2 bg-accent text-accent-foreground p-2 rounded-full cursor-pointer">
+                  <Camera className="h-4 w-4" />
+                  <input 
+                    id="profile-image" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handleImageChange}
+                  />
+                </label>
               </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold">{user.name}</h2>
-                <div className="flex items-center text-sm text-muted-foreground mt-1">
-                  <Phone className="h-3 w-3 mr-1" />
-                  <span>{user.phone}</span>
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground mt-1">
-                  <Mail className="h-3 w-3 mr-1" />
-                  <span>{user.email}</span>
+              <p className="text-sm text-muted-foreground mt-2">Tap the camera icon to update your profile picture</p>
+            </div>
+            
+            {/* Personal Details Form */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
               </div>
-              <Button variant="outline" size="icon">
-                <Edit className="h-4 w-4" />
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              
+              <Button 
+                onClick={handleSaveProfile}
+                disabled={isLoading}
+                className="w-full mt-4"
+              >
+                {isLoading ? "Saving..." : "Save Profile"}
+                <Save className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </CardContent>
         </Card>
-
-        {/* Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button variant="outline" className="h-auto py-3 flex flex-col space-y-1" asChild>
-            <div onClick={() => navigate("/my-bookings")}>
-              <Calendar className="h-5 w-5 mb-1 text-secondary" />
-              <span>My Bookings</span>
-            </div>
-          </Button>
-          <Button variant="outline" className="h-auto py-3 flex flex-col space-y-1" asChild>
-            <div onClick={() => navigate("/my-tickets")}>
-              <Ticket className="h-5 w-5 mb-1 text-secondary" />
-              <span>My Tickets</span>
-            </div>
-          </Button>
-        </div>
-
-        {/* Tabs for My Activity */}
-        <Tabs defaultValue="bookings" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="bookings">Recent Bookings</TabsTrigger>
-            <TabsTrigger value="tickets">Recent Tickets</TabsTrigger>
-          </TabsList>
-          <TabsContent value="bookings" className="mt-4 space-y-3">
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">Victory Cricket Ground</h3>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      May 10, 2025 • 18:00 - 19:00
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Cricket • 10 players
-                    </div>
-                  </div>
-                  <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                    Confirmed
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">Tennis Paradise</h3>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      April 25, 2025 • 10:00 - 11:00
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Tennis • 2 players
-                    </div>
-                  </div>
-                  <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                    Completed
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Button variant="outline" size="sm" className="w-full">
-              View All Bookings
-            </Button>
-          </TabsContent>
-          <TabsContent value="tickets" className="mt-4 space-y-3">
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">Summer Cricket Championship</h3>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      May 15-20, 2025
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      2x Premium Tickets
-                    </div>
-                  </div>
-                  <div className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                    Upcoming
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Button variant="outline" size="sm" className="w-full">
-              View All Tickets
-            </Button>
-          </TabsContent>
-        </Tabs>
-
-        {/* Account Settings */}
+        
+        {/* Placeholder for Bookings and Tickets */}
         <Card>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="font-semibold mb-2">Account Settings</h3>
-            <Button variant="outline" className="w-full justify-start text-left">
-              <User className="h-4 w-4 mr-2" />
-              Edit Profile
-            </Button>
-            <Button variant="outline" className="w-full justify-start text-left">
-              <Mail className="h-4 w-4 mr-2" />
-              Change Email
-            </Button>
-            <Button variant="outline" className="w-full justify-start text-left">
-              <Phone className="h-4 w-4 mr-2" />
-              Change Phone Number
-            </Button>
-            <Button 
-              variant="destructive" 
-              className="w-full justify-start text-left mt-4"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">My Bookings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              You don't have any bookings yet
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">My Tickets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              You don't have any tickets yet
+            </p>
           </CardContent>
         </Card>
       </div>

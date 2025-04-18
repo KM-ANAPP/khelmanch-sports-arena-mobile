@@ -27,7 +27,7 @@ const App = () => {
     // Show splash screen for a brief period
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 2500);
+    }, 2800); // Match with the animation duration in SplashScreen
     
     return () => clearTimeout(timer);
   }, []);
