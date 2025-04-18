@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
-import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
@@ -86,145 +86,160 @@ export default function Settings() {
     });
   };
   
-  const handleTestNotification = () => {
-    notificationService.sendNotification(
-      "Test Notification",
-      "This is a test notification from Khelmanch Sports",
-      "promotions",
-      "https://lovableproject.com/assets/logos/khelmanch-logo.png",
-      "/home"
-    );
-  };
-
   return (
     <MobileLayout isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-4">
         <h1 className="text-2xl font-bold">Settings</h1>
         
+        {/* Notification Settings */}
         <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Notification Preferences
-          </h2>
-          <Separator className="my-4" />
+          <div className="flex items-center mb-4">
+            <Bell className="w-5 h-5 mr-2 text-primary" />
+            <h2 className="text-lg font-semibold">Notification Settings</h2>
+          </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Transaction Updates</h3>
-                <p className="text-sm text-muted-foreground">Payment confirmations and receipts</p>
-              </div>
+              <Label htmlFor="transaction-notifications" className="flex-1">
+                Transaction updates
+              </Label>
               <Switch 
-                checked={notificationPrefs.transactions} 
+                id="transaction-notifications" 
+                checked={notificationPrefs.transactions}
                 onCheckedChange={() => handleNotificationChange('transactions')}
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Booking Reminders</h3>
-                <p className="text-sm text-muted-foreground">Upcoming ground bookings and check-ins</p>
-              </div>
+              <Label htmlFor="booking-notifications" className="flex-1">
+                Booking reminders
+              </Label>
               <Switch 
-                checked={notificationPrefs.bookings} 
+                id="booking-notifications" 
+                checked={notificationPrefs.bookings}
                 onCheckedChange={() => handleNotificationChange('bookings')}
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Tournament Announcements</h3>
-                <p className="text-sm text-muted-foreground">New tournaments and updates</p>
-              </div>
+              <Label htmlFor="tournament-notifications" className="flex-1">
+                Tournament updates
+              </Label>
               <Switch 
-                checked={notificationPrefs.tournaments} 
+                id="tournament-notifications" 
+                checked={notificationPrefs.tournaments}
                 onCheckedChange={() => handleNotificationChange('tournaments')}
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Promotional Messages</h3>
-                <p className="text-sm text-muted-foreground">Offers and special events</p>
-              </div>
+              <Label htmlFor="promo-notifications" className="flex-1">
+                Promotions and offers
+              </Label>
               <Switch 
-                checked={notificationPrefs.promotions} 
+                id="promo-notifications" 
+                checked={notificationPrefs.promotions}
                 onCheckedChange={() => handleNotificationChange('promotions')}
               />
             </div>
-            
-            <Button 
-              variant="outline" 
-              className="mt-2 w-full"
-              onClick={handleTestNotification}
-            >
-              Send Test Notification
-            </Button>
           </div>
         </Card>
         
+        {/* Location Settings */}
         <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Location Services
-          </h2>
-          <Separator className="my-4" />
+          <div className="flex items-center mb-4">
+            <MapPin className="w-5 h-5 mr-2 text-primary" />
+            <h2 className="text-lg font-semibold">Location Settings</h2>
+          </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Enable Location Access</h3>
-                <p className="text-sm text-muted-foreground">For venue recommendations and directions</p>
-              </div>
+              <Label htmlFor="location-access" className="flex-1">
+                Location access
+              </Label>
               <Switch 
-                checked={locationEnabled} 
+                id="location-access" 
+                checked={locationEnabled}
                 onCheckedChange={requestLocationPermission}
               />
             </div>
             
             {locationEnabled && (
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Background Location</h3>
-                  <p className="text-sm text-muted-foreground">For venue check-ins when app is closed</p>
-                </div>
+                <Label htmlFor="background-location" className="flex-1">
+                  Background location
+                </Label>
                 <Switch 
-                  checked={backgroundLocationEnabled} 
+                  id="background-location" 
+                  checked={backgroundLocationEnabled}
                   onCheckedChange={toggleBackgroundLocation}
                 />
               </div>
             )}
-            
-            <div className="bg-muted/50 p-3 rounded-md text-sm">
-              <p>Current location data is only used to enhance your experience with venue recommendations and check-ins. We do not share your location with third parties.</p>
+          </div>
+        </Card>
+        
+        {/* Privacy Settings */}
+        <Card className="p-4">
+          <div className="flex items-center mb-4">
+            <Lock className="w-5 h-5 mr-2 text-primary" />
+            <h2 className="text-lg font-semibold">Privacy Settings</h2>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="p-2 rounded-md hover:bg-muted">
+              Change password
+            </div>
+            <div className="p-2 rounded-md hover:bg-muted">
+              Privacy policy
+            </div>
+            <div className="p-2 rounded-md hover:bg-muted">
+              Terms of service
             </div>
           </div>
         </Card>
         
+        {/* Account Settings */}
         <Card className="p-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <User className="h-5 w-5" />
-            Account Settings
-          </h2>
-          <Separator className="my-4" />
+          <div className="flex items-center mb-4">
+            <User className="w-5 h-5 mr-2 text-primary" />
+            <h2 className="text-lg font-semibold">Account Settings</h2>
+          </div>
           
-          <div className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
-              <User className="mr-2 h-4 w-4" />
-              Edit Profile
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Lock className="mr-2 h-4 w-4" />
-              Change Password
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Info className="mr-2 h-4 w-4" />
-              Privacy Policy
-            </Button>
-            <Button variant="destructive" className="w-full">
-              <LogOut className="mr-2 h-4 w-4" />
-              Log Out
-            </Button>
+          <div className="space-y-2">
+            <div className="p-2 rounded-md hover:bg-muted">
+              Edit profile
+            </div>
+            <div className="p-2 rounded-md hover:bg-muted">
+              Linked accounts
+            </div>
+            <Separator className="my-2" />
+            <div className="p-2 rounded-md text-destructive hover:bg-destructive/10">
+              <div className="flex items-center">
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </div>
+            </div>
+          </div>
+        </Card>
+        
+        {/* About */}
+        <Card className="p-4">
+          <div className="flex items-center mb-4">
+            <Info className="w-5 h-5 mr-2 text-primary" />
+            <h2 className="text-lg font-semibold">About</h2>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="p-2 rounded-md hover:bg-muted">
+              App version: 1.0.0
+            </div>
+            <div className="p-2 rounded-md hover:bg-muted">
+              Contact support
+            </div>
+            <div className="p-2 rounded-md hover:bg-muted">
+              Rate the app
+            </div>
           </div>
         </Card>
       </div>
