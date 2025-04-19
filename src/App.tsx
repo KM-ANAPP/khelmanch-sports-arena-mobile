@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import notificationService from "./utils/notifications";
 import locationService from "./utils/location";
 import { AuthProvider } from "./context/AuthContext";
+import ChatbotSupport from "./components/ai/ChatbotSupport";
 
 // Pages
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,8 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookings";
 import MyTeams from "./pages/MyTeams";
+import Messages from "./pages/Messages";
+import Community from "./pages/Community";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +100,10 @@ const App = () => {
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/settings" element={<Settings />} />
                 
+                {/* Communication & Community Routes */}
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/community" element={<Community />} />
+                
                 {/* My Items Routes */}
                 <Route path="/my-bookings" element={<MyBookings />} />
                 <Route path="/my-tickets" element={<MyBookings />} />
@@ -108,6 +115,9 @@ const App = () => {
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              
+              {/* Global AI Chatbot Support */}
+              <ChatbotSupport />
             </BrowserRouter>
           )}
         </TooltipProvider>

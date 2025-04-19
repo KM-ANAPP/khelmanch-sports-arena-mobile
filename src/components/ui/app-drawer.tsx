@@ -1,10 +1,13 @@
+
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
+
 interface AppDrawerProps {
   isLoggedIn: boolean;
 }
+
 export function AppDrawer({
   isLoggedIn
 }: AppDrawerProps) {
@@ -22,11 +25,13 @@ export function AppDrawer({
           </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 py-4">
-          <NavItem href="/" label="Home" />
+          <NavItem href="/home" label="Home" />
           <NavItem href="/tournaments" label="Tournaments" />
           <NavItem href="/booking" label="Ground Booking" />
           <NavItem href="/my-bookings" label="My Bookings" />
           <NavItem href="/my-tickets" label="My Tickets" />
+          <NavItem href="/community" label="Community" />
+          <NavItem href="/messages" label="Messages" />
           <NavItem href="/about" label="About Us" />
           <NavItem href="/contact" label="Contact Us" />
           <NavItem href="/faq" label="FAQ" />
@@ -36,11 +41,13 @@ export function AppDrawer({
       </SheetContent>
     </Sheet>;
 }
+
 interface NavItemProps {
   href: string;
   label: string;
   className?: string;
 }
+
 function NavItem({
   href,
   label,

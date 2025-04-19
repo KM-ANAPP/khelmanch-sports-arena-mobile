@@ -1,56 +1,64 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, Trophy, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Home, Calendar, Search, MessageSquare, User } from "lucide-react";
 
 export function BottomNavigation() {
   const location = useLocation();
-  const path = location.pathname;
-  
+  const currentPath = location.pathname;
+
+  const isActive = (path: string) => {
+    if (path === "/") return currentPath === "/" || currentPath === "/home";
+    return currentPath.startsWith(path);
+  };
+
   const navItems = [
     {
-      icon: Home,
-      label: "Home",
-      path: "/",
+      name: "Home",
+      path: "/home",
+      icon: <Home className="h-6 w-6" />,
     },
     {
-      icon: Trophy,
-      label: "Tournaments",
-      path: "/tournaments",
-    },
-    {
-      icon: Calendar,
-      label: "Booking",
+      name: "Explore",
       path: "/booking",
+      icon: <Search className="h-6 w-6" />,
     },
     {
-      icon: User,
-      label: "Profile",
+      name: "Bookings",
+      path: "/my-bookings",
+      icon: <Calendar className="h-6 w-6" />,
+    },
+    {
+      name: "Messages",
+      path: "/messages",
+      icon: <MessageSquare className="h-6 w-6" />,
+    },
+    {
+      name: "Profile",
       path: "/profile",
+      icon: <User className="h-6 w-6" />,
     },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex justify-around items-center z-50 px-2">
-      {navItems.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full",
-            path === item.path ? "text-accent" : "text-muted-foreground"
-          )}
-        >
-          <item.icon
-            className={cn("h-6 w-6", path === item.path ? "text-secondary" : "text-muted-foreground")}
-          />
-          <span className={cn("text-xs mt-1", 
-            path === item.path ? "text-primary font-medium" : "text-muted-foreground"
-          )}>
-            {item.label}
-          </span>
-        </Link>
-      ))}
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
+      <nav className="flex justify-around">
+        {navItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            className={cn(
+              "flex flex-col items-center py-2 px-3",
+              isActive(item.path)
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            {item.icon}
+            <span className="text-xs mt-1">{item.name}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }
