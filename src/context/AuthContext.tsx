@@ -1,6 +1,6 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { generateOTP, sendOTP, validateOTP, is2FAEnabled, save2FAPreference } from "@/utils/two-factor-auth";
 
 // Define user type
 interface UserProfile {
@@ -17,16 +17,20 @@ interface UserProfile {
     sms: boolean;
   };
   teamVisibility?: 'public' | 'friends' | 'private';
+  twoFactorEnabled?: boolean;
 }
 
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { phone?: string; email?: string; otp?: string }) => Promise<void>;
+  login: (credentials: { phone?: string; email?: string; otp?: string }) => Promise<{ requiresOTP: boolean, tempOTP?: string }>;
+  verifyOTP: (otp: string, tempOTP: string) => Promise<boolean>;
   register: (userData: Partial<UserProfile>) => Promise<void>;
   logout: () => void;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  toggle2FA: (enabled: boolean) => Promise<boolean>;
+  is2FAEnabled: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,11 +65,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkExistingSession();
   }, []);
 
-  const login = async (credentials: { phone?: string; email?: string; otp?: string }): Promise<void> => {
+  const login = async (credentials: { phone?: string; email?: string; otp?: string }): Promise<{ requiresOTP: boolean, tempOTP?: string }> => {
     setIsLoading(true);
     try {
+      // First, validate basic credentials (without 2FA)
       // In a real app, this would make an API request to validate credentials
-      // For demo, we'll create a mock user
+      const validCredentials = true; // Mock validation
+      
+      if (!validCredentials) {
+        throw new Error('Invalid credentials');
+      }
+      
+      // Check if 2FA is required
+      const requires2FA = true; // In real app, check if user has 2FA enabled
+      
+      if (requires2FA && credentials.phone) {
+        // Generate OTP
+        const otp = generateOTP();
+        // Send OTP (in real app)
+        await sendOTP(credentials.phone, otp);
+        
+        setIsLoading(false);
+        // Return the need for 2FA verification
+        return { requiresOTP: true, tempOTP: otp };
+      }
+      
+      // If 2FA not required or OTP already provided, proceed with login
       const newUser: UserProfile = {
         id: '1234567890',
         name: 'Demo User',
@@ -78,7 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           push: true,
           sms: true
         },
-        teamVisibility: 'public'
+        teamVisibility: 'public',
+        twoFactorEnabled: true
       };
       
       setUser(newUser);
@@ -88,6 +114,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Login Successful",
         description: "Welcome back to Khelmanch!",
       });
+      
+      return { requiresOTP: false };
     } catch (error) {
       console.error('Login failed:', error);
       toast({
@@ -96,6 +124,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         variant: "destructive",
       });
       throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const verifyOTP = async (userInputOTP: string, tempOTP: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      // Validate OTP
+      const isValid = validateOTP(userInputOTP, tempOTP);
+      
+      if (!isValid) {
+        toast({
+          title: "Invalid OTP",
+          description: "The OTP you entered is incorrect. Please try again.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      // OTP is valid, complete login
+      const newUser: UserProfile = {
+        id: '1234567890',
+        name: 'Demo User',
+        phone: '1234567890', // This would come from the initial login attempt
+        email: 'demo@example.com',
+        sports: ['Cricket', 'Football'],
+        skillLevels: { 'Cricket': 'intermediate', 'Football': 'beginner' },
+        notificationPreferences: {
+          email: true,
+          push: true,
+          sms: true
+        },
+        teamVisibility: 'public',
+        twoFactorEnabled: true
+      };
+      
+      setUser(newUser);
+      localStorage.setItem('user', JSON.stringify(newUser));
+      
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to Khelmanch!",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      toast({
+        title: "Verification Failed",
+        description: "Failed to verify OTP. Please try again.",
+        variant: "destructive",
+      });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -177,6 +259,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const toggle2FA = async (enabled: boolean): Promise<boolean> => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to change 2FA settings",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    try {
+      // In a real app, this would make an API call to update 2FA settings
+      await save2FAPreference(user.id, enabled);
+      
+      // Update local user state
+      const updatedUser = { ...user, twoFactorEnabled: enabled };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      toast({
+        title: "2FA Settings Updated",
+        description: `Two-factor authentication has been ${enabled ? 'enabled' : 'disabled'}`,
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to update 2FA settings:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update 2FA settings. Please try again.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+  
+  const checkIs2FAEnabled = async (): Promise<boolean> => {
+    if (!user) return false;
+    
+    // In a real app, this would check user preferences in the database
+    return user.twoFactorEnabled || false;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -184,9 +309,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
+        verifyOTP,
         register,
         logout,
         updateProfile,
+        toggle2FA,
+        is2FAEnabled: checkIs2FAEnabled,
       }}
     >
       {children}

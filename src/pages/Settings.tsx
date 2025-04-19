@@ -1,247 +1,181 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
+import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/card";
-import { Bell, MapPin, Lock, User, Info, LogOut } from "lucide-react";
-import { toast } from "@/components/ui/sonner";
-import notificationService from "@/utils/notifications";
-import locationService from "@/utils/location";
-
-// Define a type for notification preferences
-interface NotificationPreferences {
-  transactions: boolean;
-  bookings: boolean;
-  tournaments: boolean;
-  promotions: boolean;
-}
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { AlertCircle, Lock, Bell, Eye, LogOut } from "lucide-react";
 
 export default function Settings() {
-  const [isLoggedIn] = useState(true);
-  
-  // Notification settings with proper typing
-  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
-    transactions: true,
-    bookings: true,
-    tournaments: true,
-    promotions: true
-  });
-  
-  // Location settings
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [backgroundLocationEnabled, setBackgroundLocationEnabled] = useState(false);
-  
+  const { user, isAuthenticated, logout, toggle2FA, is2FAEnabled } = useAuth();
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    // Load notification preferences
-    const prefs = notificationService.getPreferences();
-    // Ensure we're setting the state with a properly typed object
-    setNotificationPrefs({
-      transactions: prefs.transactions ?? true,
-      bookings: prefs.bookings ?? true,
-      tournaments: prefs.tournaments ?? true,
-      promotions: prefs.promotions ?? true
-    });
-    
-    // Check location status
-    const currentLocation = locationService.getCurrentLocation();
-    setLocationEnabled(!!currentLocation);
-  }, []);
-  
-  const handleNotificationChange = (channel: keyof NotificationPreferences) => {
-    const newPrefs = {
-      ...notificationPrefs,
-      [channel]: !notificationPrefs[channel]
+    const checkTwoFactorStatus = async () => {
+      if (isAuthenticated) {
+        const enabled = await is2FAEnabled();
+        setTwoFactorEnabled(enabled);
+      }
     };
     
-    setNotificationPrefs(newPrefs);
-    notificationService.savePreferences(newPrefs);
-    
-    toast(`${channel.charAt(0).toUpperCase() + channel.slice(1)} notifications ${newPrefs[channel] ? 'enabled' : 'disabled'}.`);
-  };
-  
-  const requestLocationPermission = async () => {
-    const granted = await locationService.requestPermission();
-    setLocationEnabled(granted);
-    
-    if (granted) {
-      toast("Location Access Granted", {
-        description: "You'll now receive location-based recommendations."
+    checkTwoFactorStatus();
+  }, [isAuthenticated, is2FAEnabled]);
+
+  const handleToggle2FA = async (checked: boolean) => {
+    setIsLoading(true);
+    try {
+      const success = await toggle2FA(checked);
+      if (success) {
+        setTwoFactorEnabled(checked);
+      }
+    } catch (error) {
+      console.error("Failed to toggle 2FA:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update two-factor authentication settings",
+        variant: "destructive",
       });
-      locationService.initialize();
-    } else {
-      toast("Location Access Denied", {
-        description: "Enable location in your device settings to use this feature."
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  const toggleBackgroundLocation = () => {
-    // In a real app, this would request additional permissions
-    setBackgroundLocationEnabled(!backgroundLocationEnabled);
-    
-    toast("Background Location", {
-      description: `Background location ${!backgroundLocationEnabled ? 'enabled' : 'disabled'}.`
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out",
     });
   };
-  
+
   return (
-    <MobileLayout isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-4">
+    <MobileLayout isLoggedIn={isAuthenticated}>
+      <div className="p-4 space-y-6">
         <h1 className="text-2xl font-bold">Settings</h1>
-        
-        {/* Notification Settings */}
-        <Card className="p-4">
-          <div className="flex items-center mb-4">
-            <Bell className="w-5 h-5 mr-2 text-primary" />
-            <h2 className="text-lg font-semibold">Notification Settings</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="transaction-notifications" className="flex-1">
-                Transaction updates
-              </Label>
-              <Switch 
-                id="transaction-notifications" 
-                checked={notificationPrefs.transactions}
-                onCheckedChange={() => handleNotificationChange('transactions')}
-              />
-            </div>
+
+        <div className="space-y-6">
+          {/* Security Settings */}
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold flex items-center">
+              <Lock className="mr-2 h-5 w-5" />
+              Security
+            </h2>
+            <Separator className="my-2" />
             
-            <div className="flex items-center justify-between">
-              <Label htmlFor="booking-notifications" className="flex-1">
-                Booking reminders
-              </Label>
-              <Switch 
-                id="booking-notifications" 
-                checked={notificationPrefs.bookings}
-                onCheckedChange={() => handleNotificationChange('bookings')}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="tournament-notifications" className="flex-1">
-                Tournament updates
-              </Label>
-              <Switch 
-                id="tournament-notifications" 
-                checked={notificationPrefs.tournaments}
-                onCheckedChange={() => handleNotificationChange('tournaments')}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="promo-notifications" className="flex-1">
-                Promotions and offers
-              </Label>
-              <Switch 
-                id="promo-notifications" 
-                checked={notificationPrefs.promotions}
-                onCheckedChange={() => handleNotificationChange('promotions')}
-              />
-            </div>
-          </div>
-        </Card>
-        
-        {/* Location Settings */}
-        <Card className="p-4">
-          <div className="flex items-center mb-4">
-            <MapPin className="w-5 h-5 mr-2 text-primary" />
-            <h2 className="text-lg font-semibold">Location Settings</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="location-access" className="flex-1">
-                Location access
-              </Label>
-              <Switch 
-                id="location-access" 
-                checked={locationEnabled}
-                onCheckedChange={requestLocationPermission}
-              />
-            </div>
-            
-            {locationEnabled && (
-              <div className="flex items-center justify-between">
-                <Label htmlFor="background-location" className="flex-1">
-                  Background location
-                </Label>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="two-factor" className="font-medium">Two-Factor Authentication</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Add an extra layer of security to your account
+                  </p>
+                </div>
                 <Switch 
-                  id="background-location" 
-                  checked={backgroundLocationEnabled}
-                  onCheckedChange={toggleBackgroundLocation}
+                  id="two-factor" 
+                  checked={twoFactorEnabled}
+                  onCheckedChange={handleToggle2FA}
+                  disabled={isLoading || !isAuthenticated}
                 />
               </div>
-            )}
-          </div>
-        </Card>
-        
-        {/* Privacy Settings */}
-        <Card className="p-4">
-          <div className="flex items-center mb-4">
-            <Lock className="w-5 h-5 mr-2 text-primary" />
-            <h2 className="text-lg font-semibold">Privacy Settings</h2>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="p-2 rounded-md hover:bg-muted">
-              Change password
-            </div>
-            <div className="p-2 rounded-md hover:bg-muted">
-              Privacy policy
-            </div>
-            <div className="p-2 rounded-md hover:bg-muted">
-              Terms of service
-            </div>
-          </div>
-        </Card>
-        
-        {/* Account Settings */}
-        <Card className="p-4">
-          <div className="flex items-center mb-4">
-            <User className="w-5 h-5 mr-2 text-primary" />
-            <h2 className="text-lg font-semibold">Account Settings</h2>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="p-2 rounded-md hover:bg-muted">
-              Edit profile
-            </div>
-            <div className="p-2 rounded-md hover:bg-muted">
-              Linked accounts
-            </div>
-            <Separator className="my-2" />
-            <div className="p-2 rounded-md text-destructive hover:bg-destructive/10">
-              <div className="flex items-center">
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+              
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="biometric" className="font-medium">Biometric Login</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Use fingerprint or face recognition to log in
+                  </p>
+                </div>
+                <Switch id="biometric" />
               </div>
             </div>
-          </div>
-        </Card>
-        
-        {/* About */}
-        <Card className="p-4">
-          <div className="flex items-center mb-4">
-            <Info className="w-5 h-5 mr-2 text-primary" />
-            <h2 className="text-lg font-semibold">About</h2>
-          </div>
+          </Card>
           
-          <div className="space-y-2">
-            <div className="p-2 rounded-md hover:bg-muted">
-              App version: 1.0.0
+          {/* Notifications Settings */}
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold flex items-center">
+              <Bell className="mr-2 h-5 w-5" />
+              Notifications
+            </h2>
+            <Separator className="my-2" />
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="push-notifications" className="font-medium">Push Notifications</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive alerts about bookings and updates
+                  </p>
+                </div>
+                <Switch id="push-notifications" defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="email-notifications" className="font-medium">Email Notifications</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive email updates about your account
+                  </p>
+                </div>
+                <Switch id="email-notifications" defaultChecked />
+              </div>
             </div>
-            <div className="p-2 rounded-md hover:bg-muted">
-              Contact support
+          </Card>
+          
+          {/* Privacy Settings */}
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold flex items-center">
+              <Eye className="mr-2 h-5 w-5" />
+              Privacy
+            </h2>
+            <Separator className="my-2" />
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="profile-visibility" className="font-medium">Profile Visibility</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Control who can see your profile
+                  </p>
+                </div>
+                <Switch id="profile-visibility" defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label htmlFor="location-tracking" className="font-medium">Location Services</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Allow app to access your location
+                  </p>
+                </div>
+                <Switch id="location-tracking" defaultChecked />
+              </div>
             </div>
-            <div className="p-2 rounded-md hover:bg-muted">
-              Rate the app
-            </div>
+          </Card>
+          
+          {/* Account Actions */}
+          <div className="space-y-3">
+            {isAuthenticated && (
+              <Button 
+                variant="destructive" 
+                className="w-full"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+              </Button>
+            )}
+            
+            <Button variant="outline" className="w-full">
+              <AlertCircle className="mr-2 h-4 w-4" />
+              Delete Account
+            </Button>
           </div>
-        </Card>
+        </div>
       </div>
     </MobileLayout>
   );

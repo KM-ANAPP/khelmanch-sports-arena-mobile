@@ -6,21 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, ArrowRight } from "lucide-react";
+import { Phone, Mail, ArrowRight, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, verifyOTP } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isGeneratingOTP, setIsGeneratingOTP] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
+  const [tempOTP, setTempOTP] = useState("");
+  const [is2FARequired, setIs2FARequired] = useState(false);
 
-  const handleSendOTP = () => {
+  const handleSendOTP = async () => {
     // Validate phone number
     if (phoneNumber.length !== 10) {
       toast({
@@ -31,16 +34,36 @@ export default function Login() {
       return;
     }
     
-    // In a real app, this would call an API to send OTP
     setIsGeneratingOTP(true);
-    setTimeout(() => {
-      setIsGeneratingOTP(false);
-      setOtpSent(true);
+    
+    try {
+      // Attempt login which will return if 2FA is required
+      const { requiresOTP, tempOTP: generatedOTP } = await login({ phone: phoneNumber });
+      
+      if (requiresOTP) {
+        setIs2FARequired(true);
+        setOtpSent(true);
+        if (generatedOTP) {
+          setTempOTP(generatedOTP);
+        }
+        toast({
+          title: "OTP Sent",
+          description: `OTP sent to +91 ${phoneNumber}`,
+        });
+      } else {
+        // No 2FA required, redirect to home
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
-        title: "OTP Sent",
-        description: `OTP sent to +91 ${phoneNumber}`,
+        title: "Login Failed",
+        description: "Please check your phone number and try again",
+        variant: "destructive",
       });
-    }, 1500);
+    } finally {
+      setIsGeneratingOTP(false);
+    }
   };
 
   const handleLoginWithOTP = async () => {
@@ -55,17 +78,21 @@ export default function Login() {
     }
     
     try {
-      await login({ phone: phoneNumber, otp });
-      navigate("/home");
+      const success = await verifyOTP(otp, tempOTP);
+      if (success) {
+        navigate("/home");
+      }
     } catch (error) {
-      // Error is already handled in the login function
+      // Error is already handled in the verifyOTP function
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      await login({ email: "google@example.com" });
-      navigate("/home");
+      const { requiresOTP } = await login({ email: "google@example.com" });
+      if (!requiresOTP) {
+        navigate("/home");
+      }
     } catch (error) {
       // Error is already handled in the login function
     }
@@ -96,6 +123,15 @@ export default function Login() {
             <CardDescription className="text-center">
               Login to access all features
             </CardDescription>
+            
+            {is2FARequired && (
+              <Alert className="bg-amber-50 border-amber-200">
+                <Shield className="h-4 w-4 text-amber-500" />
+                <AlertDescription className="text-amber-700">
+                  Two-factor authentication is enabled for your account
+                </AlertDescription>
+              </Alert>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             <Tabs defaultValue="phone" className="w-full">
