@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,30 +11,60 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import notificationService from '@/utils/notifications';
+import { useAuth } from '@/context/AuthContext';
 
 interface OrderDetails {
   amount: number;
   currency: string;
   orderId: string;
+  description: string;
+  type: 'ground' | 'tournament';
+  itemId: string;
+  itemName: string;
 }
-
-// In a production app, these details would come from your backend
-const mockOrderDetails: OrderDetails = {
-  amount: 500000, // Amount in smallest currency unit (paise for INR)
-  currency: 'INR',
-  orderId: 'order_' + Date.now(),
-};
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('john@example.com');
-  const [phone, setPhone] = useState('+919999999999');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+
+  // Populate user data if authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setName(user.name);
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
+    }
+  }, [isAuthenticated, user]);
+
+  // Get order details from location state or use mock data
+  useEffect(() => {
+    const locationState = location.state as { orderDetails?: OrderDetails } | null;
+    
+    if (locationState?.orderDetails) {
+      setOrderDetails(locationState.orderDetails);
+    } else {
+      // Mock data if no order details provided
+      setOrderDetails({
+        amount: 500000, // Amount in smallest currency unit (paise for INR)
+        currency: 'INR',
+        orderId: 'order_' + Date.now(),
+        description: 'Tournament Registration',
+        type: 'tournament',
+        itemId: 'tournament1',
+        itemName: 'Mumbai Cricket League'
+      });
+    }
+  }, [location]);
 
   // Check if Razorpay is loaded
   useEffect(() => {
@@ -73,6 +103,12 @@ export default function Checkout() {
       return;
     }
 
+    if (!orderDetails) {
+      setError("Order details not available. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
     // Basic validation
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError("Please fill in all required fields");
@@ -100,19 +136,19 @@ export default function Checkout() {
       console.log("Initializing Razorpay payment...");
       const options = {
         key: 'rzp_test_fwYQqk5vvi3epz', // Changed to test mode API key
-        amount: mockOrderDetails.amount,
-        currency: mockOrderDetails.currency,
+        amount: orderDetails.amount,
+        currency: orderDetails.currency,
         name: 'Khelmanch Sports',
-        description: 'Tournament Registration',
+        description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: mockOrderDetails.orderId,
+        order_id: orderDetails.orderId,
         handler: function (response: any) {
           console.log('Payment Success:', response);
           
           // Send a success notification
           notificationService.sendNotification(
             "Payment Successful",
-            "Your tournament registration payment has been processed.",
+            `Your ${orderDetails.description} payment has been processed.`,
             "transactions",
             undefined,
             "/payment-success"
@@ -126,7 +162,11 @@ export default function Checkout() {
           navigate('/payment-success', { 
             state: { 
               paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id 
+              orderId: response.razorpay_order_id,
+              itemType: orderDetails.type,
+              itemId: orderDetails.itemId,
+              itemName: orderDetails.itemName,
+              amount: orderDetails.amount / 100 // Convert back to rupees
             } 
           });
         },
@@ -167,8 +207,29 @@ export default function Checkout() {
     }
   };
 
+  if (!orderDetails) {
+    return (
+      <MobileLayout isLoggedIn={isAuthenticated}>
+        <div className="p-4">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              No order details found. Please try again.
+            </AlertDescription>
+          </Alert>
+          <Button 
+            className="w-full mt-4" 
+            onClick={() => navigate(-1)}
+          >
+            Go Back
+          </Button>
+        </div>
+      </MobileLayout>
+    );
+  }
+
   return (
-    <MobileLayout isLoggedIn={true}>
+    <MobileLayout isLoggedIn={isAuthenticated}>
       <div className="p-4 space-y-6">
         <h1 className="text-2xl font-bold">Checkout</h1>
         
@@ -194,13 +255,13 @@ export default function Checkout() {
           <h2 className="font-semibold mb-4">Order Summary</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>Tournament Registration</span>
-              <span>₹5,000.00</span>
+              <span>{orderDetails.description}</span>
+              <span>₹{(orderDetails.amount / 100).toLocaleString()}</span>
             </div>
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>₹5,000.00</span>
+                <span>₹{(orderDetails.amount / 100).toLocaleString()}</span>
               </div>
             </div>
           </div>

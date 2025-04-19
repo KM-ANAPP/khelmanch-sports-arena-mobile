@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,13 +9,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, Mail, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isGeneratingOTP, setIsGeneratingOTP] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleSendOTP = () => {
     // Validate phone number
@@ -35,12 +38,12 @@ export default function Login() {
       setOtpSent(true);
       toast({
         title: "OTP Sent",
-        description: `OTP has been sent to +91 ${phoneNumber}`,
+        description: `OTP sent to +91 ${phoneNumber}`,
       });
     }, 1500);
   };
 
-  const handleLoginWithOTP = () => {
+  const handleLoginWithOTP = async () => {
     // Validate OTP
     if (otp.length !== 6) {
       toast({
@@ -51,23 +54,21 @@ export default function Login() {
       return;
     }
     
-    // In a real app, this would verify the OTP with an API
-    // For demo, we'll just navigate to home
-    toast({
-      title: "Login Successful",
-      description: "Welcome to Khelmanch",
-    });
-    navigate("/home");
+    try {
+      await login({ phone: phoneNumber, otp });
+      navigate("/home");
+    } catch (error) {
+      // Error is already handled in the login function
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // In a real app, this would initiate Google OAuth
-    // For demo, we'll just navigate to home
-    toast({
-      title: "Google Login Successful",
-      description: "Welcome to Khelmanch",
-    });
-    navigate("/home");
+  const handleGoogleLogin = async () => {
+    try {
+      await login({ email: "google@example.com" });
+      navigate("/home");
+    } catch (error) {
+      // Error is already handled in the login function
+    }
   };
 
   const handleSkipLogin = () => {
@@ -174,6 +175,11 @@ export default function Login() {
                 </div>
               </TabsContent>
             </Tabs>
+            
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground">Don't have an account?</span>{" "}
+              <Link to="/register" className="text-primary font-medium">Register now</Link>
+            </div>
           </CardContent>
           <CardFooter>
             <Button 

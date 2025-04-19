@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,11 +9,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Services
 import notificationService from "./utils/notifications";
 import locationService from "./utils/location";
+import { AuthProvider } from "./context/AuthContext";
 
 // Pages
 import NotFound from "./pages/NotFound";
 import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Tournaments from "./pages/Tournaments";
 import TournamentDetails from "./pages/TournamentDetails";
@@ -24,6 +26,8 @@ import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Settings from "./pages/Settings";
+import MyBookings from "./pages/MyBookings";
+import MyTeams from "./pages/MyTeams";
 
 const queryClient = new QueryClient();
 
@@ -61,49 +65,53 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        {showSplash ? (
-          <SplashScreen onComplete={handleSplashComplete} />
-        ) : (
-          <BrowserRouter>
-            <Routes>
-              {/* Redirect to login after splash screen completes if necessary */}
-              {splashCompleted && (
-                <Route 
-                  path="/" 
-                  element={<Navigate to="/login" replace />} 
-                />
-              )}
-              
-              {/* Authentication Routes */}
-              <Route path="/login" element={<Login />} />
-              
-              {/* Main App Routes - Important: Order matters! */}
-              <Route path="/home" element={<Home />} />
-              <Route path="/tournaments" element={<Tournaments />} />
-              <Route path="/tournaments/:id" element={<TournamentDetails />} />
-              <Route path="/booking" element={<Booking />} />
-              <Route path="/booking/:id" element={<GroundDetails />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/settings" element={<Settings />} />
-              
-              {/* My Items Routes */}
-              <Route path="/my-bookings" element={<Profile />} />
-              <Route path="/my-tickets" element={<Profile />} />
-              
-              {/* For any old Index page route, redirect to Home */}
-              <Route path="/index" element={<Index />} />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        )}
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          {showSplash ? (
+            <SplashScreen onComplete={handleSplashComplete} />
+          ) : (
+            <BrowserRouter>
+              <Routes>
+                {/* Redirect to login after splash screen completes */}
+                {splashCompleted && (
+                  <Route 
+                    path="/" 
+                    element={<Navigate to="/login" replace />} 
+                  />
+                )}
+                
+                {/* Authentication Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                
+                {/* Main App Routes */}
+                <Route path="/home" element={<Home />} />
+                <Route path="/tournaments" element={<Tournaments />} />
+                <Route path="/tournaments/:id" element={<TournamentDetails />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/booking/:id" element={<GroundDetails />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/settings" element={<Settings />} />
+                
+                {/* My Items Routes */}
+                <Route path="/my-bookings" element={<MyBookings />} />
+                <Route path="/my-tickets" element={<MyBookings />} />
+                <Route path="/my-teams" element={<MyTeams />} />
+                
+                {/* For any old Index page route, redirect to Home */}
+                <Route path="/index" element={<Index />} />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          )}
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
