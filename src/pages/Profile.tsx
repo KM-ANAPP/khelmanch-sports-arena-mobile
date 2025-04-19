@@ -6,11 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Camera, Phone, Mail, Save, Bell, Settings } from "lucide-react";
+import { User, Camera, Phone, Mail, Save, Bell, Settings, ArrowRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user, isAuthenticated, updateProfile } = useAuth();
@@ -20,6 +21,7 @@ export default function Profile() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
+  const navigate = useNavigate();
   
   // Notification preferences
   const [emailNotifications, setEmailNotifications] = useState(true);
