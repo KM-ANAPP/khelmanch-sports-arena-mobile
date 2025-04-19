@@ -8,12 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { AlertCircle, Lock, Bell, Eye, LogOut } from "lucide-react";
+import { AlertCircle, Lock, Bell, Eye, LogOut, Fingerprint } from "lucide-react";
+import { isBiometricAvailable, isBiometricEnabled, saveBiometricPreference } from "@/utils/biometric-auth";
 
 export default function Settings() {
   const { user, isAuthenticated, logout, toggle2FA, is2FAEnabled } = useAuth();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
 
   useEffect(() => {
     const checkTwoFactorStatus = async () => {
@@ -23,8 +27,19 @@ export default function Settings() {
       }
     };
     
+    const checkBiometricStatus = async () => {
+      const available = await isBiometricAvailable();
+      setBiometricAvailable(available);
+      
+      if (isAuthenticated && user?.id) {
+        const enabled = await isBiometricEnabled(user.id);
+        setBiometricEnabled(enabled);
+      }
+    };
+    
     checkTwoFactorStatus();
-  }, [isAuthenticated, is2FAEnabled]);
+    checkBiometricStatus();
+  }, [isAuthenticated, is2FAEnabled, user]);
 
   const handleToggle2FA = async (checked: boolean) => {
     setIsLoading(true);
@@ -42,6 +57,40 @@ export default function Settings() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleBiometric = async (checked: boolean) => {
+    if (!isAuthenticated || !user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to manage biometric settings",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setBiometricLoading(true);
+    try {
+      const success = await saveBiometricPreference(user.id, checked);
+      if (success) {
+        setBiometricEnabled(checked);
+        toast({
+          title: checked ? "Biometric Login Enabled" : "Biometric Login Disabled",
+          description: checked 
+            ? "You can now use fingerprint or face recognition to log in" 
+            : "Biometric login has been disabled",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to toggle biometric login:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update biometric login settings",
+        variant: "destructive",
+      });
+    } finally {
+      setBiometricLoading(false);
     }
   };
 
@@ -90,8 +139,18 @@ export default function Settings() {
                     Use fingerprint or face recognition to log in
                   </p>
                 </div>
-                <Switch id="biometric" />
+                <Switch 
+                  id="biometric" 
+                  checked={biometricEnabled}
+                  onCheckedChange={handleToggleBiometric}
+                  disabled={biometricLoading || !biometricAvailable || !isAuthenticated}
+                />
               </div>
+              {!biometricAvailable && (
+                <p className="text-xs text-amber-600">
+                  Biometric authentication is not available on this device.
+                </p>
+              )}
             </div>
           </Card>
           

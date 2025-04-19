@@ -1,5 +1,6 @@
 
 import { toast } from "@/components/ui/sonner";
+import { playNotificationSound } from "./notification-sounds";
 
 // Mock implementation for FCM since we can't use actual Firebase in this environment
 // In a real implementation, this would integrate with Firebase Cloud Messaging
@@ -12,6 +13,8 @@ export class NotificationService {
     tournaments: true,
     promotions: true
   };
+  
+  private notificationSoundEnabled = true;
 
   private constructor() {
     // Private constructor to enforce singleton
@@ -60,6 +63,9 @@ export class NotificationService {
     if (savedPreferences) {
       this.notificationChannels = JSON.parse(savedPreferences);
     }
+    
+    const soundEnabled = localStorage.getItem('notificationSoundEnabled');
+    this.notificationSoundEnabled = soundEnabled === null ? true : soundEnabled === 'true';
   }
 
   public savePreferences(preferences: Record<string, boolean>): void {
@@ -70,6 +76,15 @@ export class NotificationService {
     localStorage.setItem('notificationPreferences', JSON.stringify(this.notificationChannels));
   }
 
+  public setSoundEnabled(enabled: boolean): void {
+    this.notificationSoundEnabled = enabled;
+    localStorage.setItem('notificationSoundEnabled', String(enabled));
+  }
+
+  public isSoundEnabled(): boolean {
+    return this.notificationSoundEnabled;
+  }
+
   public getPreferences(): Record<string, boolean> {
     return { ...this.notificationChannels };
   }
@@ -78,6 +93,7 @@ export class NotificationService {
     title: string, 
     body: string, 
     channel: 'transactions' | 'bookings' | 'tournaments' | 'promotions',
+    soundType?: 'booking' | 'message' | 'tournament' | 'payment' | 'general',
     imageUrl?: string,
     deepLink?: string
   ): Promise<boolean> {
@@ -88,6 +104,11 @@ export class NotificationService {
     // In a real app, this would send to FCM
     // For now, we'll use the browser's Notification API as a fallback
     try {
+      // Play notification sound if enabled
+      if (this.notificationSoundEnabled && soundType) {
+        playNotificationSound(soundType);
+      }
+      
       if ("Notification" in window && Notification.permission === "granted") {
         const notification = new Notification(title, {
           body,

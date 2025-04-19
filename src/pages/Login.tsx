@@ -1,16 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, ArrowRight, Shield } from "lucide-react";
+import { Phone, Mail, ArrowRight, Shield, Fingerprint } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { isBiometricAvailable, authenticateWithBiometric } from "@/utils/biometric-auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -22,6 +23,17 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [tempOTP, setTempOTP] = useState("");
   const [is2FARequired, setIs2FARequired] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
+
+  useEffect(() => {
+    const checkBiometricAvailability = async () => {
+      const available = await isBiometricAvailable();
+      setBiometricAvailable(available);
+    };
+    
+    checkBiometricAvailability();
+  }, []);
 
   const handleSendOTP = async () => {
     // Validate phone number
@@ -98,6 +110,40 @@ export default function Login() {
     }
   };
 
+  const handleBiometricLogin = async () => {
+    setBiometricLoading(true);
+    try {
+      const result = await authenticateWithBiometric();
+      
+      if (result.success) {
+        toast({
+          title: "Biometric Authentication Successful",
+          description: "Logging you in...",
+        });
+        
+        // In a real app, you'd use the userId to complete the authentication
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
+      } else {
+        toast({
+          title: "Authentication Failed",
+          description: "Biometric authentication was unsuccessful",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Biometric authentication error:", error);
+      toast({
+        title: "Authentication Error",
+        description: "There was a problem with biometric authentication",
+        variant: "destructive",
+      });
+    } finally {
+      setBiometricLoading(false);
+    }
+  };
+
   const handleSkipLogin = () => {
     toast({
       title: "Guest Mode",
@@ -134,6 +180,28 @@ export default function Login() {
             )}
           </CardHeader>
           <CardContent className="space-y-4">
+            {biometricAvailable && (
+              <div className="text-center">
+                <Button 
+                  variant="outline" 
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={handleBiometricLogin}
+                  disabled={biometricLoading}
+                >
+                  <Fingerprint className="h-4 w-4" />
+                  <span>{biometricLoading ? "Authenticating..." : "Login with Biometric"}</span>
+                </Button>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-muted" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <Tabs defaultValue="phone" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="phone">Phone</TabsTrigger>
