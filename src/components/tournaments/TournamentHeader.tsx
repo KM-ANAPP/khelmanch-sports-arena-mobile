@@ -1,7 +1,5 @@
-
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock, ChevronUp, ChevronDown, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown } from "lucide-react";
 
 interface TournamentHeaderProps {
   tournament: {

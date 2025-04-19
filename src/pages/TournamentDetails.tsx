@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Ticket } from "lucide-react";
@@ -6,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useTournament } from "@/hooks/use-tournament";
 import { TournamentHeader } from "@/components/tournaments/TournamentHeader";
 import { TicketDialog } from "@/components/tournaments/TicketDialog";
-import TournamentBracket from "@/components/tournaments/TournamentBracket";
+import TournamentBracket, { Match, BracketData } from "@/components/tournaments/TournamentBracket";
 import MatchSchedule from "@/components/tournaments/MatchSchedule";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Calendar, Clock, Info, Award } from "lucide-react";
@@ -28,6 +29,126 @@ export default function TournamentDetails() {
     handleMatchClick,
     handleSubscribeToUpdates
   } = useTournament();
+
+  // Create proper match data that conforms to the Match interface
+  const matchesData: Match[] = [
+    {
+      id: "m1",
+      round: 1,
+      position: 1,
+      team1: { id: "t1", name: "Team A" },
+      team2: { id: "t2", name: "Team B" },
+      date: "May 15, 2025",
+      time: "9:00 AM",
+      court: "Court 1",
+      officials: ["John Doe"],
+      completed: false
+    },
+    {
+      id: "m2",
+      round: 1,
+      position: 2,
+      team1: { id: "t3", name: "Team C" },
+      team2: { id: "t4", name: "Team D" },
+      date: "May 15, 2025",
+      time: "1:00 PM",
+      court: "Court 2",
+      officials: ["Jane Smith"],
+      completed: false
+    },
+    {
+      id: "m3",
+      round: 1,
+      position: 3,
+      team1: { id: "t5", name: "Team E" },
+      team2: { id: "t6", name: "Team F" },
+      date: "May 15, 2025",
+      time: "5:00 PM",
+      court: "Court 1",
+      officials: ["Alex Johnson"],
+      completed: false
+    },
+    {
+      id: "m4",
+      round: 1,
+      position: 4,
+      team1: { id: "t7", name: "Team G" },
+      team2: { id: "t8", name: "Team H" },
+      date: "May 16, 2025",
+      time: "9:00 AM",
+      court: "Court 1",
+      officials: ["Sam Wilson"],
+      completed: false
+    },
+    {
+      id: "m5",
+      round: 1,
+      position: 5,
+      team1: { id: "t9", name: "Team I" },
+      team2: { id: "t10", name: "Team J" },
+      date: "May 16, 2025",
+      time: "1:00 PM",
+      court: "Court 2",
+      officials: ["Maria Garcia"],
+      completed: false
+    },
+    {
+      id: "m6",
+      round: 1,
+      position: 6,
+      team1: { id: "t11", name: "Team K" },
+      team2: { id: "t12", name: "Team L" },
+      date: "May 16, 2025",
+      time: "5:00 PM",
+      court: "Court 1",
+      officials: ["Robert Lee"],
+      completed: false
+    }
+  ];
+
+  // Create proper tournament bracket data
+  const bracketData: BracketData = {
+    rounds: 3,
+    matches: [
+      ...matchesData,
+      {
+        id: "sf1",
+        round: 2,
+        position: 1,
+        team1: null, // Will be determined
+        team2: null, // Will be determined
+        date: "May 18, 2025",
+        time: "1:00 PM",
+        court: "Court 1",
+        officials: ["John Doe", "Jane Smith"],
+        completed: false
+      },
+      {
+        id: "sf2",
+        round: 2,
+        position: 2,
+        team1: null, // Will be determined
+        team2: null, // Will be determined
+        date: "May 18, 2025",
+        time: "5:00 PM",
+        court: "Court 1",
+        officials: ["Alex Johnson", "Sam Wilson"],
+        completed: false
+      },
+      {
+        id: "final",
+        round: 3,
+        position: 1,
+        team1: null, // Will be determined
+        team2: null, // Will be determined
+        date: "May 20, 2025",
+        time: "5:00 PM",
+        court: "Center Court",
+        officials: ["John Doe", "Jane Smith", "Alex Johnson", "Sam Wilson"],
+        completed: false
+      }
+    ]
+  };
 
   const tournament = {
     id: Number(id),
@@ -57,24 +178,6 @@ export default function TournamentDetails() {
       "Player of the Tournament: ₹10,000 + Medal",
       "Best Batsman: ₹5,000 + Medal",
       "Best Bowler: ₹5,000 + Medal"
-    ],
-    schedule: [
-      {
-        day: "Day 1 - May 15, 2025",
-        matches: [
-          "Team A vs Team B - 9:00 AM",
-          "Team C vs Team D - 1:00 PM",
-          "Team E vs Team F - 5:00 PM"
-        ]
-      },
-      {
-        day: "Day 2 - May 16, 2025",
-        matches: [
-          "Team G vs Team H - 9:00 AM",
-          "Team I vs Team J - 1:00 PM",
-          "Team K vs Team L - 5:00 PM"
-        ]
-      }
     ],
     ticketTypes: [
       {
@@ -190,7 +293,7 @@ export default function TournamentDetails() {
               <CardContent className="p-4">
                 <h3 className="text-sm font-semibold mb-3">Match Schedule</h3>
                 <MatchSchedule 
-                  matches={tournament.schedule} 
+                  matches={matchesData} 
                   onMatchClick={handleMatchClick}
                 />
               </CardContent>
@@ -202,7 +305,7 @@ export default function TournamentDetails() {
               <CardContent className="p-4">
                 <h3 className="text-sm font-semibold mb-3">Tournament Brackets</h3>
                 <TournamentBracket 
-                  data={tournament.brackets} 
+                  data={bracketData} 
                   onMatchClick={handleMatchClick}
                 />
               </CardContent>
