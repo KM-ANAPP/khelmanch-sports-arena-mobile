@@ -1,146 +1,40 @@
 
-import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, ArrowRight, Shield, Fingerprint } from "lucide-react";
+import { Mail, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { isBiometricAvailable, authenticateWithBiometric } from "@/utils/biometric-auth";
+import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
+import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
+import { useLoginForm } from "@/hooks/useLoginForm";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, verifyOTP } = useAuth();
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [isGeneratingOTP, setIsGeneratingOTP] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("");
-  const [tempOTP, setTempOTP] = useState("");
-  const [is2FARequired, setIs2FARequired] = useState(false);
-  const [biometricAvailable, setBiometricAvailable] = useState(false);
-  const [biometricLoading, setBiometricLoading] = useState(false);
-
-  useEffect(() => {
-    const checkBiometricAvailability = async () => {
-      const available = await isBiometricAvailable();
-      setBiometricAvailable(available);
-    };
-    
-    checkBiometricAvailability();
-  }, []);
-
-  const handleSendOTP = async () => {
-    // Validate phone number
-    if (phoneNumber.length !== 10) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsGeneratingOTP(true);
-    
-    try {
-      // Attempt login which will return if 2FA is required
-      const { requiresOTP, tempOTP: generatedOTP } = await login({ phone: phoneNumber });
-      
-      if (requiresOTP) {
-        setIs2FARequired(true);
-        setOtpSent(true);
-        if (generatedOTP) {
-          setTempOTP(generatedOTP);
-        }
-        toast({
-          title: "OTP Sent",
-          description: `OTP sent to +91 ${phoneNumber}`,
-        });
-      } else {
-        // No 2FA required, redirect to home
-        navigate("/home");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "Login Failed",
-        description: "Please check your phone number and try again",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingOTP(false);
-    }
-  };
-
-  const handleLoginWithOTP = async () => {
-    // Validate OTP
-    if (otp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      const success = await verifyOTP(otp, tempOTP);
-      if (success) {
-        navigate("/home");
-      }
-    } catch (error) {
-      // Error is already handled in the verifyOTP function
-    }
-  };
+  const {
+    phoneNumber,
+    setPhoneNumber,
+    isGeneratingOTP,
+    otpSent,
+    setOtpSent,
+    otp,
+    setOtp,
+    is2FARequired,
+    handleSendOTP,
+    handleLoginWithOTP
+  } = useLoginForm();
 
   const handleGoogleLogin = async () => {
     try {
-      const { requiresOTP } = await login({ email: "google@example.com" });
+      const { requiresOTP } = await useAuth().login({ email: "google@example.com" });
       if (!requiresOTP) {
         navigate("/home");
       }
     } catch (error) {
       // Error is already handled in the login function
-    }
-  };
-
-  const handleBiometricLogin = async () => {
-    setBiometricLoading(true);
-    try {
-      const result = await authenticateWithBiometric();
-      
-      if (result.success) {
-        toast({
-          title: "Biometric Authentication Successful",
-          description: "Logging you in...",
-        });
-        
-        // In a real app, you'd use the userId to complete the authentication
-        setTimeout(() => {
-          navigate("/home");
-        }, 1000);
-      } else {
-        toast({
-          title: "Authentication Failed",
-          description: "Biometric authentication was unsuccessful",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Biometric authentication error:", error);
-      toast({
-        title: "Authentication Error",
-        description: "There was a problem with biometric authentication",
-        variant: "destructive",
-      });
-    } finally {
-      setBiometricLoading(false);
     }
   };
 
@@ -180,27 +74,7 @@ export default function Login() {
             )}
           </CardHeader>
           <CardContent className="space-y-4">
-            {biometricAvailable && (
-              <div className="text-center">
-                <Button 
-                  variant="outline" 
-                  className="w-full flex items-center justify-center gap-2"
-                  onClick={handleBiometricLogin}
-                  disabled={biometricLoading}
-                >
-                  <Fingerprint className="h-4 w-4" />
-                  <span>{biometricLoading ? "Authenticating..." : "Login with Biometric"}</span>
-                </Button>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-muted" />
-                  </div>
-                  <div className="relative flex justify-center text-xs">
-                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <BiometricLoginButton />
             
             <Tabs defaultValue="phone" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
@@ -208,61 +82,17 @@ export default function Login() {
                 <TabsTrigger value="google">Google</TabsTrigger>
               </TabsList>
               <TabsContent value="phone" className="space-y-4">
-                {!otpSent ? (
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="flex space-x-2">
-                      <div className="flex h-10 w-14 rounded-md border border-input bg-background px-3 py-2 text-sm items-center justify-center">
-                        +91
-                      </div>
-                      <Input
-                        id="phone"
-                        placeholder="Enter phone number"
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                      />
-                    </div>
-                    <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
-                      onClick={handleSendOTP}
-                      disabled={phoneNumber.length !== 10 || isGeneratingOTP}
-                    >
-                      {isGeneratingOTP ? "Sending OTP..." : "Get OTP"}
-                      <Phone className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">Enter OTP</Label>
-                    <Input
-                      id="otp"
-                      placeholder="Enter 6-digit OTP"
-                      type="text"
-                      maxLength={6}
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    />
-                    <div className="text-sm text-muted-foreground mt-2">
-                      OTP sent to +91 {phoneNumber}
-                    </div>
-                    <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
-                      onClick={handleLoginWithOTP}
-                      disabled={otp.length !== 6}
-                    >
-                      Verify & Login
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="link" 
-                      className="w-full" 
-                      onClick={() => setOtpSent(false)}
-                    >
-                      Change Phone Number
-                    </Button>
-                  </div>
-                )}
+                <PhoneLoginForm
+                  phoneNumber={phoneNumber}
+                  setPhoneNumber={setPhoneNumber}
+                  otpSent={otpSent}
+                  setOtpSent={setOtpSent}
+                  otp={otp}
+                  setOtp={setOtp}
+                  isGeneratingOTP={isGeneratingOTP}
+                  handleSendOTP={handleSendOTP}
+                  handleLoginWithOTP={handleLoginWithOTP}
+                />
               </TabsContent>
               <TabsContent value="google">
                 <div className="space-y-4">
