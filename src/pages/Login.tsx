@@ -1,19 +1,17 @@
-
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/context/AuthContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
+import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { useLoginForm } from "@/hooks/useLoginForm";
 
 export default function Login() {
-  const navigate = useNavigate();
   const {
     phoneNumber,
     setPhoneNumber,
@@ -26,17 +24,6 @@ export default function Login() {
     handleSendOTP,
     handleLoginWithOTP
   } = useLoginForm();
-
-  const handleGoogleLogin = async () => {
-    try {
-      const { requiresOTP } = await useAuth().login({ email: "google@example.com" });
-      if (!requiresOTP) {
-        navigate("/home");
-      }
-    } catch (error) {
-      // Error is already handled in the login function
-    }
-  };
 
   const handleSkipLogin = () => {
     toast({
@@ -95,18 +82,7 @@ export default function Login() {
                 />
               </TabsContent>
               <TabsContent value="google">
-                <div className="space-y-4">
-                  <p className="text-sm text-center text-muted-foreground">
-                    Login with your Google account for a seamless experience
-                  </p>
-                  <Button 
-                    className="w-full bg-red-600 hover:bg-red-700" 
-                    onClick={handleGoogleLogin}
-                  >
-                    Login with Google
-                    <Mail className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
+                <GoogleLoginButton />
               </TabsContent>
             </Tabs>
             
