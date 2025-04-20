@@ -1,6 +1,6 @@
 
-// This is a minimal service worker required for Razorpay
-const CACHE_NAME = 'khelmanch-cache-v1';
+// Minimal service worker required for Razorpay Checkout with Sessions
+// Using module type as required by Razorpay
 
 // Install service worker
 self.addEventListener('install', (event) => {
@@ -13,7 +13,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('Service worker activated');
   // Claim clients forces the service worker to be used for all clients
-  event.waitUntil(clients.claim());
+  event.waitUntil(self.clients.claim());
 });
 
 // Fetch event listener (required for service worker functionality)

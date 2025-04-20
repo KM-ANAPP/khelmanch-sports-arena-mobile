@@ -16,6 +16,6 @@
   "serviceworker": {
     "src": "/service-worker.js",
     "scope": "/",
-    "type": "classic"
+    "type": "module"
   }
 }
