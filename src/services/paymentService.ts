@@ -1,21 +1,5 @@
 
-interface PaymentOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill: {
-    name: string;
-    email: string;
-    contact: string;
-  };
-  theme: {
-    color: string;
-  };
-  handler: (response: any) => void;
-}
+import { PaymentOptions } from '@/types/payment';
 
 declare global {
   interface Window {
@@ -25,7 +9,7 @@ declare global {
 
 class PaymentService {
   private static instance: PaymentService;
-  private razorpayKey = "rzp_test_6TX9G35h8LidEn";
+  private razorpayKey = "rzp_test_6TX9G35h8LidEn"; // Test key, replace with your actual key
 
   private constructor() {}
 
