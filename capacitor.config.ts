@@ -11,7 +11,13 @@ const config: CapacitorConfig = {
   },
   android: {
     buildOptions: {
-      minSdkVersion: 23 // Android 6.0 (Marshmallow) as per requirements
+      minSdkVersion: 23
+    }
+  },
+  plugins: {
+    FirebaseAuthentication: {
+      skipNativeAuth: false,
+      providers: ["phone", "google"]
     }
   }
 };
