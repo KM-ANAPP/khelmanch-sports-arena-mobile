@@ -10,7 +10,7 @@ export interface OrderDetails {
 }
 
 export interface RazorpayOptions {
-  key: string;
+  key?: string;
   amount: number;
   currency: string;
   name: string;
