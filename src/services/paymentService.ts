@@ -21,17 +21,26 @@ class PaymentService {
   }
 
   public async loadRazorpayScript(): Promise<boolean> {
-    // Check if script is already loaded
-    if (window.Razorpay) {
-      return true;
-    }
-    
     return new Promise((resolve) => {
+      // Check if script is already loaded
+      if (window.Razorpay) {
+        console.log("Razorpay script already loaded");
+        resolve(true);
+        return;
+      }
+      
+      console.log("Loading Razorpay script...");
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
+      script.onload = () => {
+        console.log("Razorpay script loaded successfully");
+        resolve(true);
+      };
+      script.onerror = () => {
+        console.error("Failed to load Razorpay script");
+        resolve(false);
+      };
       document.body.appendChild(script);
     });
   }
@@ -47,36 +56,69 @@ class PaymentService {
     onFailure?: (error: any) => void
   ): Promise<void> {
     try {
+      console.log("Initiating payment...", { name, email, phone, amount, orderId });
+      
       const scriptLoaded = await this.loadRazorpayScript();
       
       if (!scriptLoaded) {
-        if (onFailure) onFailure(new Error("Failed to load Razorpay script"));
+        const error = new Error("Failed to load Razorpay script");
+        console.error(error);
+        if (onFailure) onFailure(error);
+        return;
+      }
+
+      if (!window.Razorpay) {
+        const error = new Error("Razorpay not available");
+        console.error(error);
+        if (onFailure) onFailure(error);
         return;
       }
 
       const options: PaymentOptions = {
         key: this.razorpayKey,
-        amount,
+        amount: amount,
         currency: "INR",
         name: "Khelmanch",
-        description,
+        description: description || "Payment for Khelmanch",
         order_id: orderId,
         handler: function (response) {
+          console.log("Payment successful:", response);
           if (onSuccess) onSuccess(response);
         },
         prefill: {
-          name,
-          email,
-          contact: phone,
+          name: name || "",
+          email: email || "",
+          contact: phone || "",
         },
         theme: {
           color: "#3399cc",
         },
+        modal: {
+          ondismiss: function() {
+            console.log("Payment modal dismissed");
+            if (onFailure) onFailure(new Error("Payment cancelled by user"));
+          }
+        }
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      console.log("Creating Razorpay instance with options:", options);
+      
+      try {
+        const rzp = new window.Razorpay(options);
+        
+        rzp.on('payment.failed', function (response: any) {
+          console.error("Payment failed:", response.error);
+          if (onFailure) onFailure(new Error(response.error.description || "Payment failed"));
+        });
+        
+        console.log("Opening Razorpay payment form");
+        rzp.open();
+      } catch (error) {
+        console.error("Error while creating Razorpay instance:", error);
+        if (onFailure) onFailure(error);
+      }
     } catch (error) {
+      console.error("Error in initiatePayment:", error);
       if (onFailure) onFailure(error);
     }
   }

@@ -58,22 +58,51 @@ export default function Checkout() {
     const loadRazorpay = async () => {
       try {
         const scriptLoaded = await paymentService.loadRazorpayScript();
+        console.log("Razorpay script loaded status:", scriptLoaded);
         setIsRazorpayReady(scriptLoaded);
+        
+        if (!scriptLoaded) {
+          setError('Failed to load payment gateway. Please try again later.');
+          toast({
+            variant: "destructive",
+            title: "Payment Gateway Error",
+            description: "Failed to load payment gateway. Please try again later.",
+          });
+        }
       } catch (err) {
-        setError('Failed to load payment gateway');
+        console.error("Error loading Razorpay:", err);
+        setError('Failed to load payment gateway. Please try refreshing the page.');
       }
     };
     
     loadRazorpay();
-  }, []);
+  }, [toast]);
 
   const handlePaymentSubmit = async () => {
-    if (!orderDetails) return;
+    if (!orderDetails) {
+      toast({
+        variant: "destructive",
+        title: "Checkout Error",
+        description: "No order details found. Please try again.",
+      });
+      return;
+    }
+    
+    if (!name || !email || !phone) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+      });
+      return;
+    }
     
     setIsLoading(true);
     setError(null);
     
     try {
+      console.log("Starting payment process for order:", orderDetails);
+      
       await paymentService.initiatePayment(
         name,
         email,
@@ -83,26 +112,40 @@ export default function Checkout() {
         orderDetails.description,
         (response) => {
           // Payment successful
+          console.log("Payment successful:", response);
           toast({
             title: "Payment Successful",
             description: `Payment ID: ${response.razorpay_payment_id}`,
           });
           navigate('/payment-success', { 
-            state: { paymentResponse: response, orderDetails } 
+            state: { 
+              paymentId: response.razorpay_payment_id, 
+              orderId: response.razorpay_order_id,
+              orderDetails 
+            } 
           });
         },
         (err) => {
           // Payment failed
-          setError(err.message || 'Payment failed. Please try again.');
+          console.error("Payment failed:", err);
+          const errorMessage = err.message || 'Payment failed. Please try again.';
+          setError(errorMessage);
           toast({
             variant: "destructive",
             title: "Payment Failed",
-            description: err.message || 'Payment failed. Please try again.',
+            description: errorMessage,
           });
         }
       );
     } catch (err: any) {
-      setError(err.message || 'Payment failed. Please try again.');
+      console.error("Error during payment process:", err);
+      const errorMessage = err.message || 'Payment failed. Please try again.';
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Payment Error",
+        description: errorMessage,
+      });
     } finally {
       setIsLoading(false);
     }
