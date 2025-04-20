@@ -187,7 +187,7 @@ export default function Checkout() {
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: orderResponse.id,
+        order_id: '18829982',
         handler: function (response: any) {
           handlePaymentSuccess(response);
         },
