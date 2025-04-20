@@ -1,7 +1,7 @@
-
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +9,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
+interface WordPressPost {
+  id: number;
+  title: {
+    rendered: string;
+  };
+  featured_media_url?: string;
+}
 
 interface Athlete {
   id: number;
@@ -18,11 +26,31 @@ interface Athlete {
   tournamentId: number;
 }
 
+const fetchWordPressPosts = async (): Promise<WordPressPost[]> => {
+  const response = await fetch('https://khelmanch.com/wp-json/wp/v2/posts?per_page=2');
+  if (!response.ok) {
+    throw new Error('Failed to fetch WordPress posts');
+  }
+  return response.json();
+};
+
 export const FeaturedAthletes = () => {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   
-  const athletes = [
+  const { data: wpPosts, isLoading, error } = useQuery({
+    queryKey: ['wp-posts'],
+    queryFn: fetchWordPressPosts
+  });
+
+  const athletes: Athlete[] = [
+    ...(wpPosts?.map(post => ({
+      id: post.id,
+      name: post.title.rendered,
+      image: post.featured_media_url || "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
+      sport: "WordPress Post",
+      tournamentId: post.id
+    })) || []),
     {
       id: 1,
       name: "Cricket Star",
@@ -45,17 +73,24 @@ export const FeaturedAthletes = () => {
       tournamentId: 3
     }
   ];
-  
+
   const navigateToTournament = (tournamentId: number) => {
     navigate(`/tournaments/${tournamentId}`);
   };
+
+  if (isLoading) {
+    return <div className="p-4 text-center">Loading posts...</div>;
+  }
+
+  if (error) {
+    console.error('Error fetching WordPress posts:', error);
+  }
 
   return (
     <div className="relative">
       <Carousel 
         className="w-full"
         onSelect={(index) => {
-          // Ensure we're getting a number for the active index
           if (typeof index === 'number') {
             setActiveIndex(index);
           }
@@ -81,7 +116,6 @@ export const FeaturedAthletes = () => {
                   <h3 className="text-white text-xl font-bold">{athlete.name}</h3>
                   <p className="text-white/90">{athlete.sport}</p>
                   
-                  {/* Interactive indicator */}
                   <div className="absolute top-3 right-3 bg-accent/70 text-accent-foreground text-xs px-2 py-1 rounded-full backdrop-blur-sm">
                     Tap to view
                   </div>
@@ -94,7 +128,6 @@ export const FeaturedAthletes = () => {
         <CarouselNext className="right-2" />
       </Carousel>
       
-      {/* Indicator dots */}
       <div className="flex justify-center mt-2 space-x-1">
         {athletes.map((_, index) => (
           <div 
