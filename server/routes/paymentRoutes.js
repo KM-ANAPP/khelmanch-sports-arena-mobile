@@ -1,7 +1,6 @@
 
 /**
- * This is a sample backend routes implementation for Razorpay
- * In a real application, this would be implemented on your server
+ * Backend routes implementation for Razorpay
  */
 
 const express = require('express');

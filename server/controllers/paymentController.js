@@ -1,7 +1,6 @@
 
 /**
- * This is a sample backend implementation for Razorpay integration
- * In a real application, this would be implemented on your server
+ * This is the backend implementation for Razorpay integration
  */
 
 const Razorpay = require('razorpay');
@@ -10,8 +9,8 @@ const crypto = require('crypto');
 // Initialize Razorpay with your key_id and key_secret
 // The key_secret should ONLY be used on the server side
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_fwYQqk5vvi3epz',     // Your Razorpay API Key
-  key_secret: 'YOUR_RAZORPAY_SECRET_KEY'  // Your Razorpay Secret Key
+  key_id: 'rzp_live_w0y4ew5V0jkw9n',     // Your Razorpay Live API Key
+  key_secret: '5RRdNYD6WgO8ylst07JEiabY'  // Your Razorpay Live Secret Key
 });
 
 /**
@@ -74,8 +73,8 @@ exports.verifyPayment = async (req, res) => {
       });
     }
     
-    // Create a signature using your secret key
-    const shasum = crypto.createHmac('sha256', 'YOUR_RAZORPAY_SECRET_KEY');
+    // Create a signature using the secret key
+    const shasum = crypto.createHmac('sha256', '5RRdNYD6WgO8ylst07JEiabY');
     shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
     const digest = shasum.digest('hex');
     
@@ -88,12 +87,17 @@ exports.verifyPayment = async (req, res) => {
       });
     }
     
-    // If signature is valid, the payment is authentic
-    // You can save payment details to your database here
+    // If signature is valid, capture the payment (similar to your PHP implementation)
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    
+    if (payment.status === 'authorized') {
+      // Capture the payment if it's only authorized
+      await razorpay.payments.capture(razorpay_payment_id, payment.amount);
+    }
     
     return res.status(200).json({
       success: true,
-      message: 'Payment verified successfully',
+      message: 'Payment verified and captured successfully',
       valid: true
     });
   } catch (error) {

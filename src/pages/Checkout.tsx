@@ -12,6 +12,7 @@ import { AlertCircle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import notificationService from '@/utils/notifications';
 import { useAuth } from '@/context/AuthContext';
+import paymentService from '@/services/paymentService';
 
 interface OrderDetails {
   amount: number;
@@ -56,13 +57,13 @@ export default function Checkout() {
     } else {
       // Mock data if no order details provided
       setOrderDetails({
-        amount: 500000, // Amount in smallest currency unit (paise for INR)
+        amount: 10000, // Amount in smallest currency unit (paise for INR) - ₹100
         currency: 'INR',
         orderId: 'order_' + Date.now(),
-        description: 'Tournament Registration',
+        description: 'Test Transaction',
         type: 'tournament',
         itemId: 'tournament1',
-        itemName: 'Mumbai Cricket League'
+        itemName: 'Khelmanch Test Payment'
       });
     }
   }, [location]);
@@ -94,36 +95,27 @@ export default function Checkout() {
     loadRazorpayScript();
   }, []);
 
-  // Create Razorpay order on the backend
+  // Create Razorpay order
   const createRazorpayOrder = async () => {
     if (!orderDetails) return null;
     
     try {
-      // In a real implementation, this would call your backend API
-      // For demo purposes, we'll simulate a successful response
       console.log("Creating Razorpay order...");
       
-      // Simulating API call to backend to create order
-      // In production, replace with actual API call:
-      // const response = await fetch('your-backend-url/create-order', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     amount: orderDetails.amount,
-      //     currency: orderDetails.currency,
-      //     receipt: orderDetails.orderId,
-      //     notes: {
-      //       itemId: orderDetails.itemId,
-      //       itemType: orderDetails.type,
-      //       description: orderDetails.description
-      //     }
-      //   })
-      // });
-      // const data = await response.json();
-      // return data.id; // This would be the Razorpay order_id
-
-      // For demo, we'll just return a simulated order ID
-      return `razorpay_order_${Date.now()}`;
+      // Call our payment service to create order
+      const orderResponse = await paymentService.createOrder({
+        amount: orderDetails.amount,
+        currency: orderDetails.currency,
+        receipt: orderDetails.orderId,
+        notes: {
+          itemId: orderDetails.itemId,
+          itemType: orderDetails.type,
+          description: orderDetails.description
+        }
+      });
+      
+      console.log("Order created:", orderResponse);
+      return orderResponse;
     } catch (err) {
       console.error("Error creating Razorpay order:", err);
       setError("Failed to create payment order. Please try again.");
@@ -169,27 +161,33 @@ export default function Checkout() {
       return;
     }
 
+    if (!termsAccepted) {
+      setError("Please accept the terms and conditions");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Create Razorpay order through backend
-      const orderId = await createRazorpayOrder();
+      const orderResponse = await createRazorpayOrder();
       
-      if (!orderId) {
+      if (!orderResponse || !orderResponse.id) {
         setError("Failed to create payment order. Please try again.");
         setIsLoading(false);
         return;
       }
       
-      setRazorpayOrderId(orderId);
+      setRazorpayOrderId(orderResponse.id);
       
       console.log("Initializing Razorpay payment...");
       const options = {
-        key: 'rzp_test_fwYQqk5vvi3epz', // Replace with your actual Razorpay API key in production
+        key: 'rzp_live_w0y4ew5V0jkw9n', // Your live Razorpay API key
         amount: orderDetails.amount,
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: orderId,
+        order_id: orderResponse.id,
         handler: function (response: any) {
           handlePaymentSuccess(response);
         },
@@ -231,33 +229,47 @@ export default function Checkout() {
   const handlePaymentSuccess = async (response: any) => {
     console.log('Payment Success:', response);
     
-    // In production, verify payment on your backend:
-    // await verifyPayment(response);
-    
-    // Send a success notification
-    notificationService.sendNotification(
-      "Payment Successful",
-      `Your ${orderDetails?.description} payment has been processed.`,
-      "transactions",
-      undefined,
-      "/payment-success"
-    );
-    
-    toast({
-      title: "Payment Successful",
-      description: "Your payment has been processed successfully."
-    });
-    
-    navigate('/payment-success', { 
-      state: { 
-        paymentId: response.razorpay_payment_id,
-        orderId: response.razorpay_order_id,
-        itemType: orderDetails?.type,
-        itemId: orderDetails?.itemId,
-        itemName: orderDetails?.itemName,
-        amount: orderDetails ? orderDetails.amount / 100 : 0 // Convert back to rupees
-      } 
-    });
+    try {
+      // Verify payment with backend
+      const isVerified = await paymentService.verifyPayment({
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_signature: response.razorpay_signature
+      });
+      
+      if (!isVerified) {
+        throw new Error('Payment verification failed');
+      }
+      
+      // Send a success notification
+      notificationService.sendNotification(
+        "Payment Successful",
+        `Your ${orderDetails?.description} payment has been processed.`,
+        "transactions",
+        undefined,
+        "/payment-success"
+      );
+      
+      toast({
+        title: "Payment Successful",
+        description: "Your payment has been processed successfully."
+      });
+      
+      navigate('/payment-success', { 
+        state: { 
+          paymentId: response.razorpay_payment_id,
+          orderId: response.razorpay_order_id,
+          itemType: orderDetails?.type,
+          itemId: orderDetails?.itemId,
+          itemName: orderDetails?.itemName,
+          amount: orderDetails ? orderDetails.amount / 100 : 0 // Convert back to rupees
+        } 
+      });
+    } catch (err) {
+      console.error('Payment Verification Error:', err);
+      setError('Payment was processed but verification failed. Please contact support.');
+      setIsLoading(false);
+    }
   };
 
   const handlePaymentFailure = (response: any) => {
@@ -386,7 +398,7 @@ export default function Checkout() {
           disabled={!termsAccepted || isLoading || !isRazorpayLoaded}
           onClick={handlePayment}
         >
-          {isLoading ? "Processing..." : "Proceed to Payment"}
+          {isLoading ? "Processing..." : "Pay ₹" + (orderDetails.amount / 100).toLocaleString()}
         </Button>
         
         <Alert>

@@ -21,7 +21,9 @@ interface VerifyPaymentParams {
   razorpay_signature: string;
 }
 
-const API_BASE_URL = 'https://api.khelmanch.com'; // Replace with your actual API URL
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.khelmanch.com'; // Replace with your actual API URL
 
 const paymentService = {
   /**
@@ -30,29 +32,35 @@ const paymentService = {
    * @param params Order parameters
    * @returns The created order ID from Razorpay
    */
-  createOrder: async (params: CreateOrderParams): Promise<string> => {
+  createOrder: async (params: CreateOrderParams): Promise<any> => {
     try {
-      // In production, implement the actual API call:
-      // const response = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      //   },
-      //   body: JSON.stringify(params)
-      // });
+      // Simulating successful order creation for demo - allows for testing without backend
+      if (process.env.NODE_ENV === 'development' && !process.env.USE_REAL_API) {
+        console.log('Creating order with params:', params);
+        return {
+          id: `order_${Date.now()}`,
+          amount: params.amount,
+          currency: params.currency
+        };
+      }
       
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.message || 'Failed to create order');
-      // }
+      // Production implementation - call the actual backend API
+      const response = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+        },
+        body: JSON.stringify(params)
+      });
       
-      // const data = await response.json();
-      // return data.id;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create order');
+      }
       
-      // Simulating successful order creation for demo
-      console.log('Creating order with params:', params);
-      return `order_${Date.now()}`;
+      const data = await response.json();
+      return data.order;
     } catch (error) {
       console.error('Error creating order:', error);
       throw error;
@@ -67,29 +75,63 @@ const paymentService = {
    */
   verifyPayment: async (params: VerifyPaymentParams): Promise<boolean> => {
     try {
-      // In production, implement the actual API call:
-      // const response = await fetch(`${API_BASE_URL}/api/payments/verify`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      //   },
-      //   body: JSON.stringify(params)
-      // });
+      // Simulating successful verification for demo - allows for testing without backend
+      if (process.env.NODE_ENV === 'development' && !process.env.USE_REAL_API) {
+        console.log('Verifying payment:', params);
+        return true;
+      }
       
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.message || 'Payment verification failed');
-      // }
+      // Production implementation - call the actual backend API
+      const response = await fetch(`${API_BASE_URL}/api/payments/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+        },
+        body: JSON.stringify(params)
+      });
       
-      // const data = await response.json();
-      // return data.valid;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Payment verification failed');
+      }
       
-      // Simulating successful verification for demo
-      console.log('Verifying payment:', params);
-      return true;
+      const data = await response.json();
+      return data.valid;
     } catch (error) {
       console.error('Error verifying payment:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Capture a Razorpay payment through the backend
+   * 
+   * @param paymentId The payment ID to capture
+   * @param amount The amount to capture
+   * @returns Boolean indicating if capture was successful
+   */
+  capturePayment: async (paymentId: string, amount: number): Promise<boolean> => {
+    try {
+      // Production implementation - call the actual backend API
+      const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}/capture`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+        },
+        body: JSON.stringify({ amount })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Payment capture failed');
+      }
+      
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error('Error capturing payment:', error);
       throw error;
     }
   }
