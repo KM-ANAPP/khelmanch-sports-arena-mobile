@@ -1,6 +1,5 @@
 
 // Minimal service worker required for Razorpay Checkout with Sessions
-// Using module type as required by Razorpay
 
 // Install service worker
 self.addEventListener('install', (event) => {

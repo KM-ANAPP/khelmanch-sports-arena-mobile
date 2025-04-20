@@ -12,10 +12,5 @@
       "sizes": "64x64",
       "type": "image/x-icon"
     }
-  ],
-  "serviceworker": {
-    "src": "/service-worker.js",
-    "scope": "/",
-    "type": "module"
-  }
+  ]
 }
