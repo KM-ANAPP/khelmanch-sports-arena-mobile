@@ -36,6 +36,8 @@ const paymentService = {
    * In production, this would call your backend API
    */
   createOrder: async (params: CreateOrderParams): Promise<any> => {
+    console.log('Creating Razorpay order...');
+    
     try {
       if (isDevelopment) {
         console.log('Creating simulated order with params:', params);
@@ -44,13 +46,16 @@ const paymentService = {
         const randomOrderId = generateRandomOrderId();
         
         // Return a simulated successful order response
-        return {
+        const orderResponse = {
           id: randomOrderId,
           amount: params.amount,
           currency: params.currency,
           receipt: params.receipt,
           created_at: new Date().toISOString()
         };
+        
+        console.log('Order created:', orderResponse);
+        return orderResponse;
       } else {
         // Production code would go here
         const response = await fetch('https://your-backend-url/api/payments/create-order', {
