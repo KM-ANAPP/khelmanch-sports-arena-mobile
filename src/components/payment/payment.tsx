@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 
 interface PaymentProps {
@@ -9,7 +9,7 @@ interface PaymentProps {
   amount: number;
   orderId: string;
   description: string;
-  isDisabled: boolean;
+  termsAccepted: boolean;
 }
 
 declare global {
@@ -25,8 +25,27 @@ const Payment: React.FC<PaymentProps> = ({
   amount,
   orderId,
   description,
-  isDisabled
+  termsAccepted
 }) => {
+  const [isFormValid, setIsFormValid] = useState(false);
+  
+  useEffect(() => {
+    // Validate form when dependencies change
+    const validateForm = () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      const isValid = 
+        name.trim() !== '' && 
+        emailRegex.test(email) && 
+        phone.length >= 10 && 
+        termsAccepted;
+      
+      setIsFormValid(isValid);
+    };
+    
+    validateForm();
+  }, [name, email, phone, termsAccepted]);
+
   const handlePayment = () => {
     const options = {
       key: "rzp_test_6TX9G35h8LidEn",
@@ -65,7 +84,7 @@ const Payment: React.FC<PaymentProps> = ({
     <div className="text-center space-y-4">
       <Button
         onClick={handlePayment}
-        disabled={isDisabled}
+        disabled={!isFormValid}
         className="w-full"
       >
         Pay ₹{(amount / 100).toLocaleString()}

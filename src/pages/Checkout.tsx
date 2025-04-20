@@ -52,31 +52,6 @@ export default function Checkout() {
     }
   }, [location]);
 
-  const isFormValid = () => {
-    if (!name.trim() || !email.trim() || !phone.trim()) {
-      setError("Please fill in all required fields");
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-
-    if (phone.length < 10) {
-      setError("Please enter a valid phone number");
-      return false;
-    }
-
-    if (!termsAccepted) {
-      setError("Please accept the terms and conditions");
-      return false;
-    }
-
-    return true;
-  };
-
   if (!orderDetails) {
     return (
       <MobileLayout isLoggedIn={isAuthenticated}>
@@ -118,7 +93,7 @@ export default function Checkout() {
           onEmailChange={setEmail}
           onPhoneChange={setPhone}
           onTermsChange={setTermsAccepted}
-          onSubmit={() => {}} // We don't need this anymore as Payment handles it
+          onSubmit={() => {}}
           amount={orderDetails.amount}
         />
 
@@ -129,7 +104,7 @@ export default function Checkout() {
           amount={orderDetails.amount}
           orderId={orderDetails.orderId}
           description={orderDetails.description}
-          isDisabled={!isFormValid()}
+          termsAccepted={termsAccepted}
         />
       </div>
     </MobileLayout>
