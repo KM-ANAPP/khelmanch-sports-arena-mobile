@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -11,6 +10,7 @@ import { OrderSummary } from '@/components/checkout/order-summary';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { PaymentStatus } from '@/components/checkout/payment-status';
 import { Button } from '@/components/ui/button';
+import Payment from '@/components/payment/payment';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -51,44 +51,29 @@ export default function Checkout() {
     }
   }, [location]);
 
-  const handlePayment = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    if (!orderDetails) {
-      setError("Order details not available. Please try again.");
-      setIsLoading(false);
-      return;
-    }
-
+  const isFormValid = () => {
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError("Please fill in all required fields");
-      setIsLoading(false);
-      return;
+      return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address");
-      setIsLoading(false);
-      return;
+      return false;
     }
 
     if (phone.length < 10) {
       setError("Please enter a valid phone number");
-      setIsLoading(false);
-      return;
+      return false;
     }
 
     if (!termsAccepted) {
       setError("Please accept the terms and conditions");
-      setIsLoading(false);
-      return;
+      return false;
     }
 
-    // Payment implementation will be added later
-    console.log('Payment functionality will be implemented');
-    setIsLoading(false);
+    return true;
   };
 
   if (!orderDetails) {
@@ -132,8 +117,18 @@ export default function Checkout() {
           onEmailChange={setEmail}
           onPhoneChange={setPhone}
           onTermsChange={setTermsAccepted}
-          onSubmit={handlePayment}
+          onSubmit={() => {}} // We don't need this anymore as Payment handles it
           amount={orderDetails.amount}
+        />
+
+        <Payment
+          name={name}
+          email={email}
+          phone={phone}
+          amount={orderDetails.amount}
+          orderId={orderDetails.orderId}
+          description={orderDetails.description}
+          isDisabled={!isFormValid()}
         />
       </div>
     </MobileLayout>
