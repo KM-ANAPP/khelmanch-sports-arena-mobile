@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -23,6 +24,13 @@ interface OrderDetails {
   itemName: string;
 }
 
+// Define Razorpay globally
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,24 +44,26 @@ export default function Checkout() {
   const [phone, setPhone] = useState('');
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  const [razorpayOrderId, setRazorpayOrderId] = useState<string | null>(null);
 
+  // Set user details if authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      setName(user.name);
+      setName(user.name || '');
       setEmail(user.email || '');
       setPhone(user.phone || '');
     }
   }, [isAuthenticated, user]);
 
+  // Set order details from location state or use default test values
   useEffect(() => {
     const locationState = location.state as { orderDetails?: OrderDetails } | null;
     
     if (locationState?.orderDetails) {
       setOrderDetails(locationState.orderDetails);
     } else {
+      // Use test data if no order details are provided
       setOrderDetails({
-        amount: 10000,
+        amount: 10000, // ₹100.00 (in paise)
         currency: 'INR',
         orderId: 'order_' + Date.now(),
         description: 'Test Transaction',
@@ -64,11 +74,12 @@ export default function Checkout() {
     }
   }, [location]);
 
+  // Load Razorpay script
   useEffect(() => {
     const loadRazorpayScript = () => {
-      if ((window as any).Razorpay) {
-        setIsRazorpayLoaded(true);
+      if (window.Razorpay) {
         console.log("Razorpay script already loaded");
+        setIsRazorpayLoaded(true);
         return;
       }
       
@@ -90,32 +101,6 @@ export default function Checkout() {
     loadRazorpayScript();
   }, []);
 
-  const createRazorpayOrder = async () => {
-    if (!orderDetails) return null;
-    
-    try {
-      console.log("Creating Razorpay order...");
-      
-      const orderResponse = await paymentService.createOrder({
-        amount: orderDetails.amount,
-        currency: orderDetails.currency,
-        receipt: orderDetails.orderId,
-        notes: {
-          itemId: orderDetails.itemId,
-          itemType: orderDetails.type,
-          description: orderDetails.description
-        }
-      });
-      
-      console.log("Order created:", orderResponse);
-      return orderResponse;
-    } catch (err) {
-      console.error("Error creating Razorpay order:", err);
-      setError("Failed to create payment order. Please try again.");
-      return null;
-    }
-  };
-
   const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
@@ -132,6 +117,7 @@ export default function Checkout() {
       return;
     }
 
+    // Basic validation
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError("Please fill in all required fields");
       setIsLoading(false);
@@ -158,26 +144,36 @@ export default function Checkout() {
     }
 
     try {
-      const orderResponse = await createRazorpayOrder();
+      // Create Razorpay order
+      console.log("Creating Razorpay order...");
+      const orderResponse = await paymentService.createOrder({
+        amount: orderDetails.amount,
+        currency: orderDetails.currency,
+        receipt: orderDetails.orderId,
+        notes: {
+          itemId: orderDetails.itemId,
+          itemType: orderDetails.type,
+          description: orderDetails.description
+        }
+      });
+      
+      console.log("Order created:", orderResponse);
       
       if (!orderResponse || !orderResponse.id) {
-        setError("Failed to create payment order. Please try again.");
-        setIsLoading(false);
-        return;
+        throw new Error("Failed to create order ID");
       }
       
-      setRazorpayOrderId(orderResponse.id);
-      
+      // Initialize Razorpay checkout
       console.log("Initializing Razorpay payment...");
       const options = {
-        key: 'rzp_live_w0y4ew5V0jkw9n',
+        key: 'rzp_live_w0y4ew5V0jkw9n', // Your Razorpay Key ID
         amount: orderDetails.amount,
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
         order_id: orderResponse.id,
-        handler: function (response: any) {
+        handler: function(response: any) {
           handlePaymentSuccess(response);
         },
         prefill: {
@@ -187,8 +183,7 @@ export default function Checkout() {
         },
         notes: {
           itemId: orderDetails.itemId,
-          itemType: orderDetails.type,
-          address: "Khelmanch Sports HQ"
+          itemType: orderDetails.type
         },
         theme: {
           color: '#2AA9DD'
@@ -201,16 +196,17 @@ export default function Checkout() {
         }
       };
 
-      const razorpay = new (window as any).Razorpay(options);
+      // Create Razorpay instance and open checkout
+      const razorpay = new window.Razorpay(options);
       
-      razorpay.on('payment.failed', function (response: any) {
+      razorpay.on('payment.failed', function(response: any) {
         handlePaymentFailure(response);
       });
       
       razorpay.open();
-    } catch (err) {
-      console.error('Razorpay Error:', err);
-      setError('An error occurred while initializing the payment. Please try again.');
+    } catch (err: any) {
+      console.error('Error initiating payment:', err);
+      setError('Failed to create payment order. Please try again.');
       setIsLoading(false);
     }
   };
@@ -219,6 +215,7 @@ export default function Checkout() {
     console.log('Payment Success:', response);
     
     try {
+      // Verify payment with backend
       const isVerified = await paymentService.verifyPayment({
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_order_id: response.razorpay_order_id,
@@ -229,6 +226,7 @@ export default function Checkout() {
         throw new Error('Payment verification failed');
       }
       
+      // Send notification
       notificationService.sendNotification(
         "Payment Successful",
         `Your ${orderDetails?.description} payment has been processed.`,
@@ -237,11 +235,13 @@ export default function Checkout() {
         "/payment-success"
       );
       
+      // Show success toast
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully."
       });
       
+      // Navigate to success page
       navigate('/payment-success', { 
         state: { 
           paymentId: response.razorpay_payment_id,
@@ -271,6 +271,7 @@ export default function Checkout() {
     );
   };
 
+  // Show alert if no order details
   if (!orderDetails) {
     return (
       <MobileLayout isLoggedIn={isAuthenticated}>
@@ -384,7 +385,7 @@ export default function Checkout() {
           disabled={!termsAccepted || isLoading || !isRazorpayLoaded}
           onClick={handlePayment}
         >
-          {isLoading ? "Processing..." : "Pay ₹" + (orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0)}
+          {isLoading ? "Processing..." : `Pay ₹${orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}`}
         </Button>
         
         <Alert>

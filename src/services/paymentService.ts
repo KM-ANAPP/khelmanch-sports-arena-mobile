@@ -2,10 +2,8 @@
 /**
  * Payment Service for handling Razorpay integration
  * 
- * This service handles communication with the backend for:
- * 1. Creating payment orders
- * 2. Verifying payments
- * 3. Processing payment responses
+ * This service provides methods for working with the Razorpay payment gateway
+ * in both development and production environments.
  */
 
 interface CreateOrderParams {
@@ -21,7 +19,7 @@ interface VerifyPaymentParams {
   razorpay_signature: string;
 }
 
-// Always use development mode for testing - we'll remove API calls completely
+// Always use development mode for testing
 const isDevelopment = true;
 
 // Helper function to generate a random order ID for testing
@@ -32,29 +30,41 @@ const generateRandomOrderId = () => {
 
 const paymentService = {
   /**
-   * Create a new Razorpay order through the backend
+   * Create a new Razorpay order
    * 
-   * @param params Order parameters
-   * @returns The created order ID from Razorpay
+   * In development mode, this returns a simulated order response
+   * In production, this would call your backend API
    */
   createOrder: async (params: CreateOrderParams): Promise<any> => {
     try {
-      // Since we're in testing mode, always simulate order creation
-      console.log('Creating simulated order with params:', params);
-      
-      // Generate a random order ID for testing
-      const randomOrderId = generateRandomOrderId();
-      
-      // Simulate a successful API response
-      return {
-        id: randomOrderId,
-        amount: params.amount,
-        currency: params.currency,
-        receipt: params.receipt,
-        created_at: new Date().toISOString()
-      };
-      
-      // Production implementation is removed for now since we're testing
+      if (isDevelopment) {
+        console.log('Creating simulated order with params:', params);
+        
+        // Generate a random order ID for testing
+        const randomOrderId = generateRandomOrderId();
+        
+        // Return a simulated successful order response
+        return {
+          id: randomOrderId,
+          amount: params.amount,
+          currency: params.currency,
+          receipt: params.receipt,
+          created_at: new Date().toISOString()
+        };
+      } else {
+        // Production code would go here
+        const response = await fetch('https://your-backend-url/api/payments/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create order');
+        }
+        
+        return await response.json();
+      }
     } catch (error) {
       console.error('Error creating order:', error);
       throw error;
@@ -62,18 +72,31 @@ const paymentService = {
   },
   
   /**
-   * Verify a Razorpay payment through the backend
+   * Verify a Razorpay payment
    * 
-   * @param params Payment verification parameters
-   * @returns Boolean indicating if payment is valid
+   * In development mode, this always returns true
+   * In production, this would verify the payment with your backend
    */
   verifyPayment: async (params: VerifyPaymentParams): Promise<boolean> => {
     try {
-      // Always simulate successful verification for testing
-      console.log('Simulating payment verification:', params);
-      return true;
-      
-      // Production implementation is removed for now since we're testing
+      if (isDevelopment) {
+        console.log('Simulating payment verification:', params);
+        return true;
+      } else {
+        // Production code would go here
+        const response = await fetch('https://your-backend-url/api/payments/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Payment verification failed');
+        }
+        
+        const data = await response.json();
+        return data.valid;
+      }
     } catch (error) {
       console.error('Error verifying payment:', error);
       throw error;
@@ -81,19 +104,31 @@ const paymentService = {
   },
 
   /**
-   * Capture a Razorpay payment through the backend
+   * Capture a payment
    * 
-   * @param paymentId The payment ID to capture
-   * @param amount The amount to capture
-   * @returns Boolean indicating if capture was successful
+   * In development mode, this always returns true
+   * In production, this would capture the payment with your backend
    */
   capturePayment: async (paymentId: string, amount: number): Promise<boolean> => {
     try {
-      // Always simulate successful capture for testing
-      console.log('Simulating payment capture:', { paymentId, amount });
-      return true;
-      
-      // Production implementation is removed for now since we're testing
+      if (isDevelopment) {
+        console.log('Simulating payment capture:', { paymentId, amount });
+        return true;
+      } else {
+        // Production code would go here
+        const response = await fetch(`https://your-backend-url/api/payments/${paymentId}/capture`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Payment capture failed');
+        }
+        
+        const data = await response.json();
+        return data.success;
+      }
     } catch (error) {
       console.error('Error capturing payment:', error);
       throw error;
