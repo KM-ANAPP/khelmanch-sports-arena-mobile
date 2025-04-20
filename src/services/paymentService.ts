@@ -21,14 +21,8 @@ interface VerifyPaymentParams {
   razorpay_signature: string;
 }
 
-// Use window.location to determine the API base URL
-const API_BASE_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000' 
-  : 'https://api.khelmanch.com'; // Replace with your actual API URL
-
-// Determine if we're in development mode for simulating payments
-const isDevelopment = window.location.hostname === 'localhost' || 
-                     window.location.hostname.includes('lovableproject.com');
+// Always use development mode for testing - we'll remove API calls completely
+const isDevelopment = true;
 
 // Helper function to generate a random order ID for testing
 const generateRandomOrderId = () => {
@@ -45,40 +39,22 @@ const paymentService = {
    */
   createOrder: async (params: CreateOrderParams): Promise<any> => {
     try {
-      // Always simulate order creation in development environment
-      if (isDevelopment) {
-        console.log('Creating simulated order with params:', params);
-        
-        // Generate a random order ID for testing
-        const randomOrderId = generateRandomOrderId();
-        
-        // Simulate a successful API response
-        return {
-          id: randomOrderId,
-          amount: params.amount,
-          currency: params.currency,
-          receipt: params.receipt,
-          created_at: new Date().toISOString()
-        };
-      }
+      // Since we're in testing mode, always simulate order creation
+      console.log('Creating simulated order with params:', params);
       
-      // Production implementation - call the actual backend API
-      const response = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
-        },
-        body: JSON.stringify(params)
-      });
+      // Generate a random order ID for testing
+      const randomOrderId = generateRandomOrderId();
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create order');
-      }
+      // Simulate a successful API response
+      return {
+        id: randomOrderId,
+        amount: params.amount,
+        currency: params.currency,
+        receipt: params.receipt,
+        created_at: new Date().toISOString()
+      };
       
-      const data = await response.json();
-      return data.order;
+      // Production implementation is removed for now since we're testing
     } catch (error) {
       console.error('Error creating order:', error);
       throw error;
@@ -93,29 +69,11 @@ const paymentService = {
    */
   verifyPayment: async (params: VerifyPaymentParams): Promise<boolean> => {
     try {
-      // Simulating successful verification for testing environments
-      if (isDevelopment) {
-        console.log('Simulating payment verification:', params);
-        return true;
-      }
+      // Always simulate successful verification for testing
+      console.log('Simulating payment verification:', params);
+      return true;
       
-      // Production implementation - call the actual backend API
-      const response = await fetch(`${API_BASE_URL}/api/payments/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
-        },
-        body: JSON.stringify(params)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Payment verification failed');
-      }
-      
-      const data = await response.json();
-      return data.valid;
+      // Production implementation is removed for now since we're testing
     } catch (error) {
       console.error('Error verifying payment:', error);
       throw error;
@@ -131,29 +89,11 @@ const paymentService = {
    */
   capturePayment: async (paymentId: string, amount: number): Promise<boolean> => {
     try {
-      // Simulating successful capture for testing environments
-      if (isDevelopment) {
-        console.log('Simulating payment capture:', { paymentId, amount });
-        return true;
-      }
+      // Always simulate successful capture for testing
+      console.log('Simulating payment capture:', { paymentId, amount });
+      return true;
       
-      // Production implementation - call the actual backend API
-      const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}/capture`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
-        },
-        body: JSON.stringify({ amount })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Payment capture failed');
-      }
-      
-      const data = await response.json();
-      return data.success;
+      // Production implementation is removed for now since we're testing
     } catch (error) {
       console.error('Error capturing payment:', error);
       throw error;
