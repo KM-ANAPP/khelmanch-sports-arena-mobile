@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { OrderDetails } from '@/types/checkout';
 import { OrderSummary } from '@/components/checkout/order-summary';
-import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { PaymentStatus } from '@/components/checkout/payment-status';
 import { Button } from '@/components/ui/button';
 import Payment from '@/components/payment/payment';
@@ -82,20 +81,63 @@ export default function Checkout() {
         
         <OrderSummary orderDetails={orderDetails} />
 
-        <CheckoutForm
-          name={name}
-          email={email}
-          phone={phone}
-          termsAccepted={termsAccepted}
-          isLoading={isLoading}
-          isRazorpayReady={true}
-          onNameChange={setName}
-          onEmailChange={setEmail}
-          onPhoneChange={setPhone}
-          onTermsChange={setTermsAccepted}
-          onSubmit={() => {}}
-          amount={orderDetails.amount}
-        />
+        <div className="space-y-4">
+          <h2 className="font-semibold">Review Details</h2>
+          <div className="space-y-2">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+                placeholder="Enter your full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+                placeholder="Enter your phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              id="terms"
+              type="checkbox"
+              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            <label htmlFor="terms" className="text-sm">
+              I accept the terms and conditions
+            </label>
+          </div>
+        </div>
 
         <Payment
           name={name}
