@@ -1,4 +1,3 @@
-
 /**
  * Payment Service for handling Razorpay integration
  * 
@@ -8,6 +7,7 @@
 
 // Import required modules for native platform detection
 import { Capacitor } from '@capacitor/core';
+import { RazorpayOptions, PaymentCallbacks } from '@/types/checkout';
 
 interface CreateOrderParams {
   amount: number;
@@ -20,25 +20,6 @@ interface VerifyPaymentParams {
   razorpay_payment_id: string;
   razorpay_order_id: string;
   razorpay_signature: string;
-}
-
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  image?: string;
-  order_id: string;
-  prefill?: {
-    name?: string;
-    email?: string;
-    contact?: string;
-  };
-  notes?: Record<string, string>;
-  theme?: {
-    color: string;
-  };
 }
 
 // Always use development mode for testing
@@ -108,10 +89,7 @@ const paymentService = {
    * Start Razorpay checkout process
    * Handles both web and Android platforms
    */
-  startPayment: async (options: RazorpayOptions, callbacks: {
-    onSuccess: (paymentData: any) => void;
-    onFailure: (error: any) => void;
-  }): Promise<void> => {
+  startPayment: async (options: RazorpayOptions, callbacks: PaymentCallbacks): Promise<void> => {
     try {
       console.log('Starting Razorpay payment with options:', options);
       

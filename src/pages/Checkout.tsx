@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -151,7 +152,7 @@ export default function Checkout() {
       
       const options = {
         key: 'rzp_live_w0y4ew5V0jkw9n',
-        amount: orderDetails.amount.toString(),
+        amount: orderDetails.amount, // This needs to be a number, not a string
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
