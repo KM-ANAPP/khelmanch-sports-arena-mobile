@@ -1,29 +1,18 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Info } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import notificationService from '@/utils/notifications';
 import { useAuth } from '@/context/AuthContext';
 import paymentService from '@/services/paymentService';
 import { Capacitor } from '@capacitor/core';
-
-interface OrderDetails {
-  amount: number;
-  currency: string;
-  orderId: string;
-  description: string;
-  type: 'ground' | 'tournament';
-  itemId: string;
-  itemName: string;
-}
+import { OrderDetails } from '@/types/checkout';
+import { OrderSummary } from '@/components/checkout/order-summary';
+import { CheckoutForm } from '@/components/checkout/checkout-form';
+import { PaymentStatus } from '@/components/checkout/payment-status';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -40,7 +29,6 @@ export default function Checkout() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const isNativePlatform = Capacitor.isNativePlatform();
 
-  // Set user details if authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
       setName(user.name || '');
@@ -49,14 +37,12 @@ export default function Checkout() {
     }
   }, [isAuthenticated, user]);
 
-  // Set order details from location state or use default test values
   useEffect(() => {
     const locationState = location.state as { orderDetails?: OrderDetails } | null;
     
     if (locationState?.orderDetails) {
       setOrderDetails(locationState.orderDetails);
     } else {
-      // Use test data if no order details are provided
       setOrderDetails({
         amount: 10000, // ₹100.00 (in paise)
         currency: 'INR',
@@ -69,17 +55,14 @@ export default function Checkout() {
     }
   }, [location]);
 
-  // Initialize Razorpay
   useEffect(() => {
     const initializeRazorpay = async () => {
       if (isNativePlatform) {
-        // For Android, we assume Razorpay is available through Capacitor
         console.log("Native platform detected, assuming Razorpay SDK is available");
         setIsRazorpayReady(true);
         return;
       }
       
-      // For web platform
       if (window.Razorpay) {
         console.log("Razorpay script already loaded");
         setIsRazorpayReady(true);
@@ -125,7 +108,6 @@ export default function Checkout() {
       return;
     }
 
-    // Basic validation
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError("Please fill in all required fields");
       setIsLoading(false);
@@ -152,8 +134,6 @@ export default function Checkout() {
     }
 
     try {
-      // Create Razorpay order
-      console.log("Creating Razorpay order...");
       const orderResponse = await paymentService.createOrder({
         amount: orderDetails.amount,
         currency: orderDetails.currency,
@@ -165,15 +145,12 @@ export default function Checkout() {
         }
       });
       
-      console.log("Order created:", orderResponse);
-      
       if (!orderResponse || !orderResponse.id) {
         throw new Error("Failed to create order ID");
       }
       
-      // Setup Razorpay payment options
       const options = {
-        key: 'rzp_live_w0y4ew5V0jkw9n', // Your Razorpay Key ID
+        key: 'rzp_live_w0y4ew5V0jkw9n',
         amount: orderDetails.amount.toString(),
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
@@ -194,7 +171,6 @@ export default function Checkout() {
         }
       };
 
-      // Start Razorpay payment
       await paymentService.startPayment(options, {
         onSuccess: function(response) {
           handlePaymentSuccess(response);
@@ -215,7 +191,6 @@ export default function Checkout() {
     console.log('Payment Success:', response);
     
     try {
-      // Verify payment with backend
       const isVerified = await paymentService.verifyPayment({
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_order_id: response.razorpay_order_id,
@@ -226,7 +201,6 @@ export default function Checkout() {
         throw new Error('Payment verification failed');
       }
       
-      // Send notification
       notificationService.sendNotification(
         "Payment Successful",
         `Your ${orderDetails?.description} payment has been processed.`,
@@ -235,13 +209,11 @@ export default function Checkout() {
         "/payment-success"
       );
       
-      // Show success toast
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully."
       });
       
-      // Navigate to success page
       navigate('/payment-success', { 
         state: { 
           paymentId: response.razorpay_payment_id,
@@ -271,7 +243,6 @@ export default function Checkout() {
     );
   };
 
-  // Show alert if no order details
   if (!orderDetails) {
     return (
       <MobileLayout isLoggedIn={isAuthenticated}>
@@ -282,10 +253,7 @@ export default function Checkout() {
               No order details found. Please try again.
             </AlertDescription>
           </Alert>
-          <Button 
-            className="w-full mt-4" 
-            onClick={() => navigate(-1)}
-          >
+          <Button className="w-full mt-4" onClick={() => navigate(-1)}>
             Go Back
           </Button>
         </div>
@@ -298,102 +266,27 @@ export default function Checkout() {
       <div className="p-4 space-y-6">
         <h1 className="text-2xl font-bold">Checkout</h1>
         
-        {!isRazorpayReady && (
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              Loading payment gateway...
-            </AlertDescription>
-          </Alert>
-        )}
+        <PaymentStatus 
+          error={error}
+          isRazorpayReady={isRazorpayReady}
+        />
         
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {error}
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        <Card className="p-4">
-          <h2 className="font-semibold mb-4">Order Summary</h2>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>{orderDetails?.description}</span>
-              <span>₹{orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}</span>
-            </div>
-            <div className="border-t pt-2 mt-2">
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>₹{orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}</span>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <OrderSummary orderDetails={orderDetails} />
 
-        <div className="space-y-4">
-          <h2 className="font-semibold">Review Details</h2>
-          <div className="space-y-2">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
-              <Input 
-                id="name" 
-                placeholder="Enter your full name" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="Enter your email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input 
-                id="phone" 
-                placeholder="Enter your phone number" 
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="terms" 
-            checked={termsAccepted}
-            onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            I accept the terms and conditions
-          </label>
-        </div>
-
-        <Button 
-          className="w-full" 
-          disabled={!termsAccepted || isLoading || !isRazorpayReady}
-          onClick={handlePayment}
-        >
-          {isLoading ? "Processing..." : `Pay ₹${orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}`}
-        </Button>
-        
-        <Alert>
-          <Info className="h-4 w-4" />
-          <AlertDescription className="text-xs">
-            For testing: Use card number 4111 1111 1111 1111, any future expiry date, any CVV, and OTP 1111
-          </AlertDescription>
-        </Alert>
+        <CheckoutForm
+          name={name}
+          email={email}
+          phone={phone}
+          termsAccepted={termsAccepted}
+          isLoading={isLoading}
+          isRazorpayReady={isRazorpayReady}
+          onNameChange={setName}
+          onEmailChange={setEmail}
+          onPhoneChange={setPhone}
+          onTermsChange={setTermsAccepted}
+          onSubmit={handlePayment}
+          amount={orderDetails.amount}
+        />
       </div>
     </MobileLayout>
   );
