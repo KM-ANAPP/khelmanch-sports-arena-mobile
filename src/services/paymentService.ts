@@ -30,6 +30,12 @@ const API_BASE_URL = window.location.hostname === 'localhost'
 const isDevelopment = window.location.hostname === 'localhost' || 
                      window.location.hostname.includes('lovableproject.com');
 
+// Helper function to generate a random order ID for testing
+const generateRandomOrderId = () => {
+  return 'order_' + Math.random().toString(36).substring(2, 15) + 
+    Math.random().toString(36).substring(2, 15);
+};
+
 const paymentService = {
   /**
    * Create a new Razorpay order through the backend
@@ -39,18 +45,20 @@ const paymentService = {
    */
   createOrder: async (params: CreateOrderParams): Promise<any> => {
     try {
-      // Simulating successful order creation for testing environments
+      // Always simulate order creation in development environment
       if (isDevelopment) {
         console.log('Creating simulated order with params:', params);
         
         // Generate a random order ID for testing
-        const randomOrderId = `order_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+        const randomOrderId = generateRandomOrderId();
         
+        // Simulate a successful API response
         return {
           id: randomOrderId,
           amount: params.amount,
           currency: params.currency,
-          receipt: params.receipt
+          receipt: params.receipt,
+          created_at: new Date().toISOString()
         };
       }
       

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -39,7 +38,6 @@ export default function Checkout() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [razorpayOrderId, setRazorpayOrderId] = useState<string | null>(null);
 
-  // Populate user data if authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
       setName(user.name);
@@ -48,16 +46,14 @@ export default function Checkout() {
     }
   }, [isAuthenticated, user]);
 
-  // Get order details from location state or use mock data
   useEffect(() => {
     const locationState = location.state as { orderDetails?: OrderDetails } | null;
     
     if (locationState?.orderDetails) {
       setOrderDetails(locationState.orderDetails);
     } else {
-      // Mock data if no order details provided
       setOrderDetails({
-        amount: 10000, // Amount in smallest currency unit (paise for INR) - ₹100
+        amount: 10000,
         currency: 'INR',
         orderId: 'order_' + Date.now(),
         description: 'Test Transaction',
@@ -68,7 +64,6 @@ export default function Checkout() {
     }
   }, [location]);
 
-  // Load Razorpay script
   useEffect(() => {
     const loadRazorpayScript = () => {
       if ((window as any).Razorpay) {
@@ -95,14 +90,12 @@ export default function Checkout() {
     loadRazorpayScript();
   }, []);
 
-  // Create Razorpay order
   const createRazorpayOrder = async () => {
     if (!orderDetails) return null;
     
     try {
       console.log("Creating Razorpay order...");
       
-      // Call our payment service to create order
       const orderResponse = await paymentService.createOrder({
         amount: orderDetails.amount,
         currency: orderDetails.currency,
@@ -139,14 +132,12 @@ export default function Checkout() {
       return;
     }
 
-    // Basic validation
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError("Please fill in all required fields");
       setIsLoading(false);
       return;
     }
 
-    // Email validation using regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address");
@@ -154,7 +145,6 @@ export default function Checkout() {
       return;
     }
 
-    // Phone validation (basic)
     if (phone.length < 10) {
       setError("Please enter a valid phone number");
       setIsLoading(false);
@@ -168,7 +158,6 @@ export default function Checkout() {
     }
 
     try {
-      // Create Razorpay order through backend
       const orderResponse = await createRazorpayOrder();
       
       if (!orderResponse || !orderResponse.id) {
@@ -181,13 +170,13 @@ export default function Checkout() {
       
       console.log("Initializing Razorpay payment...");
       const options = {
-        key: 'rzp_live_w0y4ew5V0jkw9n', // Your live Razorpay API key
+        key: 'rzp_live_w0y4ew5V0jkw9n',
         amount: orderDetails.amount,
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: '18829982',
+        order_id: orderResponse.id,
         handler: function (response: any) {
           handlePaymentSuccess(response);
         },
@@ -230,7 +219,6 @@ export default function Checkout() {
     console.log('Payment Success:', response);
     
     try {
-      // Verify payment with backend
       const isVerified = await paymentService.verifyPayment({
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_order_id: response.razorpay_order_id,
@@ -241,7 +229,6 @@ export default function Checkout() {
         throw new Error('Payment verification failed');
       }
       
-      // Send a success notification
       notificationService.sendNotification(
         "Payment Successful",
         `Your ${orderDetails?.description} payment has been processed.`,
@@ -262,7 +249,7 @@ export default function Checkout() {
           itemType: orderDetails?.type,
           itemId: orderDetails?.itemId,
           itemName: orderDetails?.itemName,
-          amount: orderDetails ? orderDetails.amount / 100 : 0 // Convert back to rupees
+          amount: orderDetails ? orderDetails.amount / 100 : 0
         } 
       });
     } catch (err) {
@@ -277,7 +264,6 @@ export default function Checkout() {
     setError(`Payment failed: ${response.error.description || "Transaction declined by payment gateway"}`);
     setIsLoading(false);
     
-    // Send a failure notification
     notificationService.sendNotification(
       "Payment Failed",
       "There was an issue processing your payment. Please try again.",
@@ -333,13 +319,13 @@ export default function Checkout() {
           <h2 className="font-semibold mb-4">Order Summary</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>{orderDetails.description}</span>
-              <span>₹{(orderDetails.amount / 100).toLocaleString()}</span>
+              <span>{orderDetails?.description}</span>
+              <span>₹{orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}</span>
             </div>
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>₹{(orderDetails.amount / 100).toLocaleString()}</span>
+                <span>₹{orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}</span>
               </div>
             </div>
           </div>
@@ -398,7 +384,7 @@ export default function Checkout() {
           disabled={!termsAccepted || isLoading || !isRazorpayLoaded}
           onClick={handlePayment}
         >
-          {isLoading ? "Processing..." : "Pay ₹" + (orderDetails.amount / 100).toLocaleString()}
+          {isLoading ? "Processing..." : "Pay ₹" + (orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0)}
         </Button>
         
         <Alert>
