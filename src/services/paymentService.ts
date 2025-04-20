@@ -21,9 +21,14 @@ interface VerifyPaymentParams {
   razorpay_signature: string;
 }
 
+// Use window.location to determine the API base URL
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000' 
   : 'https://api.khelmanch.com'; // Replace with your actual API URL
+
+// Determine if we're in development mode for simulating payments
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname.includes('lovableproject.com');
 
 const paymentService = {
   /**
@@ -34,13 +39,18 @@ const paymentService = {
    */
   createOrder: async (params: CreateOrderParams): Promise<any> => {
     try {
-      // Simulating successful order creation for demo - allows for testing without backend
-      if (process.env.NODE_ENV === 'development' && !process.env.USE_REAL_API) {
-        console.log('Creating order with params:', params);
+      // Simulating successful order creation for testing environments
+      if (isDevelopment) {
+        console.log('Creating simulated order with params:', params);
+        
+        // Generate a random order ID for testing
+        const randomOrderId = `order_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+        
         return {
-          id: `order_${Date.now()}`,
+          id: randomOrderId,
           amount: params.amount,
-          currency: params.currency
+          currency: params.currency,
+          receipt: params.receipt
         };
       }
       
@@ -75,9 +85,9 @@ const paymentService = {
    */
   verifyPayment: async (params: VerifyPaymentParams): Promise<boolean> => {
     try {
-      // Simulating successful verification for demo - allows for testing without backend
-      if (process.env.NODE_ENV === 'development' && !process.env.USE_REAL_API) {
-        console.log('Verifying payment:', params);
+      // Simulating successful verification for testing environments
+      if (isDevelopment) {
+        console.log('Simulating payment verification:', params);
         return true;
       }
       
@@ -113,6 +123,12 @@ const paymentService = {
    */
   capturePayment: async (paymentId: string, amount: number): Promise<boolean> => {
     try {
+      // Simulating successful capture for testing environments
+      if (isDevelopment) {
+        console.log('Simulating payment capture:', { paymentId, amount });
+        return true;
+      }
+      
       // Production implementation - call the actual backend API
       const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}/capture`, {
         method: 'POST',
