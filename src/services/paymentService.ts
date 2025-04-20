@@ -1,44 +1,21 @@
-import { RazorpayOptions, PaymentCallbacks } from '@/types/checkout';
 
-const RAZORPAY_KEY = 'rzp_live_w0y4ew5V0jkw9n';
+// Placeholder payment service for future implementation
 
 const paymentService = {
-  startPayment: async (options: RazorpayOptions, callbacks: PaymentCallbacks): Promise<void> => {
+  startPayment: async (options: any, callbacks: any): Promise<void> => {
     try {
-      console.log('Starting Razorpay payment with options:', options);
+      console.log('Payment functionality will be implemented', options);
       
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      document.body.appendChild(script);
-
-      script.onload = () => {
-        const rzp = new window.Razorpay({
-          ...options,
-          key: RAZORPAY_KEY,
-          handler: function(response: any) {
-            callbacks.onSuccess(response);
-          },
-        });
-
-        rzp.on('payment.failed', function(response: any) {
-          callbacks.onFailure(response.error);
-        });
-
-        rzp.open();
-      };
-
+      // Mocked functionality for future implementation
+      setTimeout(() => {
+        callbacks.onSuccess({ message: 'Payment simulation successful' });
+      }, 1000);
+      
     } catch (error) {
-      console.error('Error starting Razorpay payment:', error);
+      console.error('Error in payment service:', error);
       callbacks.onFailure(error);
     }
   },
 };
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
 
 export default paymentService;
