@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +16,7 @@ export default function Login() {
   const {
     phoneNumber,
     setPhoneNumber,
-    loading,  // Using loading instead of isGeneratingOTP
+    loading,
     otpSent,
     setOtpSent,
     otp,
@@ -78,7 +77,7 @@ export default function Login() {
                   setOtpSent={setOtpSent}
                   otp={otp}
                   setOtp={setOtp}
-                  isGeneratingOTP={loading}  {/* Pass loading as isGeneratingOTP */}
+                  isGeneratingOTP={loading}
                   handleSendOTP={handleSendOTP}
                   handleLoginWithOTP={handleLoginWithOTP}
                 />
