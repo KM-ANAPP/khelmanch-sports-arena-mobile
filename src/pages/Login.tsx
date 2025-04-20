@@ -17,7 +17,7 @@ export default function Login() {
   const {
     phoneNumber,
     setPhoneNumber,
-    isGeneratingOTP,
+    loading,  // Using loading instead of isGeneratingOTP
     otpSent,
     setOtpSent,
     otp,
@@ -78,7 +78,7 @@ export default function Login() {
                   setOtpSent={setOtpSent}
                   otp={otp}
                   setOtp={setOtp}
-                  isGeneratingOTP={isGeneratingOTP}
+                  isGeneratingOTP={loading}  {/* Pass loading as isGeneratingOTP */}
                   handleSendOTP={handleSendOTP}
                   handleLoginWithOTP={handleLoginWithOTP}
                 />
