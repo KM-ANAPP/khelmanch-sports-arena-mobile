@@ -10,7 +10,8 @@ import { OrderDetails } from '@/types/checkout';
 import { OrderSummary } from '@/components/checkout/order-summary';
 import { PaymentStatus } from '@/components/checkout/payment-status';
 import { Button } from '@/components/ui/button';
-import Payment from '@/components/payment/payment';
+import { CheckoutForm } from '@/components/checkout/checkout-form';
+import paymentService from '@/services/paymentService';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function Checkout() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRazorpayReady, setIsRazorpayReady] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -51,6 +53,61 @@ export default function Checkout() {
     }
   }, [location]);
 
+  useEffect(() => {
+    // Load Razorpay script
+    const loadRazorpay = async () => {
+      try {
+        const scriptLoaded = await paymentService.loadRazorpayScript();
+        setIsRazorpayReady(scriptLoaded);
+      } catch (err) {
+        setError('Failed to load payment gateway');
+      }
+    };
+    
+    loadRazorpay();
+  }, []);
+
+  const handlePaymentSubmit = async () => {
+    if (!orderDetails) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      await paymentService.initiatePayment(
+        name,
+        email,
+        phone,
+        orderDetails.amount,
+        orderDetails.orderId,
+        orderDetails.description,
+        (response) => {
+          // Payment successful
+          toast({
+            title: "Payment Successful",
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+          navigate('/payment-success', { 
+            state: { paymentResponse: response, orderDetails } 
+          });
+        },
+        (err) => {
+          // Payment failed
+          setError(err.message || 'Payment failed. Please try again.');
+          toast({
+            variant: "destructive",
+            title: "Payment Failed",
+            description: err.message || 'Payment failed. Please try again.',
+          });
+        }
+      );
+    } catch (err: any) {
+      setError(err.message || 'Payment failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!orderDetails) {
     return (
       <MobileLayout isLoggedIn={isAuthenticated}>
@@ -76,77 +133,24 @@ export default function Checkout() {
         
         <PaymentStatus 
           error={error}
-          isRazorpayReady={true}
+          isRazorpayReady={isRazorpayReady}
         />
         
         <OrderSummary orderDetails={orderDetails} />
 
-        <div className="space-y-4">
-          <h2 className="font-semibold">Review Details</h2>
-          <div className="space-y-2">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium">
-                Full Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <input
-              id="terms"
-              type="checkbox"
-              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-            />
-            <label htmlFor="terms" className="text-sm">
-              I accept the terms and conditions
-            </label>
-          </div>
-        </div>
-
-        <Payment
+        <CheckoutForm 
           name={name}
           email={email}
           phone={phone}
-          amount={orderDetails.amount}
-          orderId={orderDetails.orderId}
-          description={orderDetails.description}
           termsAccepted={termsAccepted}
+          isLoading={isLoading}
+          isRazorpayReady={isRazorpayReady}
+          onNameChange={setName}
+          onEmailChange={setEmail}
+          onPhoneChange={setPhone}
+          onTermsChange={setTermsAccepted}
+          onSubmit={handlePaymentSubmit}
+          amount={orderDetails.amount}
         />
       </div>
     </MobileLayout>
