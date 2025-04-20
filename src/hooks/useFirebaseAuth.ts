@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   RecaptchaVerifier, 
@@ -10,7 +9,6 @@ import { toast } from '@/hooks/use-toast';
 
 export const useFirebaseAuth = () => {
   const [verificationId, setVerificationId] = useState<ConfirmationResult | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const setupRecaptcha = (phoneNumber: string) => {
     const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -32,7 +30,6 @@ export const useFirebaseAuth = () => {
 
   const sendOTP = async (phoneNumber: string, recaptchaVerifier?: RecaptchaVerifier) => {
     try {
-      setLoading(true);
       if (!recaptchaVerifier) {
         recaptchaVerifier = setupRecaptcha(phoneNumber);
       }
@@ -55,8 +52,6 @@ export const useFirebaseAuth = () => {
         variant: "destructive",
       });
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -71,7 +66,6 @@ export const useFirebaseAuth = () => {
     }
 
     try {
-      setLoading(true);
       const result = await verificationId.confirm(otp);
       
       if (result.user) {
@@ -90,14 +84,11 @@ export const useFirebaseAuth = () => {
         variant: "destructive",
       });
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
   return {
     sendOTP,
-    verifyOTP,
-    loading
+    verifyOTP
   };
 };

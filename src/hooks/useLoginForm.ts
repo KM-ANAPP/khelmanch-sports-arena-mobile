@@ -5,15 +5,24 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
 
+interface LoadingState {
+  isGeneratingOTP: boolean;
+  isVerifyingOTP: boolean;
+}
+
 export const useLoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { sendOTP: firebaseSendOTP, verifyOTP: firebaseVerifyOTP, loading } = useFirebaseAuth();
+  const { sendOTP: firebaseSendOTP, verifyOTP: firebaseVerifyOTP } = useFirebaseAuth();
   
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [is2FARequired, setIs2FARequired] = useState(false);
+  const [loadingState, setLoadingState] = useState<LoadingState>({
+    isGeneratingOTP: false,
+    isVerifyingOTP: false
+  });
   
   const handleSendOTP = async () => {
     if (phoneNumber.length !== 10) {
@@ -32,11 +41,16 @@ export const useLoginForm = () => {
       document.body.appendChild(container);
     }
     
-    const success = await firebaseSendOTP(phoneNumber);
-    
-    if (success) {
-      setIs2FARequired(true);
-      setOtpSent(true);
+    setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
+    try {
+      const success = await firebaseSendOTP(phoneNumber);
+      
+      if (success) {
+        setIs2FARequired(true);
+        setOtpSent(true);
+      }
+    } finally {
+      setLoadingState(prev => ({ ...prev, isGeneratingOTP: false }));
     }
   };
 
@@ -50,19 +64,24 @@ export const useLoginForm = () => {
       return;
     }
     
-    const success = await firebaseVerifyOTP(otp);
-    
-    if (success) {
-      // After Firebase verification, log in to your app
-      await login({ phone: phoneNumber });
-      navigate("/home");
+    setLoadingState(prev => ({ ...prev, isVerifyingOTP: true }));
+    try {
+      const success = await firebaseVerifyOTP(otp);
+      
+      if (success) {
+        // After Firebase verification, log in to your app
+        await login({ phone: phoneNumber });
+        navigate("/home");
+      }
+    } finally {
+      setLoadingState(prev => ({ ...prev, isVerifyingOTP: false }));
     }
   };
 
   return {
     phoneNumber,
     setPhoneNumber,
-    loading,
+    loadingState,
     otpSent,
     setOtpSent,
     otp,
