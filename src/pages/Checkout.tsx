@@ -5,9 +5,7 @@ import { MobileLayout } from '@/components/layouts/mobile-layout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import notificationService from '@/utils/notifications';
 import { useAuth } from '@/context/AuthContext';
-import paymentService from '@/services/paymentService';
 import { OrderDetails } from '@/types/checkout';
 import { OrderSummary } from '@/components/checkout/order-summary';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
@@ -42,7 +40,7 @@ export default function Checkout() {
       setOrderDetails(locationState.orderDetails);
     } else {
       setOrderDetails({
-        amount: 10000, // ₹100.00 (in paise)
+        amount: 10000,
         currency: 'INR',
         orderId: 'order_' + Date.now(),
         description: 'Test Transaction',
@@ -69,7 +67,6 @@ export default function Checkout() {
       return;
     }
 
-    // Basic validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address");
@@ -89,72 +86,9 @@ export default function Checkout() {
       return;
     }
 
-    try {
-      const options = {
-        amount: orderDetails.amount,
-        currency: orderDetails.currency,
-        name: 'Khelmanch Sports',
-        description: orderDetails.description,
-        image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: orderDetails.orderId,
-        prefill: {
-          name,
-          email,
-          contact: phone
-        },
-        notes: {
-          itemId: orderDetails.itemId,
-          itemType: orderDetails.type
-        },
-        theme: {
-          color: '#2AA9DD'
-        }
-      };
-
-      await paymentService.startPayment(options, {
-        onSuccess: (response) => {
-          console.log('Payment Success:', response);
-          notificationService.sendNotification(
-            "Payment Successful",
-            `Your ${orderDetails.description} payment has been processed.`,
-            "transactions",
-            undefined,
-            "/payment-success"
-          );
-          
-          toast({
-            title: "Payment Successful",
-            description: "Your payment has been processed successfully."
-          });
-          
-          navigate('/payment-success', { 
-            state: { 
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              itemType: orderDetails.type,
-              itemId: orderDetails.itemId,
-              itemName: orderDetails.itemName,
-              amount: orderDetails.amount / 100
-            } 
-          });
-        },
-        onFailure: (error) => {
-          console.error('Payment Failed:', error);
-          setError(error.description || error.message || "Transaction declined");
-          setIsLoading(false);
-          
-          notificationService.sendNotification(
-            "Payment Failed",
-            "There was an issue processing your payment. Please try again.",
-            "transactions"
-          );
-        }
-      });
-    } catch (err: any) {
-      console.error('Error initiating payment:', err);
-      setError('Failed to start payment. Please try again.');
-      setIsLoading(false);
-    }
+    // Payment implementation will be added later
+    console.log('Payment functionality will be implemented');
+    setIsLoading(false);
   };
 
   if (!orderDetails) {

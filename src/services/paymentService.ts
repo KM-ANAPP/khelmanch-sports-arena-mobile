@@ -1,4 +1,3 @@
-
 import { RazorpayOptions, PaymentCallbacks } from '@/types/checkout';
 
 const RAZORPAY_KEY = 'rzp_live_w0y4ew5V0jkw9n';
