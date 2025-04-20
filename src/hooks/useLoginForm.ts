@@ -3,15 +3,16 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
-  const { login, verifyOTP } = useAuth();
+  const { login } = useAuth();
+  const { sendOTP: firebaseSendOTP, verifyOTP: firebaseVerifyOTP, loading } = useFirebaseAuth();
+  
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [isGeneratingOTP, setIsGeneratingOTP] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [tempOTP, setTempOTP] = useState("");
   const [is2FARequired, setIs2FARequired] = useState(false);
   
   const handleSendOTP = async () => {
@@ -24,33 +25,18 @@ export const useLoginForm = () => {
       return;
     }
     
-    setIsGeneratingOTP(true);
+    // Add recaptcha container if not exists
+    if (!document.getElementById('recaptcha-container')) {
+      const container = document.createElement('div');
+      container.id = 'recaptcha-container';
+      document.body.appendChild(container);
+    }
     
-    try {
-      const { requiresOTP, tempOTP: generatedOTP } = await login({ phone: phoneNumber });
-      
-      if (requiresOTP) {
-        setIs2FARequired(true);
-        setOtpSent(true);
-        if (generatedOTP) {
-          setTempOTP(generatedOTP);
-        }
-        toast({
-          title: "OTP Sent",
-          description: `OTP sent to +91 ${phoneNumber}`,
-        });
-      } else {
-        navigate("/home");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "Login Failed",
-        description: "Please check your phone number and try again",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingOTP(false);
+    const success = await firebaseSendOTP(phoneNumber);
+    
+    if (success) {
+      setIs2FARequired(true);
+      setOtpSent(true);
     }
   };
 
@@ -64,20 +50,19 @@ export const useLoginForm = () => {
       return;
     }
     
-    try {
-      const success = await verifyOTP(otp, tempOTP);
-      if (success) {
-        navigate("/home");
-      }
-    } catch (error) {
-      // Error is already handled in the verifyOTP function
+    const success = await firebaseVerifyOTP(otp);
+    
+    if (success) {
+      // After Firebase verification, log in to your app
+      await login({ phone: phoneNumber });
+      navigate("/home");
     }
   };
 
   return {
     phoneNumber,
     setPhoneNumber,
-    isGeneratingOTP,
+    loading,
     otpSent,
     setOtpSent,
     otp,
