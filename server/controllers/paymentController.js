@@ -41,7 +41,6 @@ exports.createOrder = async (req, res) => {
     // Send the order details to client
     return res.status(200).json({
       success: true,
-      id: order.id,
       order
     });
   } catch (error) {
@@ -87,7 +86,7 @@ exports.verifyPayment = async (req, res) => {
       });
     }
     
-    // If signature is valid, capture the payment (similar to your PHP implementation)
+    // If signature is valid, capture the payment
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
     
     if (payment.status === 'authorized') {
