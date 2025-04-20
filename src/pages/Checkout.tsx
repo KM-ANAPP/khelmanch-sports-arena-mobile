@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import notificationService from '@/utils/notifications';
 import { useAuth } from '@/context/AuthContext';
 import paymentService from '@/services/paymentService';
+import { Capacitor } from '@capacitor/core';
 
 interface OrderDetails {
   amount: number;
@@ -22,13 +23,6 @@ interface OrderDetails {
   type: 'ground' | 'tournament';
   itemId: string;
   itemName: string;
-}
-
-// Define Razorpay globally
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
 }
 
 export default function Checkout() {
@@ -42,8 +36,9 @@ export default function Checkout() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [isRazorpayReady, setIsRazorpayReady] = useState(false);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const isNativePlatform = Capacitor.isNativePlatform();
 
   // Set user details if authenticated
   useEffect(() => {
@@ -74,38 +69,51 @@ export default function Checkout() {
     }
   }, [location]);
 
-  // Load Razorpay script
+  // Initialize Razorpay
   useEffect(() => {
-    const loadRazorpayScript = () => {
-      if (window.Razorpay) {
-        console.log("Razorpay script already loaded");
-        setIsRazorpayLoaded(true);
+    const initializeRazorpay = async () => {
+      if (isNativePlatform) {
+        // For Android, we assume Razorpay is available through Capacitor
+        console.log("Native platform detected, assuming Razorpay SDK is available");
+        setIsRazorpayReady(true);
         return;
       }
       
-      console.log("Loading Razorpay script...");
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      script.onload = () => {
-        console.log("Razorpay script loaded successfully");
-        setIsRazorpayLoaded(true);
-      };
-      script.onerror = () => {
-        console.error("Failed to load Razorpay script");
-        setError("Failed to load payment gateway. Please refresh the page and try again.");
-      };
-      document.body.appendChild(script);
+      // For web platform
+      if (window.Razorpay) {
+        console.log("Razorpay script already loaded");
+        setIsRazorpayReady(true);
+        return;
+      }
+      
+      try {
+        console.log("Loading Razorpay script...");
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = () => {
+          console.log("Razorpay script loaded successfully");
+          setIsRazorpayReady(true);
+        };
+        script.onerror = () => {
+          console.error("Failed to load Razorpay script");
+          setError("Failed to load payment gateway. Please refresh the page and try again.");
+        };
+        document.body.appendChild(script);
+      } catch (error) {
+        console.error("Error loading Razorpay:", error);
+        setError("Failed to initialize payment gateway");
+      }
     };
 
-    loadRazorpayScript();
-  }, []);
+    initializeRazorpay();
+  }, [isNativePlatform]);
 
   const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
 
-    if (!isRazorpayLoaded) {
+    if (!isRazorpayReady) {
       setError("Payment gateway is still loading. Please wait a moment and try again.");
       setIsLoading(false);
       return;
@@ -163,19 +171,15 @@ export default function Checkout() {
         throw new Error("Failed to create order ID");
       }
       
-      // Initialize Razorpay checkout
-      console.log("Initializing Razorpay payment...");
+      // Setup Razorpay payment options
       const options = {
         key: 'rzp_live_w0y4ew5V0jkw9n', // Your Razorpay Key ID
-        amount: orderDetails.amount,
+        amount: orderDetails.amount.toString(),
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
         order_id: orderResponse.id,
-        handler: function(response: any) {
-          handlePaymentSuccess(response);
-        },
         prefill: {
           name: name,
           email: email,
@@ -187,23 +191,19 @@ export default function Checkout() {
         },
         theme: {
           color: '#2AA9DD'
-        },
-        modal: {
-          ondismiss: function() {
-            setIsLoading(false);
-            console.log('Payment modal closed without completing payment');
-          }
         }
       };
 
-      // Create Razorpay instance and open checkout
-      const razorpay = new window.Razorpay(options);
-      
-      razorpay.on('payment.failed', function(response: any) {
-        handlePaymentFailure(response);
+      // Start Razorpay payment
+      await paymentService.startPayment(options, {
+        onSuccess: function(response) {
+          handlePaymentSuccess(response);
+        },
+        onFailure: function(error) {
+          handlePaymentFailure(error);
+        }
       });
       
-      razorpay.open();
     } catch (err: any) {
       console.error('Error initiating payment:', err);
       setError('Failed to create payment order. Please try again.');
@@ -259,9 +259,9 @@ export default function Checkout() {
     }
   };
 
-  const handlePaymentFailure = (response: any) => {
-    console.error('Payment Failed:', response.error);
-    setError(`Payment failed: ${response.error.description || "Transaction declined by payment gateway"}`);
+  const handlePaymentFailure = (error: any) => {
+    console.error('Payment Failed:', error);
+    setError(`Payment failed: ${error.description || error.message || "Transaction declined by payment gateway"}`);
     setIsLoading(false);
     
     notificationService.sendNotification(
@@ -298,7 +298,7 @@ export default function Checkout() {
       <div className="p-4 space-y-6">
         <h1 className="text-2xl font-bold">Checkout</h1>
         
-        {!isRazorpayLoaded && (
+        {!isRazorpayReady && (
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
@@ -382,7 +382,7 @@ export default function Checkout() {
 
         <Button 
           className="w-full" 
-          disabled={!termsAccepted || isLoading || !isRazorpayLoaded}
+          disabled={!termsAccepted || isLoading || !isRazorpayReady}
           onClick={handlePayment}
         >
           {isLoading ? "Processing..." : `Pay ₹${orderDetails ? (orderDetails.amount / 100).toLocaleString() : 0}`}
