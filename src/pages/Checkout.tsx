@@ -36,6 +36,7 @@ export default function Checkout() {
   const [phone, setPhone] = useState('');
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [razorpayOrderId, setRazorpayOrderId] = useState<string | null>(null);
 
   // Populate user data if authenticated
   useEffect(() => {
@@ -66,34 +67,71 @@ export default function Checkout() {
     }
   }, [location]);
 
-  // Check if Razorpay is loaded
+  // Load Razorpay script
   useEffect(() => {
-    const checkRazorpayLoaded = () => {
+    const loadRazorpayScript = () => {
       if ((window as any).Razorpay) {
         setIsRazorpayLoaded(true);
-        console.log("Razorpay script loaded successfully");
-      } else {
-        console.log("Attempting to load Razorpay...");
-        // Try to load the script if it's not yet loaded
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.async = true;
-        script.onload = () => {
-          console.log("Razorpay loaded via dynamic script");
-          setIsRazorpayLoaded(true);
-        };
-        script.onerror = () => {
-          console.error("Failed to load Razorpay script");
-          setError("Failed to load payment gateway. Please refresh the page and try again.");
-        };
-        document.body.appendChild(script);
+        console.log("Razorpay script already loaded");
+        return;
       }
+      
+      console.log("Loading Razorpay script...");
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => {
+        console.log("Razorpay script loaded successfully");
+        setIsRazorpayLoaded(true);
+      };
+      script.onerror = () => {
+        console.error("Failed to load Razorpay script");
+        setError("Failed to load payment gateway. Please refresh the page and try again.");
+      };
+      document.body.appendChild(script);
     };
 
-    checkRazorpayLoaded();
+    loadRazorpayScript();
   }, []);
 
-  const handlePayment = () => {
+  // Create Razorpay order on the backend
+  const createRazorpayOrder = async () => {
+    if (!orderDetails) return null;
+    
+    try {
+      // In a real implementation, this would call your backend API
+      // For demo purposes, we'll simulate a successful response
+      console.log("Creating Razorpay order...");
+      
+      // Simulating API call to backend to create order
+      // In production, replace with actual API call:
+      // const response = await fetch('your-backend-url/create-order', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     amount: orderDetails.amount,
+      //     currency: orderDetails.currency,
+      //     receipt: orderDetails.orderId,
+      //     notes: {
+      //       itemId: orderDetails.itemId,
+      //       itemType: orderDetails.type,
+      //       description: orderDetails.description
+      //     }
+      //   })
+      // });
+      // const data = await response.json();
+      // return data.id; // This would be the Razorpay order_id
+
+      // For demo, we'll just return a simulated order ID
+      return `razorpay_order_${Date.now()}`;
+    } catch (err) {
+      console.error("Error creating Razorpay order:", err);
+      setError("Failed to create payment order. Please try again.");
+      return null;
+    }
+  };
+
+  const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
 
@@ -131,44 +169,29 @@ export default function Checkout() {
       return;
     }
 
-    // Clear any previous errors
     try {
+      // Create Razorpay order through backend
+      const orderId = await createRazorpayOrder();
+      
+      if (!orderId) {
+        setError("Failed to create payment order. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+      
+      setRazorpayOrderId(orderId);
+      
       console.log("Initializing Razorpay payment...");
       const options = {
-        key: 'rzp_test_fwYQqk5vvi3epz', // Changed to test mode API key
+        key: 'rzp_test_fwYQqk5vvi3epz', // Replace with your actual Razorpay API key in production
         amount: orderDetails.amount,
         currency: orderDetails.currency,
         name: 'Khelmanch Sports',
         description: orderDetails.description,
         image: 'https://lovableproject.com/assets/logos/khelmanch-logo.png',
-        order_id: orderDetails.orderId,
+        order_id: orderId,
         handler: function (response: any) {
-          console.log('Payment Success:', response);
-          
-          // Send a success notification
-          notificationService.sendNotification(
-            "Payment Successful",
-            `Your ${orderDetails.description} payment has been processed.`,
-            "transactions",
-            undefined,
-            "/payment-success"
-          );
-          
-          toast({
-            title: "Payment Successful",
-            description: "Your payment has been processed successfully."
-          });
-          
-          navigate('/payment-success', { 
-            state: { 
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              itemType: orderDetails.type,
-              itemId: orderDetails.itemId,
-              itemName: orderDetails.itemName,
-              amount: orderDetails.amount / 100 // Convert back to rupees
-            } 
-          });
+          handlePaymentSuccess(response);
         },
         prefill: {
           name: name,
@@ -176,6 +199,8 @@ export default function Checkout() {
           contact: phone
         },
         notes: {
+          itemId: orderDetails.itemId,
+          itemType: orderDetails.type,
           address: "Khelmanch Sports HQ"
         },
         theme: {
@@ -189,14 +214,10 @@ export default function Checkout() {
         }
       };
 
-      // In production, you should get the order_id from your server
-      // For testing purposes, we're using a mock order_id
       const razorpay = new (window as any).Razorpay(options);
       
       razorpay.on('payment.failed', function (response: any) {
-        console.error('Payment Failed:', response.error);
-        setError(`Payment failed: ${response.error.description || "Transaction declined by payment gateway"}`);
-        setIsLoading(false);
+        handlePaymentFailure(response);
       });
       
       razorpay.open();
@@ -205,6 +226,51 @@ export default function Checkout() {
       setError('An error occurred while initializing the payment. Please try again.');
       setIsLoading(false);
     }
+  };
+
+  const handlePaymentSuccess = async (response: any) => {
+    console.log('Payment Success:', response);
+    
+    // In production, verify payment on your backend:
+    // await verifyPayment(response);
+    
+    // Send a success notification
+    notificationService.sendNotification(
+      "Payment Successful",
+      `Your ${orderDetails?.description} payment has been processed.`,
+      "transactions",
+      undefined,
+      "/payment-success"
+    );
+    
+    toast({
+      title: "Payment Successful",
+      description: "Your payment has been processed successfully."
+    });
+    
+    navigate('/payment-success', { 
+      state: { 
+        paymentId: response.razorpay_payment_id,
+        orderId: response.razorpay_order_id,
+        itemType: orderDetails?.type,
+        itemId: orderDetails?.itemId,
+        itemName: orderDetails?.itemName,
+        amount: orderDetails ? orderDetails.amount / 100 : 0 // Convert back to rupees
+      } 
+    });
+  };
+
+  const handlePaymentFailure = (response: any) => {
+    console.error('Payment Failed:', response.error);
+    setError(`Payment failed: ${response.error.description || "Transaction declined by payment gateway"}`);
+    setIsLoading(false);
+    
+    // Send a failure notification
+    notificationService.sendNotification(
+      "Payment Failed",
+      "There was an issue processing your payment. Please try again.",
+      "transactions"
+    );
   };
 
   if (!orderDetails) {
