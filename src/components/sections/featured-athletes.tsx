@@ -1,5 +1,6 @@
+
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -15,7 +16,11 @@ interface WordPressPost {
   title: {
     rendered: string;
   };
-  featured_media_url?: string;
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{
+      source_url: string;
+    }>;
+  };
 }
 
 interface Athlete {
@@ -27,7 +32,7 @@ interface Athlete {
 }
 
 const fetchWordPressPosts = async (): Promise<WordPressPost[]> => {
-  const response = await fetch('https://khelmanch.com/wp-json/wp/v2/posts?per_page=2');
+  const response = await fetch('https://khelmanch.com/wp-json/wp/v2/posts?per_page=2&_embed');
   if (!response.ok) {
     throw new Error('Failed to fetch WordPress posts');
   }
@@ -47,7 +52,8 @@ export const FeaturedAthletes = () => {
     ...(wpPosts?.map(post => ({
       id: post.id,
       name: post.title.rendered,
-      image: post.featured_media_url || "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
+      image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || 
+        "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
       sport: "WordPress Post",
       tournamentId: post.id
     })) || []),
