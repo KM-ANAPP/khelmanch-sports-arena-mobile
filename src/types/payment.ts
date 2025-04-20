@@ -30,4 +30,7 @@ export interface PaymentOptions {
     color: string;
   };
   handler: (response: any) => void;
+  modal?: {
+    ondismiss: () => void;
+  };
 }
