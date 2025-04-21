@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Device } from '@capacitor/device';
 
+// Define proper DeviceInfo interface with biometrics property
 interface DeviceInfo {
   name?: string;
   model?: string;
@@ -31,7 +32,7 @@ export function BiometricLoginButton() {
 
   const checkBiometricAvailability = async () => {
     try {
-      const info: DeviceInfo = await Device.getInfo();
+      const info = await Device.getInfo() as DeviceInfo;
       const biometricEnabled = info.biometrics?.isAvailable || false;
       setIsAvailable(biometricEnabled);
     } catch (error) {
