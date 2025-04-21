@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import { 
   RecaptchaVerifier, 
   signInWithPhoneNumber, 
@@ -7,53 +8,42 @@ import {
 import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
 
-// Keep a single instance of recaptchaVerifier to prevent multiple instances
-let recaptchaVerifier: RecaptchaVerifier | null = null;
-let recaptchaInitialized = false;
-
 export const useFirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [lastOTPRequestTime, setLastOTPRequestTime] = useState<number>(0);
   const OTP_COOLDOWN_PERIOD = 60000; // 1 minute cooldown
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  const isRecaptchaRenderedRef = useRef<boolean>(false);
 
   // Cleanup recaptchaVerifier when component unmounts
   useEffect(() => {
-    // Ensure reCAPTCHA container exists
-    if (!document.getElementById('recaptcha-container')) {
-      const container = document.createElement('div');
-      container.id = 'recaptcha-container';
-      container.style.position = 'fixed';
-      container.style.bottom = '0';
-      container.style.right = '0';
-      container.style.zIndex = '9999';
-      container.style.visibility = 'hidden';
-      document.body.appendChild(container);
-    }
-
     return () => {
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
-        recaptchaVerifier = null;
-        recaptchaInitialized = false;
+      if (recaptchaVerifierRef.current) {
+        try {
+          recaptchaVerifierRef.current.clear();
+        } catch (error) {
+          console.error('Error clearing reCAPTCHA:', error);
+        }
+        recaptchaVerifierRef.current = null;
+        isRecaptchaRenderedRef.current = false;
       }
     };
   }, []);
 
-  const setupRecaptcha = () => {
-    // Clear existing reCAPTCHA if it exists
-    if (recaptchaVerifier) {
-      try {
-        recaptchaVerifier.clear();
-      } catch (error) {
-        console.error('Error clearing reCAPTCHA:', error);
-      }
-      recaptchaVerifier = null;
-      recaptchaInitialized = false;
-    }
-
-    // Create new reCAPTCHA instance
+  const setupRecaptcha = async (): Promise<RecaptchaVerifier | null> => {
     try {
-      // Ensure the container exists
+      // Clear existing reCAPTCHA if it exists
+      if (recaptchaVerifierRef.current) {
+        try {
+          recaptchaVerifierRef.current.clear();
+        } catch (error) {
+          console.error('Error clearing reCAPTCHA:', error);
+        }
+        recaptchaVerifierRef.current = null;
+        isRecaptchaRenderedRef.current = false;
+      }
+
+      // Ensure reCAPTCHA container exists
       let container = document.getElementById('recaptcha-container');
       if (!container) {
         container = document.createElement('div');
@@ -66,11 +56,12 @@ export const useFirebaseAuth = () => {
         document.body.appendChild(container);
       }
 
-      recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      // Create new reCAPTCHA verifier
+      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
         callback: () => {
           console.log('reCAPTCHA solved');
-          recaptchaInitialized = true;
+          isRecaptchaRenderedRef.current = true;
         },
         'expired-callback': () => {
           toast({
@@ -78,36 +69,49 @@ export const useFirebaseAuth = () => {
             description: "Please try again",
             variant: "destructive",
           });
-          // Reset recaptcha when expired
-          if (recaptchaVerifier) {
-            recaptchaVerifier.clear();
-            recaptchaVerifier = null;
-            recaptchaInitialized = false;
+          if (recaptchaVerifierRef.current) {
+            try {
+              recaptchaVerifierRef.current.clear();
+            } catch (error) {
+              console.error('Error clearing expired reCAPTCHA:', error);
+            }
+            recaptchaVerifierRef.current = null;
+            isRecaptchaRenderedRef.current = false;
           }
         }
       });
       
-      // Explicitly render the reCAPTCHA to ensure it's initialized
-      return recaptchaVerifier.render()
-        .then(() => {
-          recaptchaInitialized = true;
-          return recaptchaVerifier;
-        })
-        .catch((error) => {
-          console.error('Error rendering reCAPTCHA:', error);
-          recaptchaVerifier = null;
-          recaptchaInitialized = false;
-          throw error;
-        });
+      // Explicitly render the reCAPTCHA
+      try {
+        await verifier.render();
+        recaptchaVerifierRef.current = verifier;
+        isRecaptchaRenderedRef.current = true;
+        return verifier;
+      } catch (error) {
+        console.error('Error rendering reCAPTCHA:', error);
+        if (recaptchaVerifierRef.current) {
+          try {
+            recaptchaVerifierRef.current.clear();
+          } catch (e) {
+            console.error('Error clearing failed reCAPTCHA:', e);
+          }
+        }
+        recaptchaVerifierRef.current = null;
+        isRecaptchaRenderedRef.current = false;
+        return null;
+      }
     } catch (error) {
       console.error('Error setting up reCAPTCHA:', error);
-      recaptchaVerifier = null;
-      recaptchaInitialized = false;
-      throw error;
+      recaptchaVerifierRef.current = null;
+      isRecaptchaRenderedRef.current = false;
+      return null;
     }
   };
 
   const sendOTP = async (phoneNumber: string): Promise<boolean> => {
+    let retryCount = 0;
+    const MAX_RETRIES = 2;
+    
     try {
       // Check rate limiting
       const now = Date.now();
@@ -121,68 +125,95 @@ export const useFirebaseAuth = () => {
         return false;
       }
       
-      // Set up reCAPTCHA and wait for it to be rendered
-      const recaptcha = await setupRecaptcha();
-      
-      if (!recaptcha || !recaptchaInitialized) {
-        throw new Error('reCAPTCHA not initialized properly');
-      }
-      
-      // Format phone number if needed
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
-      
-      // Send verification code
-      const result = await signInWithPhoneNumber(auth, formattedPhone, recaptcha);
-      setConfirmationResult(result);
-      setLastOTPRequestTime(now);
-      
-      toast({
-        title: "OTP Sent",
-        description: `OTP sent to ${phoneNumber}`,
-      });
-      
-      return true;
-    } catch (error: any) {
-      console.error('Error sending OTP:', error);
-      
-      // Handle specific Firebase errors with better user messages
-      let errorMessage = error.message;
-      
-      if (error.code === 'auth/invalid-phone-number') {
-        errorMessage = 'Please enter a valid phone number';
-      } else if (error.code === 'auth/captcha-check-failed') {
-        errorMessage = 'Domain verification failed. Please try again or contact support.';
-        
-        // Reset recaptcha on error
-        if (recaptchaVerifier) {
-          try {
-            recaptchaVerifier.clear();
-          } catch (e) {
-            console.error('Error clearing reCAPTCHA after failure:', e);
+      // Function to attempt sending OTP with retries
+      const attemptSendOTP = async (): Promise<boolean> => {
+        try {
+          // Setup reCAPTCHA if not already set up
+          if (!recaptchaVerifierRef.current || !isRecaptchaRenderedRef.current) {
+            const verifier = await setupRecaptcha();
+            if (!verifier) {
+              toast({
+                title: "reCAPTCHA Error",
+                description: "Failed to initialize reCAPTCHA. Please try again.",
+                variant: "destructive",
+              });
+              return false;
+            }
           }
-          recaptchaVerifier = null;
-          recaptchaInitialized = false;
+          
+          // Format phone number
+          const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
+          
+          console.log(`Attempting to send OTP to ${formattedPhone}, attempt #${retryCount + 1}`);
+          
+          // Send verification code
+          const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifierRef.current!);
+          setConfirmationResult(result);
+          setLastOTPRequestTime(now);
+          
+          toast({
+            title: "OTP Sent",
+            description: `OTP sent to ${phoneNumber}`,
+          });
+          
+          return true;
+        } catch (error: any) {
+          console.error(`Error sending OTP (attempt ${retryCount + 1}):`, error);
+          
+          // Handle specific Firebase errors
+          if (error.code === 'auth/captcha-check-failed' && retryCount < MAX_RETRIES) {
+            retryCount++;
+            console.log(`Retrying reCAPTCHA setup, attempt ${retryCount}`);
+            
+            // Clear and reset reCAPTCHA before retrying
+            if (recaptchaVerifierRef.current) {
+              try {
+                recaptchaVerifierRef.current.clear();
+              } catch (e) {
+                console.error('Error clearing reCAPTCHA before retry:', e);
+              }
+              recaptchaVerifierRef.current = null;
+              isRecaptchaRenderedRef.current = false;
+            }
+            
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            return attemptSendOTP();
+          }
+          
+          // Handle other errors or max retries reached
+          let errorMessage = error.message;
+          
+          if (error.code === 'auth/invalid-phone-number') {
+            errorMessage = 'Please enter a valid phone number';
+          } else if (error.code === 'auth/captcha-check-failed') {
+            errorMessage = 'Domain verification failed. Please try again or contact support.';
+          } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many attempts. Please try again later.';
+          } else if (error.code === 'auth/quota-exceeded') {
+            errorMessage = "Daily quota exceeded. Please try again tomorrow.";
+          }
+          
+          toast({
+            title: "Failed to send OTP",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          
+          return false;
         }
-        
-        // Attempt to reinitialize recaptchaVerifier after a short delay
-        setTimeout(() => {
-          try {
-            setupRecaptcha().catch(console.error);
-          } catch (e) {
-            console.error('Error during reCAPTCHA retry:', e);
-          }
-        }, 3000);  // Retry after 3 seconds
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many attempts. Please try again later.';
-      } else if (error.code === 'auth/quota-exceeded') {
-        errorMessage = "Daily quota exceeded. Please try again tomorrow.";
-      }
+      };
+      
+      return await attemptSendOTP();
+    } catch (error: any) {
+      console.error('Unexpected error in sendOTP:', error);
       
       toast({
         title: "Failed to send OTP",
-        description: errorMessage,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
+      
       return false;
     }
   };
@@ -202,10 +233,14 @@ export const useFirebaseAuth = () => {
       
       if (result.user) {
         // Clear recaptcha after successful verification
-        if (recaptchaVerifier) {
-          recaptchaVerifier.clear();
-          recaptchaVerifier = null;
-          recaptchaInitialized = false;
+        if (recaptchaVerifierRef.current) {
+          try {
+            recaptchaVerifierRef.current.clear();
+          } catch (error) {
+            console.error('Error clearing reCAPTCHA after verification:', error);
+          }
+          recaptchaVerifierRef.current = null;
+          isRecaptchaRenderedRef.current = false;
         }
         
         toast({

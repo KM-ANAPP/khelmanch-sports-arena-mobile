@@ -5,37 +5,35 @@ export const RecaptchaContainer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   
   useEffect(() => {
-    // If there's already a container in the DOM with this ID, remove it first
+    // If there's already a container in the DOM with this ID that isn't our ref, don't create another
     const existingContainer = document.getElementById('recaptcha-container');
     if (existingContainer && existingContainer !== containerRef.current) {
-      existingContainer.parentNode?.removeChild(existingContainer);
+      console.log('RecaptchaContainer: A container already exists in the DOM');
+      return;
     }
 
-    // Add the container to the body if it's not already there
-    if (containerRef.current && !document.body.contains(containerRef.current)) {
-      document.body.appendChild(containerRef.current);
+    // Create a container if it doesn't exist
+    if (!existingContainer) {
+      const container = document.createElement('div');
+      container.id = 'recaptcha-container';
+      container.style.position = 'fixed';
+      container.style.bottom = '0';
+      container.style.right = '0';
+      container.style.zIndex = '9999';
+      container.style.visibility = 'hidden';
+      document.body.appendChild(container);
+      containerRef.current = container;
+      console.log('RecaptchaContainer: Created new container');
     }
 
-    // Cleanup when unmounted
+    // Cleanup when unmounted - only remove if it's our container
     return () => {
-      // Only remove if it's our container and it exists in the DOM
-      if (containerRef.current && document.body.contains(containerRef.current)) {
-        document.body.removeChild(containerRef.current);
+      if (containerRef.current && containerRef.current.parentNode) {
+        containerRef.current.parentNode.removeChild(containerRef.current);
+        console.log('RecaptchaContainer: Removed container on unmount');
       }
     };
   }, []);
 
-  return (
-    <div 
-      ref={containerRef}
-      id="recaptcha-container" 
-      style={{ 
-        position: 'fixed', 
-        bottom: 0, 
-        right: 0, 
-        zIndex: 9999,
-        visibility: 'hidden' 
-      }} 
-    />
-  );
+  return null; // We're managing the DOM element imperatively
 };
