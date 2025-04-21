@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { 
   RecaptchaVerifier, 
@@ -88,6 +89,8 @@ export const useFirebaseAuth = () => {
           recaptchaVerifier.clear();
           recaptchaVerifier = null;
         }
+        // Attempt to reinitialize recaptchaVerifier after a short delay
+        setTimeout(() => setupRecaptcha(), 3000);  // Retry after 3 seconds
       }
       
       toast({
