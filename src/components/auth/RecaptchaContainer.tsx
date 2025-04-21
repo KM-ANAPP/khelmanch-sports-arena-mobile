@@ -1,23 +1,41 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const RecaptchaContainer: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  
   useEffect(() => {
-    // Ensure the container exists
-    if (!document.getElementById('recaptcha-container')) {
-      const container = document.createElement('div');
-      container.id = 'recaptcha-container';
-      document.body.appendChild(container);
+    // If there's already a container in the DOM with this ID, remove it first
+    const existingContainer = document.getElementById('recaptcha-container');
+    if (existingContainer && existingContainer !== containerRef.current) {
+      existingContainer.parentNode?.removeChild(existingContainer);
+    }
+
+    // Add the container to the body if it's not already there
+    if (containerRef.current && !document.body.contains(containerRef.current)) {
+      document.body.appendChild(containerRef.current);
     }
 
     // Cleanup when unmounted
     return () => {
-      const container = document.getElementById('recaptcha-container');
-      if (container && container.parentNode) {
-        container.parentNode.removeChild(container);
+      // Only remove if it's our container and it exists in the DOM
+      if (containerRef.current && document.body.contains(containerRef.current)) {
+        document.body.removeChild(containerRef.current);
       }
     };
   }, []);
 
-  return <div id="recaptcha-container" style={{ display: 'none' }} />;
+  return (
+    <div 
+      ref={containerRef}
+      id="recaptcha-container" 
+      style={{ 
+        position: 'fixed', 
+        bottom: 0, 
+        right: 0, 
+        zIndex: 9999,
+        visibility: 'hidden' 
+      }} 
+    />
+  );
 };
