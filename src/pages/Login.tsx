@@ -11,6 +11,7 @@ import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { useLoginForm } from "@/hooks/useLoginForm";
+import { RecaptchaContainer } from "@/components/auth/RecaptchaContainer";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -104,6 +105,9 @@ export default function Login() {
           </CardFooter>
         </Card>
       </motion.div>
+      
+      {/* Add the RecaptchaContainer to handle invisible reCAPTCHA */}
+      <RecaptchaContainer />
     </div>
   );
 }

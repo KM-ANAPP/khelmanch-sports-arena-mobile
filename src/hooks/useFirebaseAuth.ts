@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   RecaptchaVerifier, 
   signInWithPhoneNumber, 
@@ -8,36 +7,66 @@ import {
 import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
 
-export const useFirebaseAuth = () => {
-  const [verificationId, setVerificationId] = useState<ConfirmationResult | null>(null);
+// Keep a single instance of recaptchaVerifier to prevent multiple instances
+let recaptchaVerifier: RecaptchaVerifier | null = null;
 
-  const setupRecaptcha = (phoneNumber: string) => {
-    const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: 'invisible',
-      callback: () => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber
-        sendOTP(phoneNumber, recaptchaVerifier);
-      },
-      'expired-callback': () => {
-        toast({
-          title: "reCAPTCHA Expired",
-          description: "Please try again",
-          variant: "destructive",
-        });
+export const useFirebaseAuth = () => {
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
+  // Cleanup recaptchaVerifier when component unmounts
+  useEffect(() => {
+    return () => {
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+        recaptchaVerifier = null;
       }
-    });
+    };
+  }, []);
+
+  const setupRecaptcha = () => {
+    // Create recaptchaVerifier only if it doesn't exist
+    if (!recaptchaVerifier) {
+      // Ensure the container exists
+      let container = document.getElementById('recaptcha-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'recaptcha-container';
+        document.body.appendChild(container);
+      }
+
+      recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          console.log('reCAPTCHA solved');
+        },
+        'expired-callback': () => {
+          toast({
+            title: "reCAPTCHA Expired",
+            description: "Please try again",
+            variant: "destructive",
+          });
+          // Reset recaptcha when expired
+          if (recaptchaVerifier) {
+            recaptchaVerifier.clear();
+            recaptchaVerifier = null;
+          }
+        }
+      });
+    }
+    
     return recaptchaVerifier;
   };
 
-  const sendOTP = async (phoneNumber: string, recaptchaVerifier?: RecaptchaVerifier) => {
+  const sendOTP = async (phoneNumber: string): Promise<boolean> => {
     try {
-      if (!recaptchaVerifier) {
-        recaptchaVerifier = setupRecaptcha(phoneNumber);
-      }
+      const recaptcha = setupRecaptcha();
       
+      // Format phone number if needed
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
-      const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier);
-      setVerificationId(confirmationResult);
+      
+      // Send verification code
+      const result = await signInWithPhoneNumber(auth, formattedPhone, recaptcha);
+      setConfirmationResult(result);
       
       toast({
         title: "OTP Sent",
@@ -47,9 +76,23 @@ export const useFirebaseAuth = () => {
       return true;
     } catch (error: any) {
       console.error('Error sending OTP:', error);
+      
+      // Handle specific Firebase errors with better user messages
+      let errorMessage = error.message;
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'Please enter a valid phone number';
+      } else if (error.code === 'auth/captcha-check-failed') {
+        errorMessage = 'Domain verification failed. Please try again or contact support.';
+        // Reset recaptcha on error
+        if (recaptchaVerifier) {
+          recaptchaVerifier.clear();
+          recaptchaVerifier = null;
+        }
+      }
+      
       toast({
         title: "Failed to send OTP",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
       return false;
@@ -57,7 +100,7 @@ export const useFirebaseAuth = () => {
   };
 
   const verifyOTP = async (otp: string): Promise<boolean> => {
-    if (!verificationId) {
+    if (!confirmationResult) {
       toast({
         title: "Error",
         description: "Please request OTP first",
@@ -67,9 +110,15 @@ export const useFirebaseAuth = () => {
     }
 
     try {
-      const result = await verificationId.confirm(otp);
+      const result = await confirmationResult.confirm(otp);
       
       if (result.user) {
+        // Clear recaptcha after successful verification
+        if (recaptchaVerifier) {
+          recaptchaVerifier.clear();
+          recaptchaVerifier = null;
+        }
+        
         toast({
           title: "Success",
           description: "Phone number verified successfully",
@@ -81,7 +130,7 @@ export const useFirebaseAuth = () => {
       console.error('Error verifying OTP:', error);
       toast({
         title: "Invalid OTP",
-        description: error.message,
+        description: error.message || "The verification code is invalid",
         variant: "destructive",
       });
       return false;
