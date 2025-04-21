@@ -34,13 +34,6 @@ export const useLoginForm = () => {
       return;
     }
     
-    // Add recaptcha container if not exists
-    if (!document.getElementById('recaptcha-container')) {
-      const container = document.createElement('div');
-      container.id = 'recaptcha-container';
-      document.body.appendChild(container);
-    }
-    
     setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
     try {
       const success = await firebaseSendOTP(phoneNumber);

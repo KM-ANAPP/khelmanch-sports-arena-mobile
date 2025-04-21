@@ -46,14 +46,13 @@ export const useFirebaseAuth = () => {
       // Ensure reCAPTCHA container exists
       let container = document.getElementById('recaptcha-container');
       if (!container) {
-        container = document.createElement('div');
-        container.id = 'recaptcha-container';
-        container.style.position = 'fixed';
-        container.style.bottom = '0';
-        container.style.right = '0';
-        container.style.zIndex = '9999';
-        container.style.visibility = 'hidden';
-        document.body.appendChild(container);
+        console.error('RecaptchaContainer not found in DOM');
+        return null;
+      }
+
+      // Make sure container is empty before creating a new reCAPTCHA
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
       }
 
       // Create new reCAPTCHA verifier
