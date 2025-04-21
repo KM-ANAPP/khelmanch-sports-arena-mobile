@@ -8,8 +8,8 @@ export const useGoogleLogin = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const { requiresOTP } = await login({ email: "google@example.com" });
-      if (!requiresOTP) {
+      const result = await login({ email: "google@example.com" });
+      if (result && !result.requiresOTP) {
         navigate("/home");
       }
     } catch (error) {

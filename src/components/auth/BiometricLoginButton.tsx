@@ -6,6 +6,20 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Device } from '@capacitor/device';
 
+interface DeviceInfo {
+  name?: string;
+  model?: string;
+  platform?: string;
+  operatingSystem?: string;
+  osVersion?: string;
+  manufacturer?: string;
+  isVirtual?: boolean;
+  webViewVersion?: string;
+  biometrics?: {
+    isAvailable: boolean;
+  };
+}
+
 export function BiometricLoginButton() {
   const navigate = useNavigate();
   const [isAvailable, setIsAvailable] = useState(false);
@@ -17,8 +31,8 @@ export function BiometricLoginButton() {
 
   const checkBiometricAvailability = async () => {
     try {
-      const { biometrics } = await Device.getInfo();
-      const biometricEnabled = biometrics?.isAvailable || false;
+      const info: DeviceInfo = await Device.getInfo();
+      const biometricEnabled = info.biometrics?.isAvailable || false;
       setIsAvailable(biometricEnabled);
     } catch (error) {
       console.error('Error checking biometric availability:', error);

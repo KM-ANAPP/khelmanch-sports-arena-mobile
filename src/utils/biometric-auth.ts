@@ -1,90 +1,64 @@
 
-/**
- * Biometric authentication utility functions
- */
+// This is a mock implementation for demo purposes
+// In a real app, you would use a native biometric plugin
 
-// Check if biometric authentication is available on the device
-export const isBiometricAvailable = async (): Promise<boolean> => {
+export async function isBiometricAvailable(): Promise<boolean> {
   try {
-    // In a real implementation, this would use the WebAuthn API or native capabilities via Capacitor
-    // For demo purposes, we'll assume it's available on modern devices
-    return true;
+    // In a real app, you'd check device capabilities here
+    return true; // Mock response
   } catch (error) {
     console.error("Error checking biometric availability:", error);
     return false;
   }
-};
+}
 
-// Authenticate using biometric credentials
-export const authenticateWithBiometric = async (): Promise<{success: boolean; userId?: string}> => {
+export async function isBiometricEnabled(userId: string): Promise<boolean> {
   try {
-    // In a real app, this would integrate with platform APIs via Capacitor
-    // For demo purposes, we'll simulate a successful authentication
-    console.log("[DEMO] Initiating biometric authentication flow");
+    const stored = localStorage.getItem(`biometric_enabled_${userId}`);
+    return stored ? JSON.parse(stored) : false;
+  } catch (error) {
+    console.error("Error checking biometric status:", error);
+    return false;
+  }
+}
+
+export async function saveBiometricPreference(userId: string, enabled: boolean): Promise<boolean> {
+  try {
+    localStorage.setItem(`biometric_enabled_${userId}`, JSON.stringify(enabled));
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Also store if user has registered biometrics - for the mock flow
+    if (enabled) {
+      localStorage.setItem("userHasBiometrics", "true");
+    } else {
+      localStorage.removeItem("userHasBiometrics");
+    }
     
-    // Simulate successful authentication
-    console.log("[DEMO] Biometric authentication successful");
+    return true;
+  } catch (error) {
+    console.error("Error saving biometric preference:", error);
+    return false;
+  }
+}
+
+export async function authenticateWithBiometric(): Promise<{ success: boolean, message?: string }> {
+  try {
+    // In a real app, this would trigger the native biometric prompt
+    // For demo, we'll simulate success
+    const hasRegisteredBiometrics = localStorage.getItem("userHasBiometrics");
+    
+    if (hasRegisteredBiometrics) {
+      return { success: true };
+    } else {
+      return { 
+        success: false, 
+        message: "Biometric authentication not set up"
+      };
+    }
+  } catch (error) {
+    console.error("Error during biometric authentication:", error);
     return { 
-      success: true,
-      userId: "user-123" // This would be the actual user ID in a real app
+      success: false, 
+      message: "Authentication failed"
     };
-  } catch (error) {
-    console.error("Biometric authentication error:", error);
-    return { success: false };
   }
-};
-
-// Register biometric credentials for a user
-export const registerBiometricCredential = async (userId: string): Promise<boolean> => {
-  try {
-    // In a real app, this would register the user's biometric credentials
-    console.log(`[DEMO] Registering biometric credentials for user ${userId}`);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    console.log(`[DEMO] Biometric credentials successfully registered for user ${userId}`);
-    return true;
-  } catch (error) {
-    console.error("Failed to register biometric credentials:", error);
-    return false;
-  }
-};
-
-// Delete biometric credentials for a user
-export const deleteBiometricCredential = async (userId: string): Promise<boolean> => {
-  try {
-    console.log(`[DEMO] Removing biometric credentials for user ${userId}`);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    console.log(`[DEMO] Biometric credentials successfully removed for user ${userId}`);
-    return true;
-  } catch (error) {
-    console.error("Failed to remove biometric credentials:", error);
-    return false;
-  }
-};
-
-// Check if biometric login is enabled for a user
-export const isBiometricEnabled = async (userId: string): Promise<boolean> => {
-  // In a real app, this would check if the user has registered biometric credentials
-  // For demo purposes, we'll check local storage
-  const enabled = localStorage.getItem(`biometric_enabled_${userId}`) === 'true';
-  return enabled;
-};
-
-// Save biometric login preference
-export const saveBiometricPreference = async (userId: string, enabled: boolean): Promise<boolean> => {
-  try {
-    localStorage.setItem(`biometric_enabled_${userId}`, enabled ? 'true' : 'false');
-    return true;
-  } catch (error) {
-    console.error("Failed to save biometric preference:", error);
-    return false;
-  }
-};
+}

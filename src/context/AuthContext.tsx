@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { auth } from '@/utils/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
@@ -8,10 +7,14 @@ interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
   isLoading: boolean;
-  login: (userData: UserLoginData) => Promise<void>;
+  isAuthenticated: boolean;
+  user: UserProfile | null;
+  login: (userData: UserLoginData) => Promise<{ requiresOTP?: boolean }>;
   register: (userData: UserRegisterData) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  toggle2FA: (enabled: boolean) => Promise<boolean>;
+  is2FAEnabled: () => Promise<boolean>;
 }
 
 interface UserLoginData {
@@ -33,8 +36,14 @@ interface UserProfile {
   phone?: string;
   email?: string;
   photoURL?: string;
+  profileImage?: string;
   sports?: string[];
   skillLevels?: Record<string, string>;
+  notificationPreferences?: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+  };
   createdAt: number;
 }
 
@@ -56,12 +65,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       
       if (user) {
+        setIsAuthenticated(true);
         // In a real app, fetch user profile from a database
         // For demo, we'll use localStorage to mock this
         const savedProfile = localStorage.getItem(`user_profile_${user.uid}`);
@@ -82,6 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUserProfile(newProfile);
         }
       } else {
+        setIsAuthenticated(false);
         setUserProfile(null);
       }
       
@@ -91,7 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return unsubscribe;
   }, []);
 
-  const login = async (userData: UserLoginData): Promise<void> => {
+  const login = async (userData: UserLoginData): Promise<{ requiresOTP?: boolean }> => {
     try {
       // The actual Firebase authentication happens in useFirebaseAuth hook
       // Here we just handle the post-authentication logic
@@ -102,6 +114,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         title: "Login Successful",
         description: "Welcome back!",
       });
+
+      // Return an object that might include requiresOTP flag
+      return { requiresOTP: false };
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -196,14 +211,49 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // Add missing functions for 2FA
+  const toggle2FA = async (enabled: boolean): Promise<boolean> => {
+    try {
+      // In a real app, this would update the user's 2FA settings in the database
+      // For demo, we'll just use localStorage
+      if (currentUser) {
+        localStorage.setItem(`2fa_enabled_${currentUser.uid}`, JSON.stringify(enabled));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Failed to toggle 2FA:", error);
+      return false;
+    }
+  };
+
+  const is2FAEnabled = async (): Promise<boolean> => {
+    try {
+      // In a real app, this would check the user's 2FA settings in the database
+      // For demo, we'll just use localStorage
+      if (currentUser) {
+        const enabled = localStorage.getItem(`2fa_enabled_${currentUser.uid}`);
+        return enabled ? JSON.parse(enabled) : false;
+      }
+      return false;
+    } catch (error) {
+      console.error("Failed to check 2FA status:", error);
+      return false;
+    }
+  };
+
   const value = {
     currentUser,
     userProfile,
     isLoading,
+    isAuthenticated,
+    user: userProfile, // Add user as alias of userProfile for consistency
     login,
     register,
     logout,
-    updateProfile
+    updateProfile,
+    toggle2FA,
+    is2FAEnabled
   };
 
   return (
