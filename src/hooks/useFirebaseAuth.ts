@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   RecaptchaVerifier, 
@@ -14,6 +13,8 @@ let recaptchaInitialized = false;
 
 export const useFirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [lastOTPRequestTime, setLastOTPRequestTime] = useState<number>(0);
+  const OTP_COOLDOWN_PERIOD = 60000; // 1 minute cooldown
 
   // Cleanup recaptchaVerifier when component unmounts
   useEffect(() => {
@@ -108,6 +109,18 @@ export const useFirebaseAuth = () => {
 
   const sendOTP = async (phoneNumber: string): Promise<boolean> => {
     try {
+      // Check rate limiting
+      const now = Date.now();
+      if (now - lastOTPRequestTime < OTP_COOLDOWN_PERIOD) {
+        const remainingTime = Math.ceil((OTP_COOLDOWN_PERIOD - (now - lastOTPRequestTime)) / 1000);
+        toast({
+          title: "Please Wait",
+          description: `Please wait ${remainingTime} seconds before requesting another OTP`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
       // Set up reCAPTCHA and wait for it to be rendered
       const recaptcha = await setupRecaptcha();
       
@@ -121,6 +134,7 @@ export const useFirebaseAuth = () => {
       // Send verification code
       const result = await signInWithPhoneNumber(auth, formattedPhone, recaptcha);
       setConfirmationResult(result);
+      setLastOTPRequestTime(now);
       
       toast({
         title: "OTP Sent",
@@ -160,6 +174,8 @@ export const useFirebaseAuth = () => {
         }, 3000);  // Retry after 3 seconds
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = 'Too many attempts. Please try again later.';
+      } else if (error.code === 'auth/quota-exceeded') {
+        errorMessage = "Daily quota exceeded. Please try again tomorrow.";
       }
       
       toast({
@@ -201,9 +217,17 @@ export const useFirebaseAuth = () => {
       return false;
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
+      
+      let errorMessage = "Failed to verify OTP";
+      if (error.code === 'auth/invalid-verification-code') {
+        errorMessage = "Invalid OTP. Please try again.";
+      } else if (error.code === 'auth/code-expired') {
+        errorMessage = "OTP expired. Please request a new one.";
+      }
+      
       toast({
         title: "Invalid OTP",
-        description: error.message || "The verification code is invalid",
+        description: error.message || errorMessage,
         variant: "destructive",
       });
       return false;
