@@ -5,15 +5,8 @@ export const RecaptchaContainer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   
   useEffect(() => {
-    // If there's already a container in the DOM with this ID that isn't our ref, don't create another
-    const existingContainer = document.getElementById('recaptcha-container');
-    if (existingContainer && existingContainer !== containerRef.current) {
-      console.log('RecaptchaContainer: A container already exists in the DOM');
-      return;
-    }
-
-    // Create a container if it doesn't exist
-    if (!existingContainer) {
+    // Create the container if it doesn't exist
+    if (!document.getElementById('recaptcha-container')) {
       const container = document.createElement('div');
       container.id = 'recaptcha-container';
       container.style.position = 'fixed';
@@ -26,7 +19,7 @@ export const RecaptchaContainer: React.FC = () => {
       console.log('RecaptchaContainer: Created new container');
     }
 
-    // Cleanup when unmounted - only remove if it's our container
+    // Cleanup on unmount
     return () => {
       if (containerRef.current && containerRef.current.parentNode) {
         containerRef.current.parentNode.removeChild(containerRef.current);
