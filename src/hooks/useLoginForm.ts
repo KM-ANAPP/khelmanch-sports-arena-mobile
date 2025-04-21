@@ -13,7 +13,7 @@ interface LoadingState {
 export const useLoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { sendOTP: firebaseSendOTP, verifyOTP: firebaseVerifyOTP } = useFirebaseAuth();
+  const { sendOTP, verifyOTP } = useFirebaseAuth();
   
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -36,12 +36,18 @@ export const useLoginForm = () => {
     
     setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
     try {
-      const success = await firebaseSendOTP(phoneNumber);
+      console.log("Sending OTP to", phoneNumber);
+      const success = await sendOTP(phoneNumber);
       
       if (success) {
         setIs2FARequired(true);
         setOtpSent(true);
+        console.log("OTP sent successfully");
+      } else {
+        console.log("Failed to send OTP");
       }
+    } catch (error) {
+      console.error("Error in handleSendOTP:", error);
     } finally {
       setLoadingState(prev => ({ ...prev, isGeneratingOTP: false }));
     }
@@ -59,13 +65,19 @@ export const useLoginForm = () => {
     
     setLoadingState(prev => ({ ...prev, isVerifyingOTP: true }));
     try {
-      const success = await firebaseVerifyOTP(otp);
+      console.log("Verifying OTP:", otp);
+      const success = await verifyOTP(otp);
       
       if (success) {
+        console.log("OTP verified successfully");
         // After Firebase verification, log in to your app
         await login({ phone: phoneNumber });
         navigate("/home");
+      } else {
+        console.log("OTP verification failed");
       }
+    } catch (error) {
+      console.error("Error in handleLoginWithOTP:", error);
     } finally {
       setLoadingState(prev => ({ ...prev, isVerifyingOTP: false }));
     }

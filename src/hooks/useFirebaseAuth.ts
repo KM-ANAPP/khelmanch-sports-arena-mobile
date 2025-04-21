@@ -10,57 +10,52 @@ import { toast } from '@/hooks/use-toast';
 
 export const useFirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const [lastOTPRequestTime, setLastOTPRequestTime] = useState<number>(0);
-  const OTP_COOLDOWN_PERIOD = 60000; // 1 minute cooldown
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
-  const isRecaptchaRenderedRef = useRef<boolean>(false);
+  const isRecaptchaInitializedRef = useRef<boolean>(false);
 
-  // Cleanup recaptchaVerifier when component unmounts
+  // Clean up recaptcha on unmount
   useEffect(() => {
     return () => {
-      if (recaptchaVerifierRef.current) {
-        try {
-          recaptchaVerifierRef.current.clear();
-        } catch (error) {
-          console.error('Error clearing reCAPTCHA:', error);
-        }
-        recaptchaVerifierRef.current = null;
-        isRecaptchaRenderedRef.current = false;
-      }
+      clearRecaptcha();
     };
   }, []);
 
-  const setupRecaptcha = async (): Promise<RecaptchaVerifier | null> => {
-    try {
-      // Clear existing reCAPTCHA if it exists
-      if (recaptchaVerifierRef.current) {
-        try {
-          recaptchaVerifierRef.current.clear();
-        } catch (error) {
-          console.error('Error clearing reCAPTCHA:', error);
-        }
-        recaptchaVerifierRef.current = null;
-        isRecaptchaRenderedRef.current = false;
+  const clearRecaptcha = () => {
+    if (recaptchaVerifierRef.current) {
+      try {
+        recaptchaVerifierRef.current.clear();
+        console.log('Cleared existing reCAPTCHA');
+      } catch (error) {
+        console.error('Error clearing reCAPTCHA:', error);
       }
+      recaptchaVerifierRef.current = null;
+      isRecaptchaInitializedRef.current = false;
+    }
+  };
 
-      // Ensure reCAPTCHA container exists
-      let container = document.getElementById('recaptcha-container');
+  const setupRecaptcha = async (): Promise<boolean> => {
+    try {
+      // Clear existing reCAPTCHA first
+      clearRecaptcha();
+      
+      // Get the container
+      const container = document.getElementById('recaptcha-container');
       if (!container) {
         console.error('RecaptchaContainer not found in DOM');
-        return null;
+        return false;
       }
 
-      // Make sure container is empty before creating a new reCAPTCHA
+      // Make sure container is empty
       while (container.firstChild) {
         container.removeChild(container.firstChild);
       }
 
-      // Create new reCAPTCHA verifier
+      // Create new verifier
       const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
         callback: () => {
-          console.log('reCAPTCHA solved');
-          isRecaptchaRenderedRef.current = true;
+          console.log('reCAPTCHA verified');
+          isRecaptchaInitializedRef.current = true;
         },
         'expired-callback': () => {
           toast({
@@ -68,42 +63,21 @@ export const useFirebaseAuth = () => {
             description: "Please try again",
             variant: "destructive",
           });
-          if (recaptchaVerifierRef.current) {
-            try {
-              recaptchaVerifierRef.current.clear();
-            } catch (error) {
-              console.error('Error clearing expired reCAPTCHA:', error);
-            }
-            recaptchaVerifierRef.current = null;
-            isRecaptchaRenderedRef.current = false;
-          }
+          clearRecaptcha();
         }
       });
       
-      // Explicitly render the reCAPTCHA
-      try {
-        await verifier.render();
-        recaptchaVerifierRef.current = verifier;
-        isRecaptchaRenderedRef.current = true;
-        return verifier;
-      } catch (error) {
-        console.error('Error rendering reCAPTCHA:', error);
-        if (recaptchaVerifierRef.current) {
-          try {
-            recaptchaVerifierRef.current.clear();
-          } catch (e) {
-            console.error('Error clearing failed reCAPTCHA:', e);
-          }
-        }
-        recaptchaVerifierRef.current = null;
-        isRecaptchaRenderedRef.current = false;
-        return null;
-      }
+      // Render the reCAPTCHA
+      await verifier.render();
+      recaptchaVerifierRef.current = verifier;
+      isRecaptchaInitializedRef.current = true;
+      console.log('reCAPTCHA rendered successfully');
+      
+      return true;
     } catch (error) {
       console.error('Error setting up reCAPTCHA:', error);
-      recaptchaVerifierRef.current = null;
-      isRecaptchaRenderedRef.current = false;
-      return null;
+      clearRecaptcha();
+      return false;
     }
   };
 
@@ -112,43 +86,26 @@ export const useFirebaseAuth = () => {
     const MAX_RETRIES = 2;
     
     try {
-      // Check rate limiting
-      const now = Date.now();
-      if (now - lastOTPRequestTime < OTP_COOLDOWN_PERIOD) {
-        const remainingTime = Math.ceil((OTP_COOLDOWN_PERIOD - (now - lastOTPRequestTime)) / 1000);
-        toast({
-          title: "Please Wait",
-          description: `Please wait ${remainingTime} seconds before requesting another OTP`,
-          variant: "destructive",
-        });
-        return false;
+      if (!recaptchaVerifierRef.current || !isRecaptchaInitializedRef.current) {
+        const setup = await setupRecaptcha();
+        if (!setup) {
+          toast({
+            title: "reCAPTCHA Error",
+            description: "Failed to initialize verification. Please try again.",
+            variant: "destructive",
+          });
+          return false;
+        }
       }
       
-      // Function to attempt sending OTP with retries
+      // Format the phone number appropriately
+      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
+      console.log(`Attempting to send OTP to ${formattedPhone}`);
+      
       const attemptSendOTP = async (): Promise<boolean> => {
         try {
-          // Setup reCAPTCHA if not already set up
-          if (!recaptchaVerifierRef.current || !isRecaptchaRenderedRef.current) {
-            const verifier = await setupRecaptcha();
-            if (!verifier) {
-              toast({
-                title: "reCAPTCHA Error",
-                description: "Failed to initialize reCAPTCHA. Please try again.",
-                variant: "destructive",
-              });
-              return false;
-            }
-          }
-          
-          // Format phone number
-          const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
-          
-          console.log(`Attempting to send OTP to ${formattedPhone}, attempt #${retryCount + 1}`);
-          
-          // Send verification code
           const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifierRef.current!);
           setConfirmationResult(result);
-          setLastOTPRequestTime(now);
           
           toast({
             title: "OTP Sent",
@@ -159,46 +116,30 @@ export const useFirebaseAuth = () => {
         } catch (error: any) {
           console.error(`Error sending OTP (attempt ${retryCount + 1}):`, error);
           
-          // Handle specific Firebase errors
+          // If captcha failed and we haven't reached max retries, try again
           if (error.code === 'auth/captcha-check-failed' && retryCount < MAX_RETRIES) {
             retryCount++;
-            console.log(`Retrying reCAPTCHA setup, attempt ${retryCount}`);
-            
-            // Clear and reset reCAPTCHA before retrying
-            if (recaptchaVerifierRef.current) {
-              try {
-                recaptchaVerifierRef.current.clear();
-              } catch (e) {
-                console.error('Error clearing reCAPTCHA before retry:', e);
-              }
-              recaptchaVerifierRef.current = null;
-              isRecaptchaRenderedRef.current = false;
-            }
-            
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Wait a bit and retry
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await setupRecaptcha(); // Setup recaptcha again
             return attemptSendOTP();
           }
           
-          // Handle other errors or max retries reached
-          let errorMessage = error.message;
-          
+          // Handle other errors
+          let errorMessage = "Failed to send OTP";
           if (error.code === 'auth/invalid-phone-number') {
-            errorMessage = 'Please enter a valid phone number';
-          } else if (error.code === 'auth/captcha-check-failed') {
-            errorMessage = 'Domain verification failed. Please try again or contact support.';
+            errorMessage = "Please enter a valid phone number";
           } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = 'Too many attempts. Please try again later.';
-          } else if (error.code === 'auth/quota-exceeded') {
-            errorMessage = "Daily quota exceeded. Please try again tomorrow.";
+            errorMessage = "Too many attempts. Please try again later.";
           }
           
           toast({
-            title: "Failed to send OTP",
+            title: "Error",
             description: errorMessage,
             variant: "destructive",
           });
           
+          clearRecaptcha();
           return false;
         }
       };
@@ -206,9 +147,10 @@ export const useFirebaseAuth = () => {
       return await attemptSendOTP();
     } catch (error: any) {
       console.error('Unexpected error in sendOTP:', error);
+      clearRecaptcha();
       
       toast({
-        title: "Failed to send OTP",
+        title: "Error",
         description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
@@ -232,15 +174,7 @@ export const useFirebaseAuth = () => {
       
       if (result.user) {
         // Clear recaptcha after successful verification
-        if (recaptchaVerifierRef.current) {
-          try {
-            recaptchaVerifierRef.current.clear();
-          } catch (error) {
-            console.error('Error clearing reCAPTCHA after verification:', error);
-          }
-          recaptchaVerifierRef.current = null;
-          isRecaptchaRenderedRef.current = false;
-        }
+        clearRecaptcha();
         
         toast({
           title: "Success",
@@ -260,8 +194,8 @@ export const useFirebaseAuth = () => {
       }
       
       toast({
-        title: "Invalid OTP",
-        description: error.message || errorMessage,
+        title: "Error",
+        description: errorMessage,
         variant: "destructive",
       });
       return false;
