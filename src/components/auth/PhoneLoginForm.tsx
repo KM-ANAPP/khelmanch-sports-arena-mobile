@@ -1,5 +1,5 @@
 
-import { Phone, ArrowRight } from "lucide-react";
+import { Phone, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,8 +47,17 @@ export const PhoneLoginForm = ({
         onClick={handleSendOTP}
         disabled={phoneNumber.length !== 10 || isGeneratingOTP}
       >
-        {isGeneratingOTP ? "Sending OTP..." : "Get OTP"}
-        <Phone className="ml-2 h-4 w-4" />
+        {isGeneratingOTP ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Sending OTP...
+          </>
+        ) : (
+          <>
+            Get OTP
+            <Phone className="ml-2 h-4 w-4" />
+          </>
+        )}
       </Button>
     </div>
   ) : (

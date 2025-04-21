@@ -1,32 +1,32 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
 export const RecaptchaContainer: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  
   useEffect(() => {
-    // Create the container if it doesn't exist
-    if (!document.getElementById('recaptcha-container')) {
-      const container = document.createElement('div');
+    // Make sure we only have one container
+    let container = document.getElementById('recaptcha-container');
+    
+    if (!container) {
+      // Create the container if it doesn't exist
+      container = document.createElement('div');
       container.id = 'recaptcha-container';
       container.style.position = 'fixed';
       container.style.bottom = '0';
       container.style.right = '0';
       container.style.zIndex = '9999';
-      container.style.visibility = 'hidden';
       document.body.appendChild(container);
-      containerRef.current = container;
-      console.log('RecaptchaContainer: Created new container');
+      console.log('RecaptchaContainer: Created container');
     }
 
     // Cleanup on unmount
     return () => {
-      if (containerRef.current && containerRef.current.parentNode) {
-        containerRef.current.parentNode.removeChild(containerRef.current);
-        console.log('RecaptchaContainer: Removed container on unmount');
+      const containerToRemove = document.getElementById('recaptcha-container');
+      if (containerToRemove) {
+        containerToRemove.innerHTML = ''; // Clear all children first
+        console.log('RecaptchaContainer: Cleared container contents');
       }
     };
   }, []);
 
-  return null; // We're managing the DOM element imperatively
+  return null;
 };

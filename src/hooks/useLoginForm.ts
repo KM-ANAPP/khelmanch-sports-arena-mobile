@@ -36,7 +36,7 @@ export const useLoginForm = () => {
     
     setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
     try {
-      console.log("Sending OTP to", phoneNumber);
+      console.log("Attempting to send OTP to", phoneNumber);
       const success = await sendOTP(phoneNumber);
       
       if (success) {
