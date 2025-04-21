@@ -1,23 +1,71 @@
 
-import { Mail } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useGoogleLogin } from "@/hooks/useGoogleLogin";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { auth } from "@/utils/firebase";
 
-export const GoogleLoginButton = () => {
-  const { handleGoogleLogin } = useGoogleLogin();
+export function GoogleLoginButton() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+
+      // Sign in with Google using Capacitor Firebase Authentication plugin
+      const result = await FirebaseAuthentication.signInWithGoogle();
+      
+      // Get the ID token
+      if (!result.credential?.idToken) {
+        throw new Error("Failed to get ID token from Google sign in");
+      }
+
+      // Create a credential with the token
+      const credential = GoogleAuthProvider.credential(result.credential.idToken);
+      
+      // Sign in to Firebase with the credential
+      await signInWithCredential(auth, credential);
+      
+      // Handle app-specific login
+      await login({ email: result.user?.email || '' });
+      
+      toast({
+        title: "Login Successful",
+        description: "You have been successfully logged in with Google",
+      });
+      
+      navigate("/home");
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      toast({
+        title: "Google Sign-In Failed",
+        description: error.message || "Could not sign in with Google",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-center text-muted-foreground">
-        Login with your Google account for a seamless experience
-      </p>
-      <Button 
-        className="w-full bg-red-600 hover:bg-red-700" 
-        onClick={handleGoogleLogin}
-      >
-        Login with Google
-        <Mail className="ml-2 h-4 w-4" />
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      className="w-full h-11 flex items-center justify-center gap-2"
+      onClick={handleGoogleSignIn}
+      disabled={isLoading}
+    >
+      <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+        <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
+        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
+        <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
+      </svg>
+      <span>{isLoading ? "Signing in..." : "Continue with Google"}</span>
+    </Button>
   );
-};
+}
