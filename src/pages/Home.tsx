@@ -1,16 +1,16 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
-import { FeaturedAthletes } from "@/components/sections/featured-athletes";
-import { PrimaryActions } from "@/components/sections/primary-actions";
+import { WelcomeHero } from "@/components/sections/welcome-hero";
+import { SportSelection } from "@/components/sections/sport-selection";
 import { PopularGrounds } from "@/components/sections/popular-grounds";
 import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments";
 import { StatsSection } from "@/components/sections/stats-section";
 import { PartnersSection } from "@/components/sections/partners-section";
 import { SpotlightsSection } from "@/components/sections/spotlights-section";
 import { ContactSection } from "@/components/sections/contact-section";
-import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
+import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 
 export default function Home() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -38,9 +38,9 @@ export default function Home() {
 
   return (
     <MobileLayout isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-6">
-        <FeaturedAthletes />
-        <PrimaryActions />
+      <div className="flex flex-col gap-6 p-4">
+        <WelcomeHero />
+        <SportSelection />
         <PopularGrounds />
         <UpcomingTournaments />
         <StatsSection />
