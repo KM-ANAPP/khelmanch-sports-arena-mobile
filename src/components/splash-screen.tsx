@@ -45,7 +45,7 @@ export default function SportySplashScreen({
             duration: 0.5
           }
         }} className="relative mb-8">
-              <motion.div className="absolute inset-0 rounded-full bg-white/20" animate={{
+              <motion.div className="absolute rounded-full inset-0 bg-white/20" animate={{
             scale: [1, 1.2, 1],
             opacity: [0.7, 0.2, 0.7]
           }} transition={{
@@ -55,7 +55,7 @@ export default function SportySplashScreen({
           }} />
 
               <div className="relative z-10 bg-white rounded-full shadow-xl">
-                <div className="relative w-20 h-20">
+                <div className="relative rounded-full w-20 h-20">
                   <img 
                     src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
                     alt="Khelmanch Logo"
