@@ -20,7 +20,7 @@ export const RecaptchaContainer: React.FC = () => {
       console.log('RecaptchaContainer: Created container');
       
       // Store reference to allow proper cleanup
-      containerRef.current = container;
+      containerRef.current = container as HTMLDivElement;
     }
 
     // Cleanup on unmount

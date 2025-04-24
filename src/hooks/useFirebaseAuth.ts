@@ -4,7 +4,8 @@ import {
   RecaptchaVerifier, 
   signInWithPhoneNumber, 
   ConfirmationResult,
-  AuthError 
+  AuthError,
+  UserCredential 
 } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
@@ -139,12 +140,12 @@ export const useFirebaseAuth = () => {
       console.log('Verifying OTP');
       
       // Race between the verification and a timeout
-      const result = await Promise.race([
+      const userCredential = await Promise.race([
         confirmationResult.confirm(otp),
         createTimeoutPromise(FIREBASE_TIMEOUT)
-      ]);
+      ]) as UserCredential;
       
-      if (result.user) {
+      if (userCredential.user) {
         console.log('OTP verified successfully');
         toast({
           title: "Success",
