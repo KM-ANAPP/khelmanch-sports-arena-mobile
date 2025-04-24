@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
-import logo from "@/assets/logos/khelmanch-logo.svg";
+
 export default function SportySplashScreen({
   onComplete
 }: {
@@ -9,6 +9,7 @@ export default function SportySplashScreen({
 }) {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (progress < 100) {
@@ -22,6 +23,7 @@ export default function SportySplashScreen({
     }, 30);
     return () => clearTimeout(timer);
   }, [progress, onComplete]);
+
   return <AnimatePresence>
       {loading && <motion.div className="fixed inset-0 flex flex-col items-center justify-center bg-[#1E2539] z-50" initial={{
       opacity: 1
@@ -54,7 +56,11 @@ export default function SportySplashScreen({
 
               <div className="relative z-10 bg-white rounded-full p-6 shadow-xl">
                 <div className="relative w-20 h-20">
-                  
+                  <img 
+                    src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
+                    alt="Khelmanch Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </div>
             </motion.div>
