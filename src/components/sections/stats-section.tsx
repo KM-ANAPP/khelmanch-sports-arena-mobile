@@ -1,5 +1,5 @@
-
 import { Users, Award, Video, Users2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const StatsSection = () => {
   const stats = [
@@ -30,11 +30,23 @@ export const StatsSection = () => {
   ];
 
   return (
-    <section className="py-8">
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="py-8"
+    >
       <h2 className="text-2xl font-bold text-center mb-8">Celebrating Our Journey</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="p-4 bg-card rounded-lg shadow-sm">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            whileHover={{ scale: 1.02 }}
+            className="p-4 bg-card rounded-lg shadow-sm"
+          >
             <div className="flex items-start space-x-4">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <stat.icon className="h-6 w-6 text-primary" />
@@ -45,9 +57,9 @@ export const StatsSection = () => {
                 <p className="text-sm text-muted-foreground mt-1">{stat.description}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 };

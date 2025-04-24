@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
@@ -48,69 +48,112 @@ export default function Login() {
       >
         <Card>
           <CardHeader className="space-y-1">
-            <div className="flex justify-center mb-6">
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
+            >
               <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" />
-            </div>
+            </motion.div>
             <CardTitle className="text-2xl text-center">Welcome to Khelmanch</CardTitle>
             <CardDescription className="text-center">
               Login to access all features
             </CardDescription>
             
-            {is2FARequired && (
-              <Alert className="bg-amber-50 border-amber-200">
-                <Shield className="h-4 w-4 text-amber-500" />
-                <AlertDescription className="text-amber-700">
-                  Two-factor authentication is enabled for your account
-                </AlertDescription>
-              </Alert>
-            )}
+            <AnimatePresence>
+              {is2FARequired && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <Alert className="bg-amber-50 border-amber-200">
+                    <Shield className="h-4 w-4 text-amber-500" />
+                    <AlertDescription className="text-amber-700">
+                      Two-factor authentication is enabled for your account
+                    </AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CardHeader>
           <CardContent className="space-y-4">
-            <BiometricLoginButton />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <BiometricLoginButton />
+            </motion.div>
             
             <Tabs defaultValue="phone" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="phone">Phone</TabsTrigger>
                 <TabsTrigger value="google">Google</TabsTrigger>
               </TabsList>
-              <TabsContent value="phone" className="space-y-4">
-                <PhoneLoginForm
-                  phoneNumber={phoneNumber}
-                  setPhoneNumber={setPhoneNumber}
-                  otpSent={otpSent}
-                  setOtpSent={setOtpSent}
-                  otp={otp}
-                  setOtp={setOtp}
-                  isGeneratingOTP={loadingState.isGeneratingOTP}
-                  handleSendOTP={handleSendOTP}
-                  handleLoginWithOTP={handleLoginWithOTP}
-                  retryOTP={retryOTP}
-                  isRecaptchaVerifying={isRecaptchaVerifying}
-                />
-              </TabsContent>
-              <TabsContent value="google">
-                <GoogleLoginButton />
-              </TabsContent>
+              <AnimatePresence mode="wait">
+                <TabsContent value="phone" className="space-y-4">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                  >
+                    <PhoneLoginForm
+                      phoneNumber={phoneNumber}
+                      setPhoneNumber={setPhoneNumber}
+                      otpSent={otpSent}
+                      setOtpSent={setOtpSent}
+                      otp={otp}
+                      setOtp={setOtp}
+                      isGeneratingOTP={loadingState.isGeneratingOTP}
+                      handleSendOTP={handleSendOTP}
+                      handleLoginWithOTP={handleLoginWithOTP}
+                      retryOTP={retryOTP}
+                      isRecaptchaVerifying={isRecaptchaVerifying}
+                    />
+                  </motion.div>
+                </TabsContent>
+                <TabsContent value="google">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                  >
+                    <GoogleLoginButton />
+                  </motion.div>
+                </TabsContent>
+              </AnimatePresence>
             </Tabs>
             
-            <div className="text-center text-sm">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-center text-sm"
+            >
               <span className="text-muted-foreground">Don't have an account?</span>{" "}
               <Link to="/register" className="text-primary font-medium">Register now</Link>
-            </div>
+            </motion.div>
           </CardContent>
           <CardFooter>
-            <Button 
-              variant="ghost" 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
               className="w-full"
-              onClick={handleSkipLogin}
             >
-              Skip Login for Now
-            </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full"
+                onClick={handleSkipLogin}
+              >
+                Skip Login for Now
+              </Button>
+            </motion.div>
           </CardFooter>
         </Card>
       </motion.div>
-      
-      {/* Add the RecaptchaContainer to handle invisible reCAPTCHA */}
       <RecaptchaContainer />
     </div>
   );
