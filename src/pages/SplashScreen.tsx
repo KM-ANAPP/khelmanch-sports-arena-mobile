@@ -16,45 +16,42 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   }, [onComplete]);
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent overflow-hidden relative">
-      {/* Background animated shapes */}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-primary overflow-hidden relative">
+      {/* Animated background shapes */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute w-64 h-64 rounded-full bg-white/10 blur-xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-          style={{ left: "20%", top: "30%" }}
-        />
-        <motion.div
-          className="absolute w-48 h-48 rounded-full bg-accent/20 blur-xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            x: [0, -50, 0],
-            y: [0, 100, 0],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-          style={{ right: "25%", bottom: "20%" }}
-        />
+        {/* Floating circles */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-secondary/20 backdrop-blur-xl"
+            initial={{ scale: 0, x: Math.random() * 100 - 50 }}
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [Math.random() * 200 - 100, Math.random() * 200 - 100],
+              y: [Math.random() * 200 - 100, Math.random() * 200 - 100],
+            }}
+            transition={{
+              duration: 3 + i,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
+            style={{
+              width: `${100 + i * 30}px`,
+              height: `${100 + i * 30}px`,
+              left: `${20 + i * 15}%`,
+              top: `${20 + i * 10}%`,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Main logo animation */}
+      {/* Main logo with enhanced animation */}
       <motion.div
-        initial={{ scale: 0, rotate: -180 }}
+        initial={{ scale: 0, opacity: 0 }}
         animate={{ 
           scale: 1,
-          rotate: 0,
+          opacity: 1,
         }}
         transition={{
           type: "spring",
@@ -62,51 +59,69 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           damping: 20,
           duration: 0.8,
         }}
-        className="relative z-10 mb-8"
+        className="relative z-10 mb-12"
       >
         <motion.div
           animate={{
-            scale: [1, 1.1, 1],
+            scale: [1, 1.05, 1],
+            rotateZ: [0, 2, -2, 0],
           }}
           transition={{
-            duration: 2,
+            duration: 3,
             repeat: Infinity,
             ease: "easeInOut",
           }}
+          className="relative"
         >
           <img 
             alt="Khelmanch" 
-            className="w-64 h-auto" 
+            className="w-72 h-auto drop-shadow-[0_0_15px_rgba(30,174,219,0.5)]" 
             src="/lovable-uploads/22ea2144-125f-46a5-87d6-79ed02f4a764.png"
+          />
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              background: [
+                "radial-gradient(circle, rgba(30,174,219,0.2) 0%, rgba(30,174,219,0) 70%)",
+                "radial-gradient(circle, rgba(30,174,219,0.3) 0%, rgba(30,174,219,0) 70%)",
+              ],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
           />
         </motion.div>
       </motion.div>
 
-      {/* Loading indicator with shimmer */}
+      {/* Loading animation with enhanced dots */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="relative z-10 space-y-4"
+        className="relative z-10 space-y-4 flex flex-col items-center"
       >
-        <div className="flex space-x-2">
+        <div className="flex space-x-3">
           {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
-              className="w-3 h-3 rounded-full bg-white"
+              className="w-4 h-4 rounded-full bg-secondary"
               animate={{
                 scale: [1, 1.5, 1],
                 opacity: [0.5, 1, 0.5],
+                y: [0, -10, 0],
               }}
               transition={{
-                duration: 1,
+                duration: 1.5,
                 repeat: Infinity,
                 delay: i * 0.2,
+                ease: "easeInOut",
               }}
             />
           ))}
         </div>
-        <Shimmer className="w-32 h-2 rounded-full" />
+        <Shimmer className="w-40 h-2 rounded-full bg-secondary/20" />
       </motion.div>
     </div>
   );
