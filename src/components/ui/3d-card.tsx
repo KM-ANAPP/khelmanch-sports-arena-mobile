@@ -1,9 +1,9 @@
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface ThreeDCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ThreeDCardProps extends Omit<HTMLMotionProps<"div">, "className" | "children"> {
   children: React.ReactNode;
   hoverEffect?: boolean;
   glassEffect?: boolean;
