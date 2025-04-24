@@ -13,7 +13,7 @@ interface LoadingState {
 export const useLoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { sendOTP, verifyOTP } = useFirebaseAuth();
+  const { sendOTP, verifyOTP, isRecaptchaVerifying } = useFirebaseAuth();
   
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -83,6 +83,15 @@ export const useLoginForm = () => {
     }
   };
 
+  const retryOTP = async () => {
+    setOtp("");
+    setOtpSent(false);
+    // Wait a moment before allowing another attempt
+    setTimeout(() => {
+      handleSendOTP();
+    }, 1000);
+  };
+
   return {
     phoneNumber,
     setPhoneNumber,
@@ -93,6 +102,8 @@ export const useLoginForm = () => {
     setOtp,
     is2FARequired,
     handleSendOTP,
-    handleLoginWithOTP
+    handleLoginWithOTP,
+    retryOTP,
+    isRecaptchaVerifying
   };
 };

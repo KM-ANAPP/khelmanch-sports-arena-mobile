@@ -25,7 +25,9 @@ export default function Login() {
     setOtp,
     is2FARequired,
     handleSendOTP,
-    handleLoginWithOTP
+    handleLoginWithOTP,
+    retryOTP,
+    isRecaptchaVerifying
   } = useLoginForm();
 
   const handleSkipLogin = () => {
@@ -82,6 +84,8 @@ export default function Login() {
                   isGeneratingOTP={loadingState.isGeneratingOTP}
                   handleSendOTP={handleSendOTP}
                   handleLoginWithOTP={handleLoginWithOTP}
+                  retryOTP={retryOTP}
+                  isRecaptchaVerifying={isRecaptchaVerifying}
                 />
               </TabsContent>
               <TabsContent value="google">

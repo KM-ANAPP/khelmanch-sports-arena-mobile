@@ -1,5 +1,5 @@
 
-import { Phone, ArrowRight, Loader2 } from "lucide-react";
+import { Phone, ArrowRight, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,8 @@ interface PhoneLoginFormProps {
   isGeneratingOTP: boolean;
   handleSendOTP: () => void;
   handleLoginWithOTP: () => void;
+  retryOTP?: () => void;
+  isRecaptchaVerifying?: boolean;
 }
 
 export const PhoneLoginForm = ({
@@ -25,8 +27,12 @@ export const PhoneLoginForm = ({
   setOtp,
   isGeneratingOTP,
   handleSendOTP,
-  handleLoginWithOTP
+  handleLoginWithOTP,
+  retryOTP,
+  isRecaptchaVerifying
 }: PhoneLoginFormProps) => {
+  const isLoading = isGeneratingOTP || isRecaptchaVerifying;
+  
   return !otpSent ? (
     <div className="space-y-2">
       <Label htmlFor="phone">Phone Number</Label>
@@ -45,12 +51,12 @@ export const PhoneLoginForm = ({
       <Button 
         className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
         onClick={handleSendOTP}
-        disabled={phoneNumber.length !== 10 || isGeneratingOTP}
+        disabled={phoneNumber.length !== 10 || isLoading}
       >
-        {isGeneratingOTP ? (
+        {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Sending OTP...
+            {isRecaptchaVerifying ? "Verifying reCAPTCHA..." : "Sending OTP..."}
           </>
         ) : (
           <>
@@ -71,21 +77,43 @@ export const PhoneLoginForm = ({
         value={otp}
         onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
       />
-      <div className="text-sm text-muted-foreground mt-2">
-        OTP sent to +91 {phoneNumber}
+      <div className="text-sm text-muted-foreground mt-2 flex justify-between">
+        <span>OTP sent to +91 {phoneNumber}</span>
+        {retryOTP && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-auto p-0 text-primary" 
+            onClick={retryOTP}
+            disabled={isLoading}
+          >
+            <RefreshCw className="h-3 w-3 mr-1" />
+            Resend
+          </Button>
+        )}
       </div>
       <Button 
         className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
         onClick={handleLoginWithOTP}
-        disabled={otp.length !== 6}
+        disabled={otp.length !== 6 || isLoading}
       >
-        Verify & Login
-        <ArrowRight className="ml-2 h-4 w-4" />
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Verifying...
+          </>
+        ) : (
+          <>
+            Verify & Login
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </>
+        )}
       </Button>
       <Button 
         variant="link" 
         className="w-full" 
         onClick={() => setOtpSent(false)}
+        disabled={isLoading}
       >
         Change Phone Number
       </Button>
