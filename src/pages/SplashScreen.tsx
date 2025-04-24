@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
@@ -23,13 +22,13 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     }, 100);
 
     // Increased duration for each animation step
-    const timer1 = setTimeout(() => setAnimationStep(1), 1500); // Logo appears
-    const timer2 = setTimeout(() => setAnimationStep(2), 2500); // Logo animation
-    const timer3 = setTimeout(() => setAnimationStep(3), 3500); // Text appears
+    const timer1 = setTimeout(() => setAnimationStep(1), 2500); // Logo appears
+    const timer2 = setTimeout(() => setAnimationStep(2), 4000); // Logo animation
+    const timer3 = setTimeout(() => setAnimationStep(3), 5500); // Text appears
     const timer4 = setTimeout(() => {
       setAnimationStep(4); // Final state
       onComplete(); // Transition to login page
-    }, 5000);
+    }, 7000);
 
     return () => {
       clearInterval(interval);
@@ -43,7 +42,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden">
       <AnimatePresence>
-        {/* Initial loading spinner */}
         {animationStep === 0 && (
           <motion.div
             key="loading"
@@ -67,12 +65,11 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Loading resources...
+              Fueling Your Game – One Tap Away!
             </motion.p>
           </motion.div>
         )}
 
-        {/* Logo appears */}
         {animationStep >= 1 && (
           <motion.div
             key="logo"
@@ -93,7 +90,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           </motion.div>
         )}
 
-        {/* Text appears */}
         {animationStep >= 3 && (
           <motion.div
             key="text"
@@ -107,7 +103,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           </motion.div>
         )}
 
-        {/* Background elements */}
         <motion.div
           className="absolute inset-0 -z-10"
           initial={{ opacity: 0 }}
@@ -124,7 +119,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 function AppLogo() {
   return (
     <motion.div
-      className="relative w-32 h-32 rounded-2xl bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center shadow-lg"
+      className="relative w-32 h-32 rounded-2xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-lg"
       initial={{ rotate: 0 }}
       animate={{ rotate: 360 }}
       transition={{
@@ -155,10 +150,8 @@ function AppLogo() {
 function BackgroundElements() {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Animated gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-primary/80" />
 
-      {/* Animated circles */}
       {[...Array(5)].map((_, i) => (
         <motion.div
           key={i}
