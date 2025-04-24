@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Services
 import notificationService from "./utils/notifications";
@@ -76,45 +76,90 @@ const App = () => {
             <SplashScreen onComplete={handleSplashComplete} />
           ) : (
             <BrowserRouter>
-              <Routes>
-                {/* Redirect to login after splash screen completes */}
-                {splashCompleted && (
+              <AnimatePresence mode="wait">
+                <Routes>
+                  {/* Redirect to login after splash screen completes */}
+                  {splashCompleted && (
+                    <Route 
+                      path="/" 
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <Navigate to="/login" replace />
+                        </motion.div>
+                      } 
+                    />
+                  )}
+                  
+                  {/* Wrap each route in motion.div for page transitions */}
                   <Route 
-                    path="/" 
-                    element={<Navigate to="/login" replace />} 
+                    path="/login" 
+                    element={
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Login />
+                      </motion.div>
+                    } 
                   />
-                )}
-                
-                {/* Authentication Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                
-                {/* Main App Routes */}
-                <Route path="/home" element={<Home />} />
-                <Route path="/tournaments" element={<Tournaments />} />
-                <Route path="/tournaments/:id" element={<TournamentDetails />} />
-                <Route path="/booking" element={<Booking />} />
-                <Route path="/booking/:id" element={<GroundDetails />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/payment-success" element={<PaymentSuccess />} />
-                <Route path="/settings" element={<Settings />} />
-                
-                {/* Communication & Community Routes */}
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/community" element={<Community />} />
-                
-                {/* My Items Routes */}
-                <Route path="/my-bookings" element={<MyBookings />} />
-                <Route path="/my-tickets" element={<MyBookings />} />
-                <Route path="/my-teams" element={<MyTeams />} />
-                
-                {/* For any old Index page route, redirect to Home */}
-                <Route path="/index" element={<Index />} />
-                
-                {/* Catch-all route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  
+                  {/* Apply the same animation to all routes */}
+                  {[
+                    { path: "/register", element: <Register /> },
+                    { path: "/home", element: <Home /> },
+                    { path: "/tournaments", element: <Tournaments /> },
+                    { path: "/tournaments/:id", element: <TournamentDetails /> },
+                    { path: "/booking", element: <Booking /> },
+                    { path: "/booking/:id", element: <GroundDetails /> },
+                    { path: "/profile", element: <Profile /> },
+                    { path: "/checkout", element: <Checkout /> },
+                    { path: "/payment-success", element: <PaymentSuccess /> },
+                    { path: "/settings", element: <Settings /> },
+                    { path: "/messages", element: <Messages /> },
+                    { path: "/community", element: <Community /> },
+                    { path: "/my-bookings", element: <MyBookings /> },
+                    { path: "/my-tickets", element: <MyBookings /> },
+                    { path: "/my-teams", element: <MyTeams /> },
+                    { path: "/index", element: <Index /> },
+                  ].map(({ path, element }) => (
+                    <Route
+                      key={path}
+                      path={path}
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {element}
+                        </motion.div>
+                      }
+                    />
+                  ))}
+                  
+                  {/* Catch-all route */}
+                  <Route 
+                    path="*" 
+                    element={
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <NotFound />
+                      </motion.div>
+                    } 
+                  />
+                </Routes>
+              </AnimatePresence>
               
               {/* Global AI Chatbot Support */}
               <ChatbotSupport />

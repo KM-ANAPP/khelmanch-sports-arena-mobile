@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import { AnimatePresence } from 'framer-motion'
 import App from './App.tsx'
 import './index.css'
 
@@ -22,7 +23,9 @@ if ('serviceWorker' in navigator) {
 if (root) {
   createRoot(root).render(
     <React.StrictMode>
-      <App />
+      <AnimatePresence mode="wait">
+        <App />
+      </AnimatePresence>
     </React.StrictMode>
   )
 }
