@@ -1,23 +1,23 @@
 
-import { Running, Bicycle, Yoga } from "lucide-react";
+import { Activity, Smartphone, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function SportSelection() {
   const sports = [
     {
       name: "Running",
-      icon: Running,
+      icon: Activity,
       link: "/sports/running",
       active: true
     },
     {
       name: "Cycling",
-      icon: Bicycle,
+      icon: Mail,
       link: "/sports/cycling",
     },
     {
       name: "Yoga",
-      icon: Yoga,
+      icon: Smartphone,
       link: "/sports/yoga",
     }
   ];

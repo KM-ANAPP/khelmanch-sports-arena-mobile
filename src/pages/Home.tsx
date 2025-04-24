@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { WelcomeHero } from "@/components/sections/welcome-hero";
 import { SportSelection } from "@/components/sections/sport-selection";
