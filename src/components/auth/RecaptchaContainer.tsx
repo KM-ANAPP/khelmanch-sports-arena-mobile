@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
-import { isPlatform } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
 export const RecaptchaContainer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -8,7 +8,7 @@ export const RecaptchaContainer: React.FC = () => {
   useEffect(() => {
     // Skip reCAPTCHA container creation for native platforms
     // Firebase will use native verification on Android/iOS
-    if (isPlatform('android') || isPlatform('ios')) {
+    if (Capacitor.isNativePlatform()) {
       console.log('RecaptchaContainer: Native platform detected, skipping web reCAPTCHA');
       return;
     }

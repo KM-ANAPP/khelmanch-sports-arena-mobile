@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
-import { isPlatform } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
 // Configure timeout for Firebase operations
 const FIREBASE_TIMEOUT = 60000; // 60 seconds
@@ -44,7 +44,7 @@ export const useFirebaseAuth = () => {
       console.log(`Sending OTP to ${formattedPhone}`);
       
       // Check if we're on a native platform
-      const isNative = isPlatform('android') || isPlatform('ios');
+      const isNative = Capacitor.isNativePlatform();
       
       if (isNative) {
         // For native platforms, we don't need reCAPTCHA

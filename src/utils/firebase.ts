@@ -1,6 +1,7 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbHbaj6dA_eGt6yvzOIYnKw-K8tcXyNys",
@@ -21,4 +22,10 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize auth with proper settings for development environments
-auth.settings.appVerificationDisabledForTesting = false; // Set to true only for testing environments
+// For production, this should always be set to false
+auth.settings.appVerificationDisabledForTesting = false;
+
+// Log the platform information
+console.log(`Running on ${Capacitor.getPlatform()} platform`);
+console.log(`Is native: ${Capacitor.isNativePlatform()}`);
+
