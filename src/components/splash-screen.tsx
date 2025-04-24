@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Loader2 } from "lucide-react"
@@ -26,7 +27,7 @@ export default function SportySplashScreen({ onComplete }: { onComplete?: () => 
     <AnimatePresence>
       {loading && (
         <motion.div
-          className="fixed inset-0 flex flex-col items-center justify-center bg-[#1A1F2C] z-50"
+          className="fixed inset-0 flex flex-col items-center justify-center bg-[#1E2539] z-50"
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
@@ -58,22 +59,10 @@ export default function SportySplashScreen({ onComplete }: { onComplete?: () => 
 
               <div className="relative z-10 bg-white rounded-full p-6 shadow-xl">
                 <div className="relative w-20 h-20">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <motion.path
-                      d="M12 2L4 6V12C4 15.31 7.58 20 12 22C16.42 20 20 15.31 20 12V6L12 2Z"
-                      stroke="#10B981"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 1.5, ease: "easeInOut" }}
-                    />
-                  </svg>
                   <img
                     src={logo}
                     alt="Khelmanch Logo"
-                    className="absolute inset-0 w-full h-full object-contain p-2"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
@@ -81,15 +70,15 @@ export default function SportySplashScreen({ onComplete }: { onComplete?: () => 
 
             <div className="mb-8 text-center">
               <motion.h1
-                className="text-3xl font-bold text-emerald-500 mb-2"
+                className="text-3xl font-bold text-[#DFE61C] mb-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                KHEL<span className="text-emerald-400">MANCH</span>
+                KHEL<span className="text-[#DFE61C]/80">MANCH</span>
               </motion.h1>
               <motion.p
-                className="text-emerald-400/80 text-sm"
+                className="text-[#DFE61C]/80 text-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
@@ -105,7 +94,7 @@ export default function SportySplashScreen({ onComplete }: { onComplete?: () => 
               transition={{ delay: 0.8, duration: 0.5 }}
             >
               <motion.div
-                className="h-full bg-emerald-500 rounded-full"
+                className="h-full bg-[#DFE61C] rounded-full"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.1 }}
@@ -113,20 +102,28 @@ export default function SportySplashScreen({ onComplete }: { onComplete?: () => 
             </motion.div>
 
             <motion.div
-              className="flex items-center text-emerald-400/80 text-sm"
+              className="flex items-center text-[#DFE61C]/80 text-sm"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.5 }}
+              animate={{ 
+                opacity: [1, 0.5, 1],
+                transition: {
+                  opacity: {
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }
+              }}
             >
-              <Loader2 className="animate-spin mr-2 h-4 w-4 text-emerald-500" />
-              <span>Loading experience {progress}%</span>
+              <Loader2 className="animate-spin mr-2 h-4 w-4 text-[#DFE61C]" />
+              <span>Prepping the Game for You</span>
             </motion.div>
 
             <div className="absolute inset-0 pointer-events-none">
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute rounded-full bg-emerald-500/30"
+                  className="absolute rounded-full bg-[#DFE61C]/30"
                   initial={{
                     scale: 0,
                     opacity: 0,
