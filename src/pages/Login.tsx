@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Smartphone } from "lucide-react";
@@ -9,6 +8,8 @@ import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
 import { RecaptchaContainer } from "@/components/auth/RecaptchaContainer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -113,43 +114,33 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E2539] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md overflow-hidden rounded-3xl shadow-xl"
-      >
-        {/* Gradient Header with Waves */}
-        <div className="relative h-56 bg-[#1E2539]">
-          {/* Logo Placeholder */}
-          <div className={`pt-10 flex justify-center transition-all duration-1000 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}>
-            <div className="w-16 h-16 rounded-full bg-[#1E2539] shadow-md flex items-center justify-center p-1">
-              <img 
-                src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" 
-                alt="Khelmanch Logo" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-          </div>
-          
-          {/* First Wave */}
-          <div className="absolute bottom-8 left-0 right-0 h-16 bg-gray-100 rounded-t-full opacity-20"></div>
-          
-          {/* Second Wave */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-white rounded-t-full"></div>
+    <div className="min-h-screen bg-white">
+      {/* Gradient Header */}
+      <div className="h-80 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-b-[3rem] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/10"></div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg className="w-full h-24" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path
+              d="M0,100 C30,50 70,50 100,100"
+              fill="white"
+              className="shadow-lg"
+            />
+          </svg>
         </div>
-        
-        {/* Login Form Section */}
-        <div className="bg-white px-8 pt-4 pb-10 rounded-b-3xl">
-          {/* Welcome Back Text with Animation */}
-          <div className={`mb-6 transition-all duration-1000 delay-300 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <h2 className="text-2xl font-semibold text-gray-800 text-center">Welcome to Khelmanch</h2>
-            <p className="text-center text-gray-500 mt-1">Please sign in to continue</p>
-          </div>
+      </div>
 
-          <BiometricLoginButton />
-          
+      {/* Login Form */}
+      <div className="px-8 -mt-40 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-md mx-auto"
+        >
+          <h1 className="text-3xl font-semibold text-center text-white mb-8">
+            Welcome back
+          </h1>
+
           {/* Auth Method Tabs */}
           <div className={`mb-6 flex border-b transition-all duration-700 delay-400 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <button
@@ -167,29 +158,18 @@ export default function Login() {
               Phone
             </button>
           </div>
-          
-          <form onSubmit={(e) => e.preventDefault()} className={`transition-all duration-700 delay-500 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
             {renderAuthMethod()}
           </form>
-          
-          {/* OAuth Separator */}
-          <div className={`my-8 flex items-center transition-all duration-700 delay-700 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">OR</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-          
-          {/* Google Sign In */}
-          <div className={`transition-all duration-700 delay-800 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <GoogleLoginButton />
-          </div>
-          
-          {/* Sign Up Link */}
-          <div className={`mt-8 text-center text-sm transition-all duration-700 delay-900 transform ${animated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <span className="text-gray-600">Don't have an account?</span>{" "}
-            <Link to="/register" className="text-[#DFE61C] font-medium hover:text-[#DFE61C]/80">
-              Register now
-            </Link>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-cyan-600 font-medium">
+                Create Account
+              </Link>
+            </p>
           </div>
 
           {/* Skip Login Button */}
@@ -201,8 +181,8 @@ export default function Login() {
               Skip Login for Now
             </button>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
       
       <RecaptchaContainer />
     </div>
