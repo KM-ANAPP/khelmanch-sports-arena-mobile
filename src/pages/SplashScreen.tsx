@@ -1,6 +1,7 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Shimmer } from "@/components/ui/shimmer";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -81,23 +82,14 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         </motion.div>
       </motion.div>
 
-      {/* Loading indicator */}
+      {/* Loading indicator with shimmer */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="relative z-10"
+        className="relative z-10 space-y-4"
       >
-        <motion.div
-          className="flex space-x-2"
-          animate={{
-            scale: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-          }}
-        >
+        <div className="flex space-x-2">
           {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
@@ -113,7 +105,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               }}
             />
           ))}
-        </motion.div>
+        </div>
+        <Shimmer className="w-32 h-2 rounded-full" />
       </motion.div>
     </div>
   );

@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { Shimmer } from "@/components/ui/shimmer";
 
 interface ProfileActionsProps {
   name: string;
@@ -80,7 +80,9 @@ export function ProfileActions({
     }
   };
 
-  return (
+  return isLoading ? (
+    <Shimmer className="w-full h-10 rounded-md" />
+  ) : (
     <Button 
       onClick={handleSaveProfile}
       disabled={isLoading}

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   RecaptchaVerifier, 
@@ -11,14 +10,12 @@ import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
 import { Capacitor } from '@capacitor/core';
 
-// Configure timeout for Firebase operations
 const FIREBASE_TIMEOUT = 60000; // 60 seconds
 
 export const useFirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isRecaptchaVerifying, setIsRecaptchaVerifying] = useState(false);
 
-  // Function to clear any existing recaptcha
   const clearExistingRecaptcha = () => {
     const container = document.getElementById('recaptcha-container');
     if (container) {
@@ -39,22 +36,17 @@ export const useFirebaseAuth = () => {
     try {
       setIsRecaptchaVerifying(true);
       
-      // Format the phone number for Firebase
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
       console.log(`Sending OTP to ${formattedPhone}`);
       
-      // Check if we're on a native platform
       const isNative = Capacitor.isNativePlatform();
       
       if (isNative) {
-        // For native platforms, we don't need reCAPTCHA
         console.log('Using native phone auth verification');
         
         try {
-          // For native platforms, we can directly use signInWithPhoneNumber
-          // Firebase will use SafetyNet or Play Integrity API on Android
           const result = await Promise.race([
-            signInWithPhoneNumber(auth, formattedPhone),
+            signInWithPhoneNumber(auth, formattedPhone, null),
             createTimeoutPromise(FIREBASE_TIMEOUT)
           ]) as ConfirmationResult;
           
@@ -71,11 +63,8 @@ export const useFirebaseAuth = () => {
           throw error;
         }
       } else {
-        // For web platform, we need to use reCAPTCHA
-        // Always clear any existing reCAPTCHA before creating a new one
         clearExistingRecaptcha();
         
-        // Get the container
         const container = document.getElementById('recaptcha-container');
         if (!container) {
           console.error('recaptcha-container not found');
@@ -89,7 +78,6 @@ export const useFirebaseAuth = () => {
         
         console.log('Creating new RecaptchaVerifier for web');
         
-        // Create a new verifier
         const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
           size: 'invisible',
           callback: () => {
@@ -105,7 +93,6 @@ export const useFirebaseAuth = () => {
           }
         });
         
-        // Race between the Firebase operation and a timeout
         try {
           const result = await Promise.race([
             signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier),
@@ -122,17 +109,14 @@ export const useFirebaseAuth = () => {
           
           return true;
         } catch (error) {
-          // Handle timeout or other errors
           throw error;
         }
       }
     } catch (error: any) {
       console.error('Error sending OTP:', error);
       
-      // Clean up
       clearExistingRecaptcha();
       
-      // User-friendly error messages
       let errorMessage = "Failed to send OTP";
       
       if (error.message && error.message.includes('timed out')) {
@@ -170,7 +154,6 @@ export const useFirebaseAuth = () => {
     try {
       console.log('Verifying OTP');
       
-      // Race between the verification and a timeout
       const userCredential = await Promise.race([
         confirmationResult.confirm(otp),
         createTimeoutPromise(FIREBASE_TIMEOUT)
