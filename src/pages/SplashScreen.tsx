@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
@@ -40,7 +41,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   }, [onComplete]);
 
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden font-anton">
       <AnimatePresence>
         {animationStep === 0 && (
           <motion.div
@@ -50,17 +51,17 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex flex-col items-center justify-center"
           >
-            <LoaderCircle className="h-12 w-12 text-secondary animate-spin mb-4" />
+            <LoaderCircle className="h-12 w-12 text-accent animate-spin mb-4" />
             <motion.div className="w-64 h-2 bg-primary/20 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-secondary rounded-full"
+                className="h-full bg-accent rounded-full"
                 initial={{ width: "0%" }}
                 animate={{ width: `${loadingProgress}%` }}
                 transition={{ type: "spring", stiffness: 50 }}
               />
             </motion.div>
             <motion.p
-              className="text-secondary/70 mt-2 text-sm"
+              className="text-accent/70 mt-2 text-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
