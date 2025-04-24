@@ -12,10 +12,13 @@ interface LoginBottomSheetProps {
   open: boolean;
   onDismiss: () => void;
   onLogin: () => void;
+  inSplashScreen?: boolean;
 }
 
-export function LoginBottomSheet({ open, onDismiss, onLogin }: LoginBottomSheetProps) {
-  const navigate = useNavigate();
+export function LoginBottomSheet({ open, onDismiss, onLogin, inSplashScreen = false }: LoginBottomSheetProps) {
+  // Only use the navigate hook when we're not in the splash screen
+  // This is a workaround for the router context issue
+  const navigate = !inSplashScreen ? useNavigate() : undefined;
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");

@@ -54,6 +54,7 @@ export default function Home() {
         open={showLoginPrompt} 
         onDismiss={handleDismissLoginPrompt}
         onLogin={() => setIsLoggedIn(true)}
+        inSplashScreen={false}
       />
     </MobileLayout>
   );

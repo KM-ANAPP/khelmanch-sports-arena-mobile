@@ -129,6 +129,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         open={showLogin} 
         onDismiss={() => onComplete()}
         onLogin={handleLoginComplete}
+        inSplashScreen={true}
       />
     </div>
   );
@@ -204,4 +205,3 @@ function BackgroundElements() {
     </div>
   );
 }
-
