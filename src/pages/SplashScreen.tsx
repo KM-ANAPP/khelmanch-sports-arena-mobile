@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
@@ -41,7 +40,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
   }, [onComplete]);
 
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden font-anton">
+    <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden font-poppins">
       <AnimatePresence>
         {animationStep === 0 && (
           <motion.div

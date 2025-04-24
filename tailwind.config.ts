@@ -97,7 +97,7 @@ export default {
         shimmer: "shimmer 2s infinite"
       },
       fontFamily: {
-        'anton': ['Anton', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif'],
       }
     }
   },
