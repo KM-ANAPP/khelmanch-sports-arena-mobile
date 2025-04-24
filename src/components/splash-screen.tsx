@@ -55,7 +55,7 @@ export default function SportySplashScreen({
           }} />
 
               <div className="relative z-10 bg-white rounded-full shadow-xl">
-                <div className="relative w-20 h-20 rounded-full">
+                <div className="relative w-20 h-20 p-1 rounded-full">
                   <img 
                     src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
                     alt="Khelmanch Logo"
