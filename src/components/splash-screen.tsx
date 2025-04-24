@@ -25,7 +25,7 @@ export default function SportySplashScreen({
   }, [progress, onComplete]);
 
   return <AnimatePresence>
-      {loading && <motion.div className="fixed inset-0 flex flex-col items-center rounded-full justify-center bg-[#1E2539] z-50" initial={{
+      {loading && <motion.div className="fixed inset-0 flex flex-col items-center justify-center bg-[#1E2539] z-50" initial={{
       opacity: 1
     }} exit={{
       opacity: 0,
@@ -45,7 +45,7 @@ export default function SportySplashScreen({
             duration: 0.5
           }
         }} className="relative mb-8">
-              <motion.div className="absolute rounded inset-0 bg-white/20" animate={{
+              <motion.div className="absolute inset-0 rounded-full bg-white/20" animate={{
             scale: [1, 1.2, 1],
             opacity: [0.7, 0.2, 0.7]
           }} transition={{
@@ -54,12 +54,12 @@ export default function SportySplashScreen({
             ease: "easeInOut"
           }} />
 
-              <div className="relative z-10 rounded-full shadow-xl">
-                <div className="relative rounded-full w-20 h-20">
+              <div className="relative z-10 bg-white rounded-full shadow-xl">
+                <div className="relative w-20 h-20 rounded-full">
                   <img 
                     src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
                     alt="Khelmanch Logo"
-                    className="w-full h-full object-contain"
+                    className="w-full rounded-full h-full object-contain"
                   />
                 </div>
               </div>
