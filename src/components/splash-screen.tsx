@@ -25,7 +25,7 @@ export default function SportySplashScreen({
   }, [progress, onComplete]);
 
   return <AnimatePresence>
-      {loading && <motion.div className="fixed inset-0 flex flex-col items-center justify-center bg-[#1E2539] z-50" initial={{
+      {loading && <motion.div className="fixed inset-0 flex flex-col items-center rounded-full justify-center bg-[#1E2539] z-50" initial={{
       opacity: 1
     }} exit={{
       opacity: 0,
