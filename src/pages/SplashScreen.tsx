@@ -22,14 +22,14 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       });
     }, 100);
 
-    // Animation sequence
-    const timer1 = setTimeout(() => setAnimationStep(1), 1000); // Logo appears
-    const timer2 = setTimeout(() => setAnimationStep(2), 2000); // Logo animation
-    const timer3 = setTimeout(() => setAnimationStep(3), 3000); // Text appears
+    // Increased duration for each animation step
+    const timer1 = setTimeout(() => setAnimationStep(1), 1500); // Logo appears
+    const timer2 = setTimeout(() => setAnimationStep(2), 2500); // Logo animation
+    const timer3 = setTimeout(() => setAnimationStep(3), 3500); // Text appears
     const timer4 = setTimeout(() => {
       setAnimationStep(4); // Final state
       onComplete(); // Transition to login page
-    }, 3500);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
