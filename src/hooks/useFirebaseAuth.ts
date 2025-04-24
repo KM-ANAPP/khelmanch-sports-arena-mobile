@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
 import { toast } from '@/hooks/use-toast';
+import { isPlatform } from '@capacitor/core';
 
 // Configure timeout for Firebase operations
 const FIREBASE_TIMEOUT = 60000; // 60 seconds
@@ -38,62 +39,92 @@ export const useFirebaseAuth = () => {
     try {
       setIsRecaptchaVerifying(true);
       
-      // Always clear any existing reCAPTCHA before creating a new one
-      clearExistingRecaptcha();
-      
-      // Get the container
-      const container = document.getElementById('recaptcha-container');
-      if (!container) {
-        console.error('recaptcha-container not found');
-        toast({
-          title: "Error",
-          description: "reCAPTCHA initialization failed. Please reload the page.",
-          variant: "destructive",
-        });
-        return false;
-      }
-      
-      console.log('Creating new RecaptchaVerifier');
-      
-      // Create a new verifier
-      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-        callback: () => {
-          console.log('reCAPTCHA solved');
-        },
-        'expired-callback': () => {
-          clearExistingRecaptcha();
-          toast({
-            title: "reCAPTCHA Expired",
-            description: "Please try again",
-            variant: "destructive",
-          });
-        }
-      });
-      
       // Format the phone number for Firebase
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
       console.log(`Sending OTP to ${formattedPhone}`);
       
-      // Race between the Firebase operation and a timeout
-      try {
-        const result = await Promise.race([
-          signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier),
-          createTimeoutPromise(FIREBASE_TIMEOUT)
-        ]) as ConfirmationResult;
+      // Check if we're on a native platform
+      const isNative = isPlatform('android') || isPlatform('ios');
+      
+      if (isNative) {
+        // For native platforms, we don't need reCAPTCHA
+        console.log('Using native phone auth verification');
         
-        setConfirmationResult(result);
-        console.log('OTP sent successfully');
+        try {
+          // For native platforms, we can directly use signInWithPhoneNumber
+          // Firebase will use SafetyNet or Play Integrity API on Android
+          const result = await Promise.race([
+            signInWithPhoneNumber(auth, formattedPhone),
+            createTimeoutPromise(FIREBASE_TIMEOUT)
+          ]) as ConfirmationResult;
+          
+          setConfirmationResult(result);
+          console.log('OTP sent successfully using native verification');
+          
+          toast({
+            title: "OTP Sent",
+            description: `OTP sent to ${phoneNumber}`,
+          });
+          
+          return true;
+        } catch (error) {
+          throw error;
+        }
+      } else {
+        // For web platform, we need to use reCAPTCHA
+        // Always clear any existing reCAPTCHA before creating a new one
+        clearExistingRecaptcha();
         
-        toast({
-          title: "OTP Sent",
-          description: `OTP sent to ${phoneNumber}`,
+        // Get the container
+        const container = document.getElementById('recaptcha-container');
+        if (!container) {
+          console.error('recaptcha-container not found');
+          toast({
+            title: "Error",
+            description: "reCAPTCHA initialization failed. Please reload the page.",
+            variant: "destructive",
+          });
+          return false;
+        }
+        
+        console.log('Creating new RecaptchaVerifier for web');
+        
+        // Create a new verifier
+        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible',
+          callback: () => {
+            console.log('reCAPTCHA solved');
+          },
+          'expired-callback': () => {
+            clearExistingRecaptcha();
+            toast({
+              title: "reCAPTCHA Expired",
+              description: "Please try again",
+              variant: "destructive",
+            });
+          }
         });
         
-        return true;
-      } catch (error) {
-        // Handle timeout or other errors
-        throw error;
+        // Race between the Firebase operation and a timeout
+        try {
+          const result = await Promise.race([
+            signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier),
+            createTimeoutPromise(FIREBASE_TIMEOUT)
+          ]) as ConfirmationResult;
+          
+          setConfirmationResult(result);
+          console.log('OTP sent successfully via web reCAPTCHA');
+          
+          toast({
+            title: "OTP Sent",
+            description: `OTP sent to ${phoneNumber}`,
+          });
+          
+          return true;
+        } catch (error) {
+          // Handle timeout or other errors
+          throw error;
+        }
       }
     } catch (error: any) {
       console.error('Error sending OTP:', error);
@@ -111,7 +142,7 @@ export const useFirebaseAuth = () => {
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = "Too many attempts. Please try again later.";
       } else if (error.code === 'auth/captcha-check-failed') {
-        errorMessage = "reCAPTCHA verification failed. Please try again.";
+        errorMessage = "Verification failed. Please try again.";
       }
       
       toast({
