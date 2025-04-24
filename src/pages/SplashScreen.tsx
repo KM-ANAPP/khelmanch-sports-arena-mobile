@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
-import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -11,7 +10,6 @@ interface SplashScreenProps {
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   const [animationStep, setAnimationStep] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,8 +27,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     const timer2 = setTimeout(() => setAnimationStep(2), 2000); // Logo animation
     const timer3 = setTimeout(() => setAnimationStep(3), 3000); // Text appears
     const timer4 = setTimeout(() => {
-      setAnimationStep(4); // Show login
-      setShowLogin(true);
+      setAnimationStep(4); // Final state
+      onComplete(); // Transition to login page
     }, 3500);
 
     return () => {
@@ -40,12 +38,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       clearTimeout(timer3);
       clearTimeout(timer4);
     };
-  }, []);
-
-  const handleLoginComplete = () => {
-    setShowLogin(false);
-    onComplete();
-  };
+  }, [onComplete]);
 
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center bg-primary overflow-hidden">
@@ -124,13 +117,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <BackgroundElements />
         </motion.div>
       </AnimatePresence>
-
-      <LoginBottomSheet 
-        open={showLogin} 
-        onDismiss={() => onComplete()}
-        onLogin={handleLoginComplete}
-        inSplashScreen={true}
-      />
     </div>
   );
 }
