@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 // Services
 import notificationService from "./utils/notifications";
@@ -36,24 +36,17 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const [splashCompleted, setSplashCompleted] = useState(false);
   const [servicesInitialized, setServicesInitialized] = useState(false);
 
   // Initialize services
   useEffect(() => {
     const initializeServices = async () => {
       try {
-        // Initialize notification service
         await notificationService.initialize();
-        
-        // Initialize location service
         await locationService.initialize();
-        
         setServicesInitialized(true);
-        console.log("All services initialized successfully");
       } catch (error) {
         console.error("Error initializing services:", error);
-        // Continue even if services fail to initialize
         setServicesInitialized(true);
       }
     };
@@ -63,7 +56,6 @@ const App = () => {
 
   const handleSplashComplete = () => {
     setShowSplash(false);
-    setSplashCompleted(true);
   };
 
   return (
@@ -78,24 +70,20 @@ const App = () => {
             <BrowserRouter>
               <AnimatePresence mode="wait">
                 <Routes>
-                  {/* Redirect to login after splash screen completes */}
-                  {splashCompleted && (
-                    <Route 
-                      path="/" 
-                      element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <Navigate to="/login" replace />
-                        </motion.div>
-                      } 
-                    />
-                  )}
+                  <Route 
+                    path="/" 
+                    element={
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Navigate to="/login" replace />
+                      </motion.div>
+                    } 
+                  />
                   
-                  {/* Wrap each route in motion.div for page transitions */}
                   <Route 
                     path="/login" 
                     element={
@@ -110,7 +98,6 @@ const App = () => {
                     } 
                   />
                   
-                  {/* Apply the same animation to all routes */}
                   {[
                     { path: "/register", element: <Register /> },
                     { path: "/home", element: <Home /> },
@@ -145,7 +132,6 @@ const App = () => {
                     />
                   ))}
                   
-                  {/* Catch-all route */}
                   <Route 
                     path="*" 
                     element={
@@ -160,8 +146,6 @@ const App = () => {
                   />
                 </Routes>
               </AnimatePresence>
-              
-              {/* Global AI Chatbot Support */}
               <ChatbotSupport />
             </BrowserRouter>
           )}
