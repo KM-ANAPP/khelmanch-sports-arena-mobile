@@ -54,7 +54,7 @@ export default function SportySplashScreen({
             ease: "easeInOut"
           }} />
 
-              <div className="relative z-10 bg-white rounded-full p-6 shadow-xl">
+              <div className="relative z-10 bg-white rounded-full shadow-xl">
                 <div className="relative w-20 h-20">
                   <img 
                     src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
