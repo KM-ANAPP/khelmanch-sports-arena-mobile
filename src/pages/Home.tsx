@@ -39,56 +39,62 @@ const venues = [
 export default function Home() {
   return (
     <MobileLayout>
-      <div className="p-4 space-y-6">
+      <div className="min-h-screen bg-[#101010] p-4 space-y-6 max-w-[428px] mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-primary" />
-            <span className="text-sm">4517 Ave. Manchester</span>
+            <MapPin className="w-5 h-5 text-[#37DF90]" />
+            <span className="text-sm text-white font-medium">4517 Ave. Manchester</span>
           </div>
           <motion.button
             whileTap={{ scale: 0.95 }}
-            className="p-2 rounded-full bg-primary/10"
+            className="p-2 rounded-full bg-[#1A1A1A]"
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-5 h-5 text-white" />
           </motion.button>
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#AAAAAA]" />
           <Input
             placeholder="Search venues, sports, location..."
-            className="pl-10"
+            className="pl-10 bg-[#1A1A1A] text-white border-none rounded-3xl h-[54px]"
           />
         </div>
 
         {/* Sports Filter */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Sports</h2>
+          <h2 className="text-white text-lg font-semibold">Sports</h2>
           <SportFilter />
         </div>
 
         {/* Game Drops */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">Games Drops</h2>
-            <p className="text-sm text-muted-foreground">
-              Discount games for you to join now
-            </p>
+        <div className="relative h-[170px] rounded-2xl overflow-hidden bg-gradient-to-r from-[#007D44] to-transparent">
+          <img 
+            src="https://image-resource.creatie.ai/138019645226637/138019646275221/fc3dae0d5703514b2573062a69a8b122.jpg"
+            className="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
+            alt="Games backdrop"
+          />
+          <div className="relative p-5 flex flex-col justify-end h-full">
+            <h3 className="text-white text-lg font-bold">Games Drops</h3>
+            <p className="text-white/80 text-sm">Discount games for you to join now</p>
           </div>
-          <motion.button
-            whileHover={{ x: 5 }}
-            whileTap={{ scale: 0.95 }}
-            className="text-primary"
-          >
-            See all
-          </motion.button>
+        </div>
+
+        {/* Toggle Buttons */}
+        <div className="flex rounded-full bg-[#1A1A1A] p-1">
+          <button className="flex-1 py-2 px-4 rounded-full bg-[#007D44] text-white text-sm font-semibold">
+            Slots
+          </button>
+          <button className="flex-1 py-2 px-4 text-[#AAAAAA] text-sm font-semibold">
+            Courts
+          </button>
         </div>
 
         {/* Nearby Venues */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Nearby turfs</h2>
+          <h2 className="text-white text-lg font-semibold">Nearby turfs</h2>
           <div className="grid gap-4">
             {venues.map((venue, index) => (
               <motion.div
