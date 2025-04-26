@@ -2,6 +2,7 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MobileLayout } from "@/components/layouts/mobile-layout";
+import { useAuth } from "@/context/AuthContext";
 
 interface WordPressProduct {
   id: number;
@@ -23,6 +24,7 @@ const fetchProductDetails = async (id: string): Promise<WordPressProduct> => {
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', id],
     queryFn: () => fetchProductDetails(id!),
@@ -34,7 +36,7 @@ export default function ProductDetails() {
   if (!product) return null;
 
   return (
-    <MobileLayout>
+    <MobileLayout isLoggedIn={isAuthenticated}>
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-4">{product.title.rendered}</h1>
         <p className="text-gray-600 dark:text-gray-300 mb-4">
