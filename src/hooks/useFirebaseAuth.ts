@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { 
   RecaptchaVerifier, 
@@ -15,12 +16,25 @@ const FIREBASE_TIMEOUT = 60000; // 60 seconds
 export const useFirebaseAuth = () => {
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [isRecaptchaVerifying, setIsRecaptchaVerifying] = useState(false);
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
 
   const clearExistingRecaptcha = () => {
+    // First, dispose of any existing recaptcha verifier
+    if (recaptchaVerifier) {
+      try {
+        recaptchaVerifier.clear();
+        console.log('Cleared existing RecaptchaVerifier');
+      } catch (error) {
+        console.error('Error clearing RecaptchaVerifier:', error);
+      }
+      setRecaptchaVerifier(null);
+    }
+    
+    // Then clear the container
     const container = document.getElementById('recaptcha-container');
     if (container) {
       container.innerHTML = '';
-      console.log('Cleared existing reCAPTCHA');
+      console.log('Cleared existing reCAPTCHA container');
     }
   };
 
@@ -63,6 +77,7 @@ export const useFirebaseAuth = () => {
           throw error;
         }
       } else {
+        // Always clear existing reCAPTCHA before creating a new one
         clearExistingRecaptcha();
         
         const container = document.getElementById('recaptcha-container');
@@ -78,7 +93,7 @@ export const useFirebaseAuth = () => {
         
         console.log('Creating new RecaptchaVerifier for web');
         
-        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        const newRecaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
           size: 'invisible',
           callback: () => {
             console.log('reCAPTCHA solved');
@@ -92,10 +107,13 @@ export const useFirebaseAuth = () => {
             });
           }
         });
+
+        // Set the new recaptcha verifier
+        setRecaptchaVerifier(newRecaptchaVerifier);
         
         try {
           const result = await Promise.race([
-            signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier),
+            signInWithPhoneNumber(auth, formattedPhone, newRecaptchaVerifier),
             createTimeoutPromise(FIREBASE_TIMEOUT)
           ]) as ConfirmationResult;
           
