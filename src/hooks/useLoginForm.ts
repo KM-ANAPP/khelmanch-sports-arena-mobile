@@ -42,12 +42,21 @@ export const useLoginForm = () => {
       if (success) {
         setIs2FARequired(true);
         setOtpSent(true);
+        toast({
+          title: "OTP Sent",
+          description: `OTP sent to +91 ${phoneNumber}`,
+        });
         console.log("OTP sent successfully");
       } else {
         console.log("Failed to send OTP");
       }
     } catch (error) {
       console.error("Error in handleSendOTP:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send OTP. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoadingState(prev => ({ ...prev, isGeneratingOTP: false }));
     }
@@ -85,11 +94,33 @@ export const useLoginForm = () => {
 
   const retryOTP = async () => {
     setOtp("");
-    setOtpSent(false);
-    // Wait a moment before allowing another attempt
-    setTimeout(() => {
-      handleSendOTP();
-    }, 1000);
+    console.log("Retrying OTP for phone number:", phoneNumber);
+    // Don't set otpSent to false as that will hide the OTP input screen
+    // Instead, directly call handleSendOTP to generate a new OTP
+    setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
+    
+    try {
+      const success = await sendOTP(phoneNumber);
+      
+      if (success) {
+        toast({
+          title: "OTP Resent",
+          description: `New OTP sent to +91 ${phoneNumber}`,
+        });
+        console.log("OTP resent successfully");
+      } else {
+        console.log("Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error("Error in retryOTP:", error);
+      toast({
+        title: "Error",
+        description: "Failed to resend OTP. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingState(prev => ({ ...prev, isGeneratingOTP: false }));
+    }
   };
 
   return {

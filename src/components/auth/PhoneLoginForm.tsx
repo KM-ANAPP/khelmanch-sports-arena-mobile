@@ -12,6 +12,7 @@ interface PhoneLoginFormProps {
   otp: string;
   setOtp: (value: string) => void;
   isGeneratingOTP: boolean;
+  isVerifyingOTP?: boolean;
   handleSendOTP: () => void;
   handleLoginWithOTP: () => void;
   retryOTP?: () => void;
@@ -26,12 +27,13 @@ export const PhoneLoginForm = ({
   otp,
   setOtp,
   isGeneratingOTP,
+  isVerifyingOTP = false,
   handleSendOTP,
   handleLoginWithOTP,
   retryOTP,
   isRecaptchaVerifying
 }: PhoneLoginFormProps) => {
-  const isLoading = isGeneratingOTP || isRecaptchaVerifying;
+  const isLoading = isGeneratingOTP || isVerifyingOTP || isRecaptchaVerifying;
   
   return !otpSent ? (
     <div className="space-y-2">
@@ -85,9 +87,13 @@ export const PhoneLoginForm = ({
             size="sm" 
             className="h-auto p-0 text-primary" 
             onClick={retryOTP}
-            disabled={isLoading}
+            disabled={isGeneratingOTP}
           >
-            <RefreshCw className="h-3 w-3 mr-1" />
+            {isGeneratingOTP ? (
+              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3 w-3 mr-1" />
+            )}
             Resend
           </Button>
         )}
@@ -95,9 +101,9 @@ export const PhoneLoginForm = ({
       <Button 
         className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
         onClick={handleLoginWithOTP}
-        disabled={otp.length !== 6 || isLoading}
+        disabled={otp.length !== 6 || isVerifyingOTP}
       >
-        {isLoading ? (
+        {isVerifyingOTP ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Verifying...

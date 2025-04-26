@@ -107,6 +107,7 @@ export default function Login() {
                       otp={otp}
                       setOtp={setOtp}
                       isGeneratingOTP={loadingState.isGeneratingOTP}
+                      isVerifyingOTP={loadingState.isVerifyingOTP}
                       handleSendOTP={handleSendOTP}
                       handleLoginWithOTP={handleLoginWithOTP}
                       retryOTP={retryOTP}
