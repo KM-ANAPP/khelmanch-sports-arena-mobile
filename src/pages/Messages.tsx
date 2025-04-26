@@ -4,7 +4,7 @@ import MessageCenter from "@/components/communication/MessageCenter";
 
 export default function Messages() {
   return (
-    <MobileLayout requireAuth={true}>
+    <MobileLayout requireAuth={true} isLoggedIn={true}>
       <div className="p-4 h-full">
         <MessageCenter />
       </div>

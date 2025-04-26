@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Community() {
   return (
-    <MobileLayout requireAuth={true}>
+    <MobileLayout requireAuth={true} isLoggedIn={true}>
       <div className="p-4 space-y-6">
         <Card>
           <CardHeader className="pb-2">
