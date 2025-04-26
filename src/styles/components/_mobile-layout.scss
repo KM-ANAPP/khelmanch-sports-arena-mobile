@@ -1,3 +1,4 @@
+
 .mobile-layout {
   width: 100%;
   min-height: 100vh;
@@ -7,9 +8,10 @@
     position: fixed;
     top: 0;
     width: 100%;
-    height: 60px;
-    background-color: $primary;
-    border-bottom: 1px solid $border;
+    height: 64px;
+    background-color: rgba($background, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba($border, 0.3);
     padding: 0 $spacing-unit * 4;
     display: flex;
     align-items: center;
@@ -17,53 +19,80 @@
     z-index: 50;
 
     a {
-      color: $primary-foreground;
+      color: $foreground;
       
       &:hover {
-        color: rgba($primary-foreground, 0.8);
+        color: rgba($foreground, 0.8);
       }
     }
 
     img {
-      height: 1.25rem;
+      height: 1.5rem;
     }
   }
 
   .content {
     width: 100%;
-    padding-top: 60px;
-    padding-bottom: 70px;
+    padding-top: 64px;
+    padding-bottom: 64px;
+    min-height: 100vh;
   }
 
   .bottom-nav {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 70px;
-    background-color: $background;
-    border-top: 1px solid $border;
-    padding: $spacing-unit * 3;
+    height: 64px;
+    background-color: rgba($background, 0.8);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba($border, 0.3);
 
     nav {
       display: flex;
       justify-content: space-around;
       align-items: center;
+      height: 100%;
 
       a {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: $spacing-unit * 2 $spacing-unit * 3;
+        justify-content: center;
+        flex: 1;
+        height: 100%;
         color: $muted-foreground;
         transition: color 0.2s;
 
         &:hover, &.active {
-          color: $primary;
+          color: $secondary;
         }
 
         span {
           font-size: 0.75rem;
           margin-top: 0.25rem;
+          font-weight: 500;
+        }
+
+        .icon-container {
+          position: relative;
+          padding: $spacing-unit * 2;
+          border-radius: 9999px;
+          
+          &.active {
+            background-color: rgba($secondary, 0.1);
+            
+            &:after {
+              content: '';
+              position: absolute;
+              bottom: -$spacing-unit;
+              left: 50%;
+              transform: translateX(-50%);
+              width: $spacing-unit;
+              height: $spacing-unit;
+              background-color: $secondary;
+              border-radius: 50%;
+            }
+          }
         }
       }
     }

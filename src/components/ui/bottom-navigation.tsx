@@ -1,64 +1,59 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Home, Calendar, Search, MessageSquare, User } from "lucide-react";
+import { Home, Trophy, Calendar, User, Search } from "lucide-react";
 
 export function BottomNavigation() {
   const location = useLocation();
-  const currentPath = location.pathname;
-
+  
   const isActive = (path: string) => {
-    if (path === "/") return currentPath === "/" || currentPath === "/home";
-    return currentPath.startsWith(path);
+    return location.pathname === path;
   };
-
-  const navItems = [
-    {
-      name: "Home",
-      path: "/home",
-      icon: <Home className="h-6 w-6" />,
-    },
-    {
-      name: "Explore",
-      path: "/booking",
-      icon: <Search className="h-6 w-6" />,
-    },
-    {
-      name: "Bookings",
-      path: "/my-bookings",
-      icon: <Calendar className="h-6 w-6" />,
-    },
-    {
-      name: "Messages",
-      path: "/messages",
-      icon: <MessageSquare className="h-6 w-6" />,
-    },
-    {
-      name: "Profile",
-      path: "/profile",
-      icon: <User className="h-6 w-6" />,
-    },
+  
+  const navigationItems = [
+    { path: "/home", label: "Home", icon: Home },
+    { path: "/tournaments", label: "Events", icon: Trophy },
+    { path: "/booking", label: "Book", icon: Calendar },
+    { path: "/community", label: "Community", icon: Search },
+    { path: "/profile", label: "Profile", icon: User }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
-      <nav className="flex justify-around">
-        {navItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={cn(
-              "flex flex-col items-center py-2 px-3",
-              isActive(item.path)
-                ? "text-primary"
-                : "text-muted-foreground hover:text-primary"
-            )}
-          >
-            {item.icon}
-            <span className="text-xs mt-1">{item.name}</span>
-          </Link>
-        ))}
-      </nav>
+    <div className="fixed bottom-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-t border-border/30 flex items-center justify-around px-2 z-40">
+      {navigationItems.map((item) => (
+        <NavItem 
+          key={item.path} 
+          path={item.path} 
+          label={item.label} 
+          icon={item.icon} 
+          active={isActive(item.path)}
+        />
+      ))}
     </div>
+  );
+}
+
+interface NavItemProps {
+  path: string;
+  label: string;
+  icon: React.ElementType;
+  active: boolean;
+}
+
+function NavItem({ path, label, icon: Icon, active }: NavItemProps) {
+  return (
+    <Link 
+      to={path} 
+      className={`flex flex-col items-center justify-center w-full h-full ${
+        active ? "text-secondary" : "text-muted-foreground"
+      } transition-colors duration-200`}
+    >
+      <div className={`relative ${active ? "bg-secondary/10 text-secondary" : ""} p-2 rounded-full`}>
+        <Icon className="h-5 w-5" />
+        {active && (
+          <span className="absolute bottom-0 left-1/2 w-1 h-1 bg-secondary rounded-full transform -translate-x-1/2 translate-y-1"></span>
+        )}
+      </div>
+      <span className="text-xs mt-1 font-medium">{label}</span>
+    </Link>
   );
 }

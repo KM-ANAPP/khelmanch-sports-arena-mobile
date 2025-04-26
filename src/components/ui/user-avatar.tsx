@@ -1,25 +1,45 @@
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cva } from "class-variance-authority";
+import { motion } from "framer-motion";
+import { User } from "lucide-react";
 
 interface UserAvatarProps {
   isLoggedIn: boolean;
-  userImage?: string;
+  src?: string;
+  fallback?: string;
 }
 
-export function UserAvatar({ isLoggedIn, userImage }: UserAvatarProps) {
+const avatarVariants = cva(
+  "border-2 transition-all duration-200",
+  {
+    variants: {
+      status: {
+        loggedIn: "border-secondary",
+        loggedOut: "border-muted"
+      }
+    },
+    defaultVariants: {
+      status: "loggedOut"
+    }
+  }
+);
+
+export function UserAvatar({ isLoggedIn, src, fallback = "U" }: UserAvatarProps) {
   return (
-    <Link to="/profile" className="flex items-center">
-      <Avatar className="h-8 w-8 border-2 border-accent">
-        {isLoggedIn && userImage ? (
-          <AvatarImage src={userImage} alt="User" />
-        ) : (
-          <AvatarFallback className="bg-secondary text-white">
-            <User className="h-4 w-4" />
+    <Link to={isLoggedIn ? "/profile" : "/login"}>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Avatar className={avatarVariants({ status: isLoggedIn ? "loggedIn" : "loggedOut" })}>
+          <AvatarImage src={src} />
+          <AvatarFallback className="bg-muted">
+            {isLoggedIn ? fallback : <User className="h-5 w-5 text-muted-foreground" />}
           </AvatarFallback>
-        )}
-      </Avatar>
+        </Avatar>
+      </motion.div>
     </Link>
   );
 }

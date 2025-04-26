@@ -1,7 +1,7 @@
+
 .home-page {
   width: 100%;
   margin: 0 auto;
-  padding: $spacing-unit * 4;
   
   .content-section {
     padding: $spacing-unit * 4;
@@ -25,10 +25,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 5rem;
+      height: 5.5rem;
       padding: $spacing-unit * 4;
-      border-radius: $radius;
-      transition: transform 0.2s;
+      border-radius: $radius-lg;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
       &:first-child {
         background-color: $accent;
@@ -49,7 +50,8 @@
       }
 
       &:hover {
-        transform: scale(1.02);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
       }
 
       span {
@@ -61,19 +63,41 @@
   }
 
   .section-title {
-    font-family: $font-family-heading;
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: $spacing-unit * 4;
+    display: flex;
+    align-items: center;
+    
+    &:after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, rgba($accent, 0.5), transparent);
+      margin-left: $spacing-unit * 4;
+    }
   }
 
   .stats-section, .partners-section, .spotlights-section, .contact-section {
     padding: $spacing-unit * 8 0;
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba($border, 0.5), transparent);
+    }
 
     h2 {
       font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: $spacing-unit * 4;
+      margin-bottom: $spacing-unit * 6;
+      text-align: center;
     }
   }
 }
