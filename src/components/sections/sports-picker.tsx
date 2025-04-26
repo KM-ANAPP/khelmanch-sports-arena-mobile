@@ -1,11 +1,11 @@
 
-import { Run, Bike, Footprints } from "lucide-react";
+import { Running, Bike, Footprints } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const sports = [
   {
     name: "Running",
-    icon: Run,
+    icon: Running,
     path: "/running",
     active: true,
   },
