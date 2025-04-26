@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -123,7 +122,7 @@ export default {
         'fade-in': 'fade-in 0.3s ease-out',
       },
       fontFamily: {
-        'sans': ['Inter', 'sans-serif'],
+        'sans': ['Poppins', 'sans-serif'],
       }
     }
   },
