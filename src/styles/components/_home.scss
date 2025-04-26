@@ -1,6 +1,7 @@
-
 .home-page {
-  @include page-container;
+  width: 100%;
+  margin: 0 auto;
+  padding: $spacing-unit * 4;
   
   .content-section {
     padding: $spacing-unit * 4;
