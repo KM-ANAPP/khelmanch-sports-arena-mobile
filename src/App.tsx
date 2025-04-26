@@ -33,6 +33,7 @@ import MyTeams from "./pages/MyTeams";
 import Messages from "./pages/Messages";
 import Community from "./pages/Community";
 import Onboarding from "./pages/Onboarding";
+import ProductDetails from "./pages/ProductDetails";
 
 const queryClient = new QueryClient();
 
@@ -148,6 +149,21 @@ const App = () => {
                         }
                       />
                     ))}
+                    
+                    {/* Add the new product details route */}
+                    <Route 
+                      path="/products/:id" 
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ProductDetails />
+                        </motion.div>
+                      } 
+                    />
                     
                     <Route 
                       path="*" 
