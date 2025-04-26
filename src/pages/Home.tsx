@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { FeaturedAthletes } from "@/components/sections/featured-athletes";
@@ -11,7 +10,7 @@ import { SpotlightsSection } from "@/components/sections/spotlights-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
-// Correctly reference the SCSS file using alias
+import { SportsPicker } from "@/components/sections/sports-picker";
 import '@/styles/main.scss';
 
 export default function Home() {
@@ -19,11 +18,9 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
-    // Check if user dismissed login prompt this session
     const hasSeenPrompt = sessionStorage.getItem("loginPromptDismissed");
     
     if (!isLoggedIn && !hasSeenPrompt) {
-      // Show login prompt after a short delay
       const timer = setTimeout(() => {
         setShowLoginPrompt(true);
       }, 1500);
@@ -34,7 +31,6 @@ export default function Home() {
   
   const handleDismissLoginPrompt = () => {
     setShowLoginPrompt(false);
-    // Remember that user dismissed the prompt for this session
     sessionStorage.setItem("loginPromptDismissed", "true");
   };
 
@@ -44,6 +40,7 @@ export default function Home() {
         <div className="content-section">
           <FeaturedAthletes />
           <PrimaryActions />
+          <SportsPicker />
           <PopularGrounds />
           <UpcomingTournaments />
           <StatsSection />
