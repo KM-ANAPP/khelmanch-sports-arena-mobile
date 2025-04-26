@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { useLoginForm } from "@/hooks/useLoginForm";
+import { RecaptchaContainer } from "@/components/auth/RecaptchaContainer";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -153,6 +155,7 @@ export default function Login() {
           </CardFooter>
         </Card>
       </motion.div>
+      <RecaptchaContainer />
     </div>
   );
 }
