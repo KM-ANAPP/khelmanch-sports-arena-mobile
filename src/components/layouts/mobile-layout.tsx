@@ -20,17 +20,17 @@ export function MobileLayout({ children, isLoggedIn, title, requireAuth }: Mobil
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="content pt-16 pb-16"
+        className="content pt-20 pb-20 px-4 md:px-6"
       >
         {title && (
-          <div className="px-4 py-4">
-            <h1 className="text-2xl font-bold">{title}</h1>
+          <div className="py-6">
+            <h1 className="text-3xl font-bold tracking-tight text-balance bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{title}</h1>
           </div>
         )}
         {children}
       </motion.main>
 
-      <nav className="bottom-nav">
+      <nav className="bottom-nav glass-morphism">
         <BottomNavigation />
       </nav>
     </div>

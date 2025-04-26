@@ -106,19 +106,27 @@
     text-wrap: balance;
   }
   
+  .interactive-hover {
+    @apply transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+  
   .text-gradient {
     @apply bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent;
   }
 
   .glass-card {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg;
+    @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg hover:shadow-xl transition-all duration-300;
   }
   
   .card-gradient {
     @apply bg-gradient-to-br from-card via-card/95 to-muted/50;
   }
   
-  .text-gradient {
-    @apply bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent;
+  .section-title {
+    @apply text-2xl font-semibold tracking-tight text-balance;
+  }
+  
+  .interactive-underline {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-secondary after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100;
   }
 }

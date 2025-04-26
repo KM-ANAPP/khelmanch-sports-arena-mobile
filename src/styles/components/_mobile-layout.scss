@@ -9,17 +9,12 @@
     top: 0;
     width: 100%;
     height: 64px;
-    background-color: rgba($background, 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba($border, 0.3);
-    padding: 0 $spacing-unit * 4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    @extend .glass-morphism;
     z-index: 50;
 
     a {
       color: $foreground;
+      @apply transition-colors duration-200;
       
       &:hover {
         color: rgba($foreground, 0.8);
@@ -36,6 +31,13 @@
     padding-top: 64px;
     padding-bottom: 64px;
     min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    @media (min-width: 768px) {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
   .bottom-nav {
@@ -43,15 +45,15 @@
     bottom: 0;
     width: 100%;
     height: 64px;
-    background-color: rgba($background, 0.8);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba($border, 0.3);
+    @extend .glass-morphism;
 
     nav {
       display: flex;
       justify-content: space-around;
       align-items: center;
       height: 100%;
+      max-width: 428px;
+      margin: 0 auto;
 
       a {
         display: flex;
@@ -61,7 +63,7 @@
         flex: 1;
         height: 100%;
         color: $muted-foreground;
-        transition: color 0.2s;
+        @apply transition-all duration-200;
 
         &:hover, &.active {
           color: $secondary;
@@ -71,15 +73,17 @@
           font-size: 0.75rem;
           margin-top: 0.25rem;
           font-weight: 500;
+          @apply transition-transform duration-200;
         }
 
         .icon-container {
           position: relative;
           padding: $spacing-unit * 2;
           border-radius: 9999px;
+          @apply transition-all duration-200;
           
           &.active {
-            background-color: rgba($secondary, 0.1);
+            @apply bg-secondary/10;
             
             &:after {
               content: '';
@@ -89,8 +93,7 @@
               transform: translateX(-50%);
               width: $spacing-unit;
               height: $spacing-unit;
-              background-color: $secondary;
-              border-radius: 50%;
+              @apply bg-secondary rounded-full transition-transform duration-200;
             }
           }
         }
