@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -109,5 +108,17 @@
   
   .text-gradient {
     @apply bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-br from-card via-card/95 to-muted/50;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent;
   }
 }
