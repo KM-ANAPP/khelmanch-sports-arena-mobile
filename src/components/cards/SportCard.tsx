@@ -1,5 +1,7 @@
 
 import { Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface SportCardProps {
   image: string;
@@ -20,35 +22,34 @@ export function SportCard({
   sport,
   rating,
   price,
+  className
 }: SportCardProps) {
   return (
-    <div className="flex bg-[#1A1A1A] rounded-2xl p-2.5 gap-5">
-      <img 
-        src={image} 
-        alt={title} 
-        className="w-[77px] h-[94px] rounded-lg object-cover"
-      />
-      <div className="flex-1 flex flex-col gap-2.5 min-w-0">
-        <div>
-          <h3 className="text-white text-lg font-semibold truncate">{title}</h3>
-          <p className="text-white/60 text-xs mt-1">{distance} | {location}</p>
-        </div>
-        
-        <div className="h-px bg-[#2F2F2F]" />
-        
-        <div className="flex items-center justify-between">
-          <span className="px-3 py-1 bg-[#101010] text-white rounded-full text-xs">
-            {sport}
-          </span>
-          <div className="flex items-center gap-1 px-2 py-1 bg-[#101010] rounded-full">
-            <Star className="w-5 h-5 text-yellow-400 fill-current" />
-            <span className="text-white text-xs">{rating}</span>
-          </div>
-          <div className="flex items-center gap-1 px-2.5 py-1 bg-[#101010] rounded-full">
-            <span className="text-white text-xs">₹{price}/hr</span>
-          </div>
-        </div>
+    <Card className={cn("overflow-hidden", className)}>
+      <div className="relative h-48">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
       </div>
-    </div>
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <h3 className="font-semibold text-lg line-clamp-1">{title}</h3>
+          <p className="text-sm text-muted-foreground">
+            {distance} | {location}
+          </p>
+          <div className="h-px bg-border" />
+          <div className="flex items-center justify-between">
+            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+              {sport}
+            </span>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+              <span className="text-sm font-medium">{rating}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">₹{price}/hr</span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
