@@ -24,6 +24,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+// Utility classes
+.glass-morphism {
+  @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg;
+}
+
 // Components
 @import 'components/home';
 @import 'components/mobile-layout';
