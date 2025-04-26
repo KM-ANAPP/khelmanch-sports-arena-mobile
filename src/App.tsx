@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 // Services
 import notificationService from "./utils/notifications";
@@ -60,80 +61,20 @@ const App = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          {showSplash ? (
-            <SplashScreen onComplete={handleSplashComplete} />
-          ) : (
-            <BrowserRouter>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route 
-                    path="/" 
-                    element={
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Navigate to="/onboarding" replace />
-                      </motion.div>
-                    } 
-                  />
-                  
-                  <Route 
-                    path="/onboarding" 
-                    element={
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Onboarding />
-                      </motion.div>
-                    } 
-                  />
-                  
-                  <Route 
-                    path="/login" 
-                    element={
-                      <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Login />
-                      </motion.div>
-                    } 
-                  />
-                  
-                  {[
-                    { path: "/register", element: <Register /> },
-                    { path: "/home", element: <Home /> },
-                    { path: "/tournaments", element: <Tournaments /> },
-                    { path: "/tournaments/:id", element: <TournamentDetails /> },
-                    { path: "/booking", element: <Booking /> },
-                    { path: "/booking/:id", element: <GroundDetails /> },
-                    { path: "/profile", element: <Profile /> },
-                    { path: "/checkout", element: <Checkout /> },
-                    { path: "/payment-success", element: <PaymentSuccess /> },
-                    { path: "/settings", element: <Settings /> },
-                    { path: "/messages", element: <Messages /> },
-                    { path: "/community", element: <Community /> },
-                    { path: "/my-bookings", element: <MyBookings /> },
-                    { path: "/my-tickets", element: <MyBookings /> },
-                    { path: "/my-teams", element: <MyTeams /> },
-                    { path: "/index", element: <Index /> },
-                  ].map(({ path, element }) => (
-                    <Route
-                      key={path}
-                      path={path}
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            {showSplash ? (
+              <SplashScreen onComplete={handleSplashComplete} />
+            ) : (
+              <BrowserRouter>
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route 
+                      path="/" 
                       element={
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
@@ -141,32 +82,94 @@ const App = () => {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {element}
+                          <Navigate to="/onboarding" replace />
                         </motion.div>
-                      }
+                      } 
                     />
-                  ))}
-                  
-                  <Route 
-                    path="*" 
-                    element={
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <NotFound />
-                      </motion.div>
-                    } 
-                  />
-                </Routes>
-              </AnimatePresence>
-              <ChatbotSupport />
-            </BrowserRouter>
-          )}
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+                    
+                    <Route 
+                      path="/onboarding" 
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <Onboarding />
+                        </motion.div>
+                      } 
+                    />
+                    
+                    <Route 
+                      path="/login" 
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <Login />
+                        </motion.div>
+                      } 
+                    />
+                    
+                    {[
+                      { path: "/register", element: <Register /> },
+                      { path: "/home", element: <Home /> },
+                      { path: "/tournaments", element: <Tournaments /> },
+                      { path: "/tournaments/:id", element: <TournamentDetails /> },
+                      { path: "/booking", element: <Booking /> },
+                      { path: "/booking/:id", element: <GroundDetails /> },
+                      { path: "/profile", element: <Profile /> },
+                      { path: "/checkout", element: <Checkout /> },
+                      { path: "/payment-success", element: <PaymentSuccess /> },
+                      { path: "/settings", element: <Settings /> },
+                      { path: "/messages", element: <Messages /> },
+                      { path: "/community", element: <Community /> },
+                      { path: "/my-bookings", element: <MyBookings /> },
+                      { path: "/my-tickets", element: <MyBookings /> },
+                      { path: "/my-teams", element: <MyTeams /> },
+                      { path: "/index", element: <Index /> },
+                    ].map(({ path, element }) => (
+                      <Route
+                        key={path}
+                        path={path}
+                        element={
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {element}
+                          </motion.div>
+                        }
+                      />
+                    ))}
+                    
+                    <Route 
+                      path="*" 
+                      element={
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          <NotFound />
+                        </motion.div>
+                      } 
+                    />
+                  </Routes>
+                </AnimatePresence>
+                <ChatbotSupport />
+              </BrowserRouter>
+            )}
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

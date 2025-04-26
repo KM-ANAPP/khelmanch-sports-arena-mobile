@@ -1,4 +1,5 @@
 
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,8 +71,9 @@ export default function Profile() {
     <MobileLayout isLoggedIn={isAuthenticated}>
       <div className="p-4 space-y-6">
         <Card>
-          <CardHeader className="pb-4">
+          <CardHeader className="pb-4 flex justify-between items-center">
             <CardTitle className="text-xl">My Profile</CardTitle>
+            <ThemeToggle />
           </CardHeader>
           <CardContent className="space-y-6">
             <ProfileHeader 
