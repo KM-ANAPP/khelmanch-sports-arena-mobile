@@ -1,7 +1,8 @@
 
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
-import '../../styles/main.scss';
+// Correctly reference the SCSS file from component's location
+import '@/styles/main.scss';
 
 interface MobileLayoutProps {
   children: React.ReactNode;

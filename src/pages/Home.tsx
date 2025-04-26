@@ -11,7 +11,8 @@ import { SpotlightsSection } from "@/components/sections/spotlights-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
-import '../../styles/main.scss';
+// Correctly reference the SCSS file using alias
+import '@/styles/main.scss';
 
 export default function Home() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
