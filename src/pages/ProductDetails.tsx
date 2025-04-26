@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { TournamentHeader } from "@/components/tournaments/TournamentHeader";
 import { TournamentTabs } from "@/components/tournaments/TournamentTabs";
 import { useState } from 'react';
+import { BracketData } from '@/components/tournaments/TournamentBracket';
 
 interface WordPressProduct {
   id: number;
@@ -78,6 +79,12 @@ export default function ProductDetails() {
     ]
   };
 
+  // Create an empty bracket data structure instead of using null
+  const emptyBracketData: BracketData = {
+    rounds: 0,
+    matches: []
+  };
+
   const handleRegisterClick = () => {
     // Handle registration
     console.log("Register clicked");
@@ -101,7 +108,7 @@ export default function ProductDetails() {
       <TournamentTabs
         tournament={mockTabsData}
         matchesData={[]}
-        bracketData={null}
+        bracketData={emptyBracketData}
         onMatchClick={() => {}}
       />
     </MobileLayout>
