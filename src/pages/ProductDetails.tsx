@@ -40,6 +40,7 @@ export default function ProductDetails() {
   if (error) return <div className="p-4">Error loading product</div>;
   if (!product) return null;
 
+  // Header data for TournamentHeader component
   const mockTournamentData = {
     image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55",
     sport: "Sports Venue",
@@ -59,6 +60,21 @@ export default function ProductDetails() {
     ticketTypes: [
       { id: 1, name: "1 Hour Slot", price: 500, description: "Basic slot booking" },
       { id: 2, name: "2 Hour Slot", price: 900, description: "Extended slot booking" }
+    ]
+  };
+
+  // Tab data for TournamentTabs component
+  const mockTabsData = {
+    address: product.acf.venue_address,
+    mapUrl: "https://maps.google.com",
+    prizes: ["Professional equipment", "Coached sessions available", "Regular tournaments"],
+    organizer: "Khelmanch Sports",
+    organizerContact: "+91 9876543210",
+    rules: [
+      "Prior booking required",
+      "Follow venue guidelines",
+      "Maintain cleanliness",
+      "Respect other players"
     ]
   };
 
@@ -83,7 +99,7 @@ export default function ProductDetails() {
       />
       
       <TournamentTabs
-        tournament={mockTournamentData}
+        tournament={mockTabsData}
         matchesData={[]}
         bracketData={null}
         onMatchClick={() => {}}
