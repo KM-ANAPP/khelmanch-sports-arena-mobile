@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Trophy, Medal, Basketball } from "lucide-react";
+import { Loader2, Trophy, Medal } from "lucide-react";
 
 interface ModernSplashScreenProps {
   variant: 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass';
@@ -116,7 +115,7 @@ export function ModernSplashScreen({ variant, onComplete }: ModernSplashScreenPr
                         ease: "easeInOut",
                       }}
                     >
-                      <Basketball className="w-8 h-8 text-white/80" />
+                      <Trophy className="w-8 h-8 text-white/80 rotate-12" />
                     </motion.div>
                   </motion.div>
                 </>
