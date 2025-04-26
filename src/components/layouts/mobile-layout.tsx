@@ -1,14 +1,13 @@
 
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
-// Correctly reference the SCSS file from component's location
 import '@/styles/main.scss';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
   isLoggedIn: boolean;
-  title?: string;  // Optional title property
-  requireAuth?: boolean; // Optional requireAuth property
+  title?: string;
+  requireAuth?: boolean;
 }
 
 export function MobileLayout({ children, isLoggedIn, title, requireAuth }: MobileLayoutProps) {

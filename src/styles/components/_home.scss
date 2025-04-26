@@ -14,20 +14,47 @@
   }
 
   .primary-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: $spacing-unit * 4;
     margin: $spacing-unit * 6 0;
 
-    .action-button {
-      flex: 1;
+    a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 5rem;
       padding: $spacing-unit * 4;
-      background-color: $primary;
-      color: $primary-foreground;
       border-radius: $radius;
       transition: transform 0.2s;
 
+      &:first-child {
+        background-color: $accent;
+        color: $accent-foreground;
+
+        &:hover {
+          background-color: rgba($accent, 0.9);
+        }
+      }
+
+      &:last-child {
+        background-color: $secondary;
+        color: $secondary-foreground;
+
+        &:hover {
+          background-color: rgba($secondary, 0.9);
+        }
+      }
+
       &:hover {
         transform: scale(1.02);
+      }
+
+      span {
+        margin-top: $spacing-unit * 2;
+        font-size: 1rem;
+        font-weight: 600;
       }
     }
   }
@@ -37,5 +64,15 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: $spacing-unit * 4;
+  }
+
+  .stats-section, .partners-section, .spotlights-section, .contact-section {
+    padding: $spacing-unit * 8 0;
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: $spacing-unit * 4;
+    }
   }
 }
