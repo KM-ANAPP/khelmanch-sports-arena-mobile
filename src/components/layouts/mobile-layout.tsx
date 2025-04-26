@@ -1,38 +1,27 @@
 
-import { ReactNode } from "react";
-import { AppHeader } from "../ui/app-header";
-import { BottomNavigation } from "../ui/bottom-navigation";
-import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
+import { AppHeader } from "@/components/ui/app-header";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import '../styles/main.scss';
 
 interface MobileLayoutProps {
-  children: ReactNode;
-  title?: string;
-  isLoggedIn?: boolean;
-  hideBottom?: boolean;
-  requireAuth?: boolean;
+  children: React.ReactNode;
+  isLoggedIn: boolean;
 }
 
-export function MobileLayout({ 
-  children, 
-  isLoggedIn, 
-  hideBottom = false,
-  requireAuth = false
-}: MobileLayoutProps) {
-  const { isAuthenticated } = useAuth();
-  
-  // If the page requires authentication and user is not authenticated, redirect to login
-  if (requireAuth && !isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
+export function MobileLayout({ children, isLoggedIn }: MobileLayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <AppHeader isLoggedIn={isLoggedIn || isAuthenticated} />
-      <main className="flex-1 pt-14 pb-16 overflow-auto">
+    <div className="mobile-layout">
+      <header className="header">
+        <AppHeader isLoggedIn={isLoggedIn} />
+      </header>
+
+      <main className="content">
         {children}
       </main>
-      {!hideBottom && <BottomNavigation />}
+
+      <nav className="bottom-nav">
+        <BottomNavigation />
+      </nav>
     </div>
   );
 }

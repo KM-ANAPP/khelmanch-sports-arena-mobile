@@ -1,0 +1,29 @@
+
+// Base styles
+@import 'base/variables';
+@import 'base/reset';
+
+// Components
+@import 'components/home';
+@import 'components/mobile-layout';
+
+// Mixins
+@mixin page-container {
+  width: 100%;
+  max-width: 428px;
+  margin: 0 auto;
+  padding: $spacing-unit * 4;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card {
+  background-color: $card;
+  border-radius: $radius;
+  padding: $spacing-unit * 4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

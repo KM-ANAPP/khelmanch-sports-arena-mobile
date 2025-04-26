@@ -11,6 +11,7 @@ import { SpotlightsSection } from "@/components/sections/spotlights-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
+import '../styles/main.scss';
 
 export default function Home() {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -38,24 +39,26 @@ export default function Home() {
 
   return (
     <MobileLayout isLoggedIn={isLoggedIn}>
-      <div className="p-4 space-y-6">
-        <FeaturedAthletes />
-        <PrimaryActions />
-        <PopularGrounds />
-        <UpcomingTournaments />
-        <StatsSection />
-        <PartnersSection />
-        <SpotlightsSection />
-        <HelpSection />
-        <ContactSection />
+      <div className="home-page">
+        <div className="content-section">
+          <FeaturedAthletes />
+          <PrimaryActions />
+          <PopularGrounds />
+          <UpcomingTournaments />
+          <StatsSection />
+          <PartnersSection />
+          <SpotlightsSection />
+          <HelpSection />
+          <ContactSection />
+        </div>
+        
+        <LoginBottomSheet 
+          open={showLoginPrompt} 
+          onDismiss={handleDismissLoginPrompt}
+          onLogin={() => setIsLoggedIn(true)}
+          inSplashScreen={false}
+        />
       </div>
-      
-      <LoginBottomSheet 
-        open={showLoginPrompt} 
-        onDismiss={handleDismissLoginPrompt}
-        onLogin={() => setIsLoggedIn(true)}
-        inSplashScreen={false}
-      />
     </MobileLayout>
   );
 }
