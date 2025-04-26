@@ -94,8 +94,7 @@ export function OnboardingSlide({
             key={index}
             className={cn(
               "w-2 h-2 rounded-full",
-              currentIndex === index ? "bg-primary" : "bg
--muted"
+              currentIndex === index ? "bg-primary" : "bg-muted"
             )}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
