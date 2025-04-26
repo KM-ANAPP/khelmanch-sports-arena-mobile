@@ -6,9 +6,11 @@ import '../styles/main.scss';
 interface MobileLayoutProps {
   children: React.ReactNode;
   isLoggedIn: boolean;
+  title?: string;  // Optional title property
+  requireAuth?: boolean; // Optional requireAuth property
 }
 
-export function MobileLayout({ children, isLoggedIn }: MobileLayoutProps) {
+export function MobileLayout({ children, isLoggedIn, title, requireAuth }: MobileLayoutProps) {
   return (
     <div className="mobile-layout">
       <header className="header">

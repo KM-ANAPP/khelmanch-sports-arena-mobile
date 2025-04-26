@@ -3,10 +3,6 @@
 @import 'base/variables';
 @import 'base/reset';
 
-// Components
-@import 'components/home';
-@import 'components/mobile-layout';
-
 // Mixins
 @mixin page-container {
   width: 100%;
@@ -27,3 +23,7 @@
   padding: $spacing-unit * 4;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+// Components
+@import 'components/home';
+@import 'components/mobile-layout';
