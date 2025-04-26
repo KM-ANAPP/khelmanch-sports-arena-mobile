@@ -29,21 +29,18 @@ export function OnboardingSlide({
       exit={{ opacity: 0 }}
       className="relative min-h-screen bg-background text-foreground"
     >
-      {/* Status Bar Space */}
-      <div className="h-14 bg-background" />
-
       {/* Skip Button */}
       <motion.button
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
         onClick={onSkip}
-        className="absolute top-14 right-6 text-primary font-bold z-10"
+        className="absolute top-14 right-6 text-primary font-semibold z-10"
       >
         Skip
       </motion.button>
 
-      {/* Images Section */}
+      {/* Images Section with Overlap Effect */}
       <div className="relative h-[40vh] w-full overflow-hidden">
         <motion.div 
           className="absolute inset-0 flex justify-center"
@@ -97,7 +94,8 @@ export function OnboardingSlide({
             key={index}
             className={cn(
               "w-2 h-2 rounded-full",
-              currentIndex === index ? "bg-primary" : "bg-muted"
+              currentIndex === index ? "bg-primary" : "bg
+-muted"
             )}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -117,7 +115,7 @@ export function OnboardingSlide({
           className="w-full" 
           onClick={onNext}
         >
-          Next
+          {currentIndex === totalSlides - 1 ? "Get Started" : "Next"}
         </Button>
       </motion.div>
     </motion.div>
