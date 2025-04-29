@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Trophy, Medal, Basketball } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface ModernSplashScreenProps {
   variant: 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass';
@@ -29,7 +30,7 @@ export function ModernSplashScreen({ variant, onComplete }: ModernSplashScreenPr
     gradient: "bg-gradient-to-br from-primary via-secondary to-accent",
     particle: "bg-[#1a1a1c]",
     morphing: "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500",
-    sports: "bg-gradient-to-br from-[#0EA5E9] via-[#1EAEDB] to-[#33C3F0]",
+    sports: "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800",
     glass: "bg-white/10 backdrop-blur-xl"
   };
 
@@ -42,13 +43,8 @@ export function ModernSplashScreen({ variant, onComplete }: ModernSplashScreenPr
       transition: { repeat: Infinity, duration: 2 }
     },
     sports: { 
-      scale: [0.9, 1.1, 0.9],
-      rotate: [0, 5, -5, 0],
-      transition: { 
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
+      y: [0, -10, 0],
+      transition: { repeat: Infinity, duration: 1.5 }
     },
     glass: {
       scale: [0.9, 1],
@@ -67,67 +63,58 @@ export function ModernSplashScreen({ variant, onComplete }: ModernSplashScreenPr
           exit={{ opacity: 0 }}
         >
           <div className="relative w-full max-w-md flex flex-col items-center">
-            {variant === 'sports' && (
-              <>
-                <motion.div
-                  className="absolute inset-0"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <motion.div
-                    className="absolute top-[-50px] left-[20%]"
-                    animate={{
-                      y: [0, -20, 0],
-                      rotate: [0, 360],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Trophy className="w-8 h-8 text-white/80" />
-                  </motion.div>
-                  <motion.div
-                    className="absolute top-[50%] right-[20%]"
-                    animate={{
-                      y: [0, 20, 0],
-                      rotate: [0, -360],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Medal className="w-8 h-8 text-white/80" />
-                  </motion.div>
-                  <motion.div
-                    className="absolute bottom-[-30px] left-[30%]"
-                    animate={{
-                      x: [0, 20, 0],
-                      y: [0, -10, 0],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Basketball className="w-8 h-8 text-white/80" />
-                  </motion.div>
-                </motion.div>
-              </>
-            )}
-
+            {/* Logo Container */}
             <motion.div
               className="relative mb-8"
               animate={logoVariants[variant]}
             >
+              {/* Particle Effects for particle variant */}
+              {variant === 'particle' && (
+                <div className="absolute inset-0">
+                  {[...Array(8)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-1 h-1 bg-white/30 rounded-full"
+                      animate={{
+                        x: Math.random() * 200 - 100,
+                        y: Math.random() * 200 - 100,
+                        scale: [0, 1, 0],
+                        opacity: [0, 1, 0],
+                      }}
+                      transition={{
+                        duration: Math.random() * 2 + 1,
+                        repeat: Infinity,
+                        repeatType: "loop",
+                      }}
+                      style={{
+                        left: `${50 + Math.random() * 20 - 10}%`,
+                        top: `${50 + Math.random() * 20 - 10}%`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Glass effect for glass variant */}
+              {variant === 'glass' && (
+                <motion.div
+                  className="absolute inset-0 bg-white/10 rounded-full blur-lg"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 0.2, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                />
+              )}
+
+              {/* Logo */}
               <div className={`relative z-10 rounded-full ${
-                variant === 'sports' ? 'bg-white/20 backdrop-blur-lg' : 'bg-background/5'
+                variant === 'glass' ? 'bg-white/10 backdrop-blur-xl' : 'bg-background/5'
               }`}>
-                <div className="w-24 h-24 p-2 rounded-full overflow-hidden">
+                <div className="w-20 h-20 p-1 rounded-full">
                   <img
                     src="/lovable-uploads/b593a4c0-9212-4029-a1ca-5e39bd91c535.png"
                     alt="Khelmanch Logo"
@@ -137,127 +124,66 @@ export function ModernSplashScreen({ variant, onComplete }: ModernSplashScreenPr
               </div>
             </motion.div>
 
-            {variant === 'sports' && (
-              <motion.div 
-                className="text-center mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+            {/* Title */}
+            <motion.div 
+              className="text-center mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <motion.h1 
+                className={`text-3xl font-bold mb-2 ${
+                  variant === 'glass' ? 'text-white' : 'text-accent'
+                }`}
               >
-                <motion.h1 
-                  className="text-4xl font-bold mb-2 text-white"
-                  animate={{
-                    scale: [1, 1.02, 1],
-                    transition: { duration: 2, repeat: Infinity }
-                  }}
-                >
-                  KHEL<span className="text-white/80">MANCH</span>
-                </motion.h1>
-                <motion.p 
-                  className="text-sm text-white/80"
-                  animate={{
-                    opacity: [0.7, 1, 0.7],
-                    transition: { duration: 3, repeat: Infinity }
-                  }}
-                >
-                  Your ultimate sports destination
-                </motion.p>
-              </motion.div>
-            )}
-
-            {variant === 'sports' && (
-              <>
-                <motion.div 
-                  className="w-64 h-2 bg-white/20 rounded-full overflow-hidden mb-4"
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: "16rem", opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <motion.div
-                    className="h-full bg-white rounded-full"
-                    initial={{ width: "0%" }}
-                    animate={{ 
-                      width: `${progress}%`,
-                      transition: { duration: 0.3 }
-                    }}
-                  />
-                </motion.div>
-
-                <motion.div 
-                  className="flex items-center text-sm text-white/80"
-                  animate={{ 
-                    opacity: [1, 0.7, 1],
-                    transition: {
-                      duration: 1.5,
-                      repeat: Infinity,
-                    }
-                  }}
-                >
-                  <Loader2 className="animate-spin mr-2 h-4 w-4 text-white" />
-                  <span>Loading your sports experience</span>
-                </motion.div>
-              </>
-            )}
-
-            {variant !== 'sports' && (
-              <motion.div 
-                className="text-center mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <motion.h1 
-                  className={`text-3xl font-bold mb-2 ${
-                    variant === 'glass' ? 'text-white' : 'text-accent'
-                  }`}
-                >
-                  KHEL<span className="opacity-80">MANCH</span>
-                </motion.h1>
-                <motion.p 
-                  className={`text-sm ${
-                    variant === 'glass' ? 'text-white/80' : 'text-accent/80'
-                  }`}
-                >
-                  Your ultimate sports destination
-                </motion.p>
-              </motion.div>
-
-              <motion.div 
-                className="w-64 h-1.5 bg-white/20 rounded-full overflow-hidden mb-4"
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "16rem", opacity: 1 }}
-                transition={{ delay: 0.8 }}
-              >
-                <motion.div
-                  className={`h-full rounded-full ${
-                    variant === 'glass' ? 'bg-white' : 'bg-accent'
-                  }`}
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${progress}%` }}
-                />
-              </motion.div>
-
-              <motion.div 
-                className={`flex items-center text-sm ${
+                KHEL<span className="opacity-80">MANCH</span>
+              </motion.h1>
+              <motion.p 
+                className={`text-sm ${
                   variant === 'glass' ? 'text-white/80' : 'text-accent/80'
                 }`}
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: [1, 0.5, 1],
-                  transition: {
-                    opacity: {
-                      duration: 1.5,
-                      repeat: Infinity,
-                    }
-                  }
-                }}
               >
-                <Loader2 className={`animate-spin mr-2 h-4 w-4 ${
-                  variant === 'glass' ? 'text-white' : 'text-accent'
-                }`} />
-                <span>Loading your experience</span>
-              </motion.div>
-            )}
+                Your ultimate sports destination
+              </motion.p>
+            </motion.div>
+
+            {/* Progress Bar */}
+            <motion.div 
+              className="w-64 h-1.5 bg-white/20 rounded-full overflow-hidden mb-4"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "16rem", opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <motion.div
+                className={`h-full rounded-full ${
+                  variant === 'glass' ? 'bg-white' : 'bg-accent'
+                }`}
+                initial={{ width: "0%" }}
+                animate={{ width: `${progress}%` }}
+              />
+            </motion.div>
+
+            {/* Loading Text */}
+            <motion.div 
+              className={`flex items-center text-sm ${
+                variant === 'glass' ? 'text-white/80' : 'text-accent/80'
+              }`}
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [1, 0.5, 1],
+                transition: {
+                  opacity: {
+                    duration: 1.5,
+                    repeat: Infinity,
+                  }
+                }
+              }}
+            >
+              <Loader2 className={`animate-spin mr-2 h-4 w-4 ${
+                variant === 'glass' ? 'text-white' : 'text-accent'
+              }`} />
+              <span>Loading your experience</span>
+            </motion.div>
           </div>
         </motion.div>
       )}
