@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Trophy } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import gsap from "gsap";
-import anime from "animejs/lib/anime.es.js";
+import anime from "animejs";
 
 interface SportsAnimatedSplashScreenProps {
   onComplete?: () => void;
