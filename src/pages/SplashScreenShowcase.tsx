@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 export default function SplashScreenShowcase() {
-  const [activeVariant, setActiveVariant] = useState<'animated' | 'sports' | 'gradient' | 'particle' | 'morphing' | 'glass'>('sports');
+  const [activeVariant, setActiveVariant] = useState<'animated' | 'sports' | 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass'>('sports');
   const [isPlaying, setIsPlaying] = useState(true);
 
   const variants = [
@@ -16,6 +16,7 @@ export default function SplashScreenShowcase() {
     { id: 'gradient', name: 'Minimalist Gradient' },
     { id: 'particle', name: 'Particle Animation' },
     { id: 'morphing', name: 'Morphing Shapes' },
+    { id: 'sports', name: 'Sports Dynamic' },
     { id: 'glass', name: 'Glass-morphism' },
   ] as const;
 
@@ -70,7 +71,7 @@ export default function SplashScreenShowcase() {
         <SportsAnimatedSplashScreen onComplete={handleComplete} />
       ) : isPlaying && (
         <ModernSplashScreen
-          variant={activeVariant as 'gradient' | 'particle' | 'morphing' | 'glass'}
+          variant={activeVariant as 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass'}
           onComplete={handleComplete}
         />
       )}
