@@ -2,15 +2,17 @@
 import { useState } from 'react';
 import { ModernSplashScreen } from '@/components/splash-screens/modern-splash-screen';
 import AnimatedSplashScreen from '@/components/animated-splash-screen';
+import SportsAnimatedSplashScreen from '@/components/sports-animated-splash-screen';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 export default function SplashScreenShowcase() {
-  const [activeVariant, setActiveVariant] = useState<'animated' | 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass'>('animated');
+  const [activeVariant, setActiveVariant] = useState<'animated' | 'sports' | 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass'>('sports');
   const [isPlaying, setIsPlaying] = useState(true);
 
   const variants = [
     { id: 'animated', name: 'Circular Animation' },
+    { id: 'sports', name: 'Sports Animation' },
     { id: 'gradient', name: 'Minimalist Gradient' },
     { id: 'particle', name: 'Particle Animation' },
     { id: 'morphing', name: 'Morphing Shapes' },
@@ -65,6 +67,8 @@ export default function SplashScreenShowcase() {
       {/* Active Splash Screen */}
       {isPlaying && activeVariant === 'animated' ? (
         <AnimatedSplashScreen onComplete={handleComplete} />
+      ) : isPlaying && activeVariant === 'sports' ? (
+        <SportsAnimatedSplashScreen onComplete={handleComplete} />
       ) : isPlaying && (
         <ModernSplashScreen
           variant={activeVariant as 'gradient' | 'particle' | 'morphing' | 'sports' | 'glass'}
