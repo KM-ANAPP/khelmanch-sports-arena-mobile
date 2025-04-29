@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import gsap from "gsap";
-import anime from "animejs/lib/anime.es.js";
+import anime from "animejs";
 
 interface SportsAnimatedSplashScreenProps {
   onComplete?: () => void;
@@ -258,7 +259,6 @@ export default function SportsAnimatedSplashScreen({ onComplete }: SportsAnimate
   };
 
   // Simplified SVG components for demonstration
-  // We're including simplified versions of the SVGs to demonstrate the concept
   const renderSportsSVGs = () => {
     return (
       <div className="sports-container absolute inset-0 w-full h-full z-0 overflow-hidden opacity-50">
