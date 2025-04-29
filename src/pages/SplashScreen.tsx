@@ -1,10 +1,10 @@
 
-import SportySplashScreen from "@/components/splash-screen";
+import AnimatedSplashScreen from "@/components/animated-splash-screen";
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  return <SportySplashScreen onComplete={onComplete} />;
+  return <AnimatedSplashScreen onComplete={onComplete} />;
 }
