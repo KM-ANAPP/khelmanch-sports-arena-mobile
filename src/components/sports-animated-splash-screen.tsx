@@ -1,12 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import gsap from "gsap";
-import * as animeLib from "animejs";
-
-// Get the default function from the anime library
-const anime = animeLib.default || animeLib;
+import anime from "animejs/lib/anime.es.js";
 
 interface SportsAnimatedSplashScreenProps {
   onComplete?: () => void;
