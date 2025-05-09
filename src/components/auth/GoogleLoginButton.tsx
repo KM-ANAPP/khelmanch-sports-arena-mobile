@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { auth } from "@/utils/firebase";
+import { loginWithGoogle } from "@/utils/wordpress-auth";
 
 export function GoogleLoginButton() {
   const navigate = useNavigate();
@@ -31,15 +32,38 @@ export function GoogleLoginButton() {
       // Sign in to Firebase with the credential
       await signInWithCredential(auth, credential);
       
-      // Handle app-specific login
-      await login({ email: result.user?.email || '' });
+      // Authenticate with WordPress using the Google email
+      if (result.user?.email) {
+        try {
+          // Call WordPress authentication with Google email
+          const wpAuthResult = await loginWithGoogle(result.user.email);
+          
+          // Handle app-specific login with the WordPress token
+          await login({ 
+            email: result.user.email,
+            username: wpAuthResult.user_nicename || result.user.displayName || '',
+            displayName: wpAuthResult.user_display_name || result.user.displayName || '',
+            userId: wpAuthResult.user_id?.toString() || ''
+          });
+          
+          toast({
+            title: "Login Successful",
+            description: "You have been successfully logged in with Google",
+          });
+          
+          navigate("/home");
+        } catch (wpError: any) {
+          console.error("WordPress Authentication Error:", wpError);
+          toast({
+            title: "WordPress Authentication Failed",
+            description: "Could not authenticate with WordPress. Please try another login method.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        throw new Error("No email provided from Google sign in");
+      }
       
-      toast({
-        title: "Login Successful",
-        description: "You have been successfully logged in with Google",
-      });
-      
-      navigate("/home");
     } catch (error: any) {
       console.error("Google Sign-In Error:", error);
       toast({

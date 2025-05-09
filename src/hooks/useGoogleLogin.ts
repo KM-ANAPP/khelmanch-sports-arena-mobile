@@ -1,12 +1,11 @@
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-
-// Define proper return type for login function
-interface LoginResult {
-  requiresOTP?: boolean;
-  success: boolean;
-}
+import { toast } from "@/hooks/use-toast";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { auth } from "@/utils/firebase";
+import { loginWithGoogle } from "@/utils/wordpress-auth";
 
 export const useGoogleLogin = () => {
   const navigate = useNavigate();
@@ -14,15 +13,54 @@ export const useGoogleLogin = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Cast the result to the expected interface
-      const result = await login({ email: "google@example.com" }) as LoginResult;
+      // Sign in with Google using Capacitor Firebase Authentication plugin
+      const result = await FirebaseAuthentication.signInWithGoogle();
       
-      if (result && !result.requiresOTP) {
-        navigate("/home");
+      if (!result.credential?.idToken) {
+        throw new Error("Failed to get ID token from Google sign in");
       }
-    } catch (error) {
-      // Error is already handled in the login function
+
+      // Create a credential with the token
+      const credential = GoogleAuthProvider.credential(result.credential.idToken);
+      
+      // Sign in to Firebase with the credential
+      await signInWithCredential(auth, credential);
+      
+      // Authenticate with WordPress using the Google email
+      if (result.user?.email) {
+        try {
+          // Call WordPress authentication with Google email
+          const wpAuthResult = await loginWithGoogle(result.user.email);
+          
+          // Handle app-specific login with the WordPress token
+          await login({ 
+            email: result.user.email,
+            username: wpAuthResult.user_nicename || result.user.displayName || '',
+            displayName: wpAuthResult.user_display_name || result.user.displayName || '',
+            userId: wpAuthResult.user_id?.toString() || ''
+          });
+          
+          toast({
+            title: "Login Successful",
+            description: "You have been successfully logged in with Google",
+          });
+          
+          navigate("/home");
+        } catch (wpError) {
+          console.error("WordPress Authentication Error:", wpError);
+          throw new Error("Could not authenticate with WordPress");
+        }
+      } else {
+        throw new Error("No email provided from Google sign in");
+      }
+      
+    } catch (error: any) {
       console.error("Google login error:", error);
+      toast({
+        title: "Login Failed",
+        description: error.message || "Could not sign in with Google",
+        variant: "destructive",
+      });
     }
   };
 
