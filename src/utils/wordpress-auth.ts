@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 const API_BASE_URL = "https://khelmanch.com/wp-json";
@@ -7,6 +6,8 @@ const JWT_VALIDATE_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/token/validate`;
 const USERS_ENDPOINT = `${API_BASE_URL}/wp/v2/users/me`;
 // Endpoint for Google authentication (you might need to create this custom endpoint)
 const GOOGLE_AUTH_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/google`;
+// Endpoint for Google registration (you might need to create this custom endpoint)
+const GOOGLE_REGISTER_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/google/register`;
 
 // We'll store the token in localStorage
 const TOKEN_STORAGE_KEY = "wp_jwt_auth_token";
@@ -124,9 +125,72 @@ export const fetchUserData = async () => {
   }
 };
 
-// This function authenticates a user with their Google email
+// New function to register a user with Google information
+export const registerWithGoogle = async (
+  email: string,
+  displayName?: string
+): Promise<JWTAuthResponse> => {
+  try {
+    console.log("Attempting to register Google user with WordPress:", email);
+    
+    // Generate a username from email (remove special characters and domain)
+    const username = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+    
+    // Generate a random password (this won't be used for logins since Google auth will be used)
+    const password = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+    
+    // First, try to use the custom Google register endpoint if it exists
+    try {
+      const registerResponse = await fetch(GOOGLE_REGISTER_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+          email,
+          username,
+          password,
+          display_name: displayName || username
+        })
+      });
+
+      if (registerResponse.ok) {
+        const data = await registerResponse.json();
+        
+        // Store the token
+        if (data.token) {
+          storeAuthToken(data.token);
+        }
+        
+        toast({
+          title: "Registration Successful",
+          description: "Your Google account has been registered with WordPress",
+        });
+        
+        return data as JWTAuthResponse;
+      } else {
+        const errorData = await registerResponse.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+    } catch (registerEndpointError: any) {
+      console.log("Custom Google register endpoint error:", registerEndpointError);
+      throw new Error("Failed to register with WordPress: " + registerEndpointError.message);
+    }
+  } catch (error: any) {
+    console.error("Google registration with WordPress error:", error);
+    toast({
+      title: "Registration Failed",
+      description: error.message || "Failed to register with WordPress using Google",
+      variant: "destructive"
+    });
+    throw error;
+  }
+};
+
+// Updated function to handle both login and registration
 export const loginWithGoogle = async (
-  email: string
+  email: string,
+  displayName?: string
 ): Promise<JWTAuthResponse> => {
   try {
     // First attempt: try to use the custom Google endpoint if it exists
@@ -139,6 +203,7 @@ export const loginWithGoogle = async (
         body: JSON.stringify({ email })
       });
 
+      // If login succeeds, return the data
       if (googleResponse.ok) {
         const data = await googleResponse.json();
         
@@ -148,9 +213,29 @@ export const loginWithGoogle = async (
         }
         
         return data as JWTAuthResponse;
+      } 
+      
+      // If we get a 404 error, it likely means the user doesn't exist
+      const errorData = await googleResponse.json();
+      if (googleResponse.status === 404 || errorData.code === "rest_user_invalid_email") {
+        console.log("User not found, attempting registration...");
+        // Try to register the user
+        return await registerWithGoogle(email, displayName);
       }
-    } catch (googleEndpointError) {
-      console.log("Custom Google endpoint not available, trying alternative approach");
+      
+      // Other errors
+      throw new Error(errorData.message || "Authentication failed");
+    } catch (googleEndpointError: any) {
+      if (googleEndpointError.message === "Failed to fetch") {
+        console.log("Custom Google endpoint not available, trying alternative approach");
+      } else {
+        // If we know it's a "user not found" error, try registration
+        if (googleEndpointError.message?.includes("not found") || 
+            googleEndpointError.message?.includes("invalid_email")) {
+          return await registerWithGoogle(email, displayName);
+        }
+        throw googleEndpointError;
+      }
     }
     
     // Alternative approach: Try to find user by email using WordPress REST API
@@ -161,7 +246,7 @@ export const loginWithGoogle = async (
     // In a real app, you would need a custom WordPress endpoint to handle Google auth
     toast({
       title: "Important Note",
-      description: "You need a custom WordPress endpoint to properly authenticate Google users. Currently using a fallback method.",
+      description: "You need a custom WordPress endpoint to properly authenticate and register Google users. Currently using a fallback method.",
       variant: "default" // Change from "warning" to "default" as "warning" isn't supported
     });
     
@@ -171,7 +256,7 @@ export const loginWithGoogle = async (
       token: "google-auth-token",  // This should be a real token in production
       user_email: email,
       user_nicename: email.split('@')[0],
-      user_display_name: email.split('@')[0]
+      user_display_name: displayName || email.split('@')[0]
     };
     
     // Store the token (in production, this would be a real WordPress JWT token)

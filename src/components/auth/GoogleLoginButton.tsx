@@ -35,8 +35,11 @@ export function GoogleLoginButton() {
       // Authenticate with WordPress using the Google email
       if (result.user?.email) {
         try {
-          // Call WordPress authentication with Google email
-          const wpAuthResult = await loginWithGoogle(result.user.email);
+          // Call WordPress authentication with Google email and display name
+          const wpAuthResult = await loginWithGoogle(
+            result.user.email,
+            result.user.displayName || undefined
+          );
           
           // Handle app-specific login with the WordPress token
           await login({ 
