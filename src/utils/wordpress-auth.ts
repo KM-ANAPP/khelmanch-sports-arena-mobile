@@ -241,9 +241,9 @@ export const loginWithPhone = async (phoneNumber: string): Promise<JWTAuthRespon
   try {
     console.log(`Starting phone authentication with WordPress: ${phoneNumber}`);
     
-    // Use the dynamic phone number in the payload
+    // Concatenate "91" with the phone number in the payload
     const payload = {
-      phone: phoneNumber
+      phone: "91" + phoneNumber
     };
 
     console.log("Sending request to WordPress phone auth endpoint:", payload);
