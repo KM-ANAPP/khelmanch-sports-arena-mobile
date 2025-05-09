@@ -69,17 +69,16 @@ export const usePhoneLogin = () => {
       const verified = await verifyOTP(otp);
       
       if (verified) {
-        // Format phone number with country code for WordPress
-        const formattedPhone = `91${phoneNumber}`;
-        
+        // Send phone number without additional country code prefix
+        // The phone number is already formatted with country code by Firebase
         try {
-          // Authenticate with WordPress
-          const wpAuthResult = await loginWithPhone(formattedPhone);
+          // Authenticate with WordPress - send only phoneNumber with 91 prefix
+          const wpAuthResult = await loginWithPhone(phoneNumber);
           
           // Set user data in local auth context
           await login({ 
-            phone: formattedPhone,
-            username: wpAuthResult.user_nicename || formattedPhone,
+            phone: phoneNumber,
+            username: wpAuthResult.user_nicename || phoneNumber,
             displayName: wpAuthResult.user_display_name || "User",
             userId: wpAuthResult.user_id?.toString() || ''
           });
