@@ -17,6 +17,49 @@ export const useGoogleLogin = () => {
     try {
       setIsLoading(true);
 
+      // Determine if we're in development preview environment from the URL
+      const isDevPreview = window.location.hostname.includes('id-preview--');
+      
+      if (isDevPreview) {
+        console.log("Development preview detected, using mock Google auth flow");
+        
+        // In development preview, we'll use mock data for testing
+        const mockUserData = {
+          email: "test.user@example.com",
+          displayName: "Test User"
+        };
+        
+        try {
+          // Call WordPress authentication with mock Google data
+          const wpAuthResult = await loginWithGoogle(
+            mockUserData.email,
+            mockUserData.displayName
+          );
+          
+          // Handle app-specific login with the WordPress token
+          await login({ 
+            email: mockUserData.email,
+            username: wpAuthResult.user_nicename || mockUserData.displayName,
+            displayName: wpAuthResult.user_display_name || mockUserData.displayName,
+            userId: wpAuthResult.user_id?.toString() || ''
+          });
+          
+          toast({
+            title: "Development Login",
+            description: "You have been logged in with test credentials",
+          });
+          
+          navigate("/home");
+        } catch (wpError) {
+          console.error("WordPress Authentication Error:", wpError);
+          throw new Error("Could not authenticate with WordPress");
+        }
+        
+        return;
+      }
+      
+      // For production environments, use regular Google sign-in flow
+      
       // Sign in with Google using Capacitor Firebase Authentication plugin
       const result = await FirebaseAuthentication.signInWithGoogle();
       
@@ -63,9 +106,19 @@ export const useGoogleLogin = () => {
       
     } catch (error: any) {
       console.error("Google login error:", error);
+      
+      // Provide more user-friendly error messages
+      let errorMessage = "Could not sign in with Google";
+      
+      if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = "This domain is not authorized for Google sign-in. Please use the app on a production domain.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Login Failed",
-        description: error.message || "Could not sign in with Google",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

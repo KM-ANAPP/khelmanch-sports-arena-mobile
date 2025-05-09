@@ -18,14 +18,23 @@ export const androidConfig = {
   appNickname: "Khelmanch Sports Arena",
 };
 
+// List of development domains for testing
+export const developmentDomains = [
+  "localhost",
+  "id-preview--aae24903-253a-4a22-a677-e35a688ad26c.lovable.app"
+];
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize auth with proper settings for development environments
-// For production, this should always be set to false
-auth.settings.appVerificationDisabledForTesting = false;
+// Enable app verification disabled for testing in development environments
+const isDevelopmentDomain = developmentDomains.some(domain => 
+  window.location.hostname.includes(domain)
+);
+auth.settings.appVerificationDisabledForTesting = isDevelopmentDomain;
 
 // Log the platform information
 console.log(`Running on ${Capacitor.getPlatform()} platform`);
 console.log(`Is native: ${Capacitor.isNativePlatform()}`);
-
+console.log(`Is development domain: ${isDevelopmentDomain}`);
