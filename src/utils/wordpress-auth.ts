@@ -241,12 +241,9 @@ export const loginWithPhone = async (phoneNumber: string): Promise<JWTAuthRespon
   try {
     console.log(`Starting phone authentication with WordPress: ${phoneNumber}`);
     
-    // Prepare the request payload with country code already included
-    // We add the country code here rather than sending it duplicated
-    const formattedPhone = `91${phoneNumber}`;
-    
+    // Send the phone number as is, without adding country code
     const payload = {
-      phone: formattedPhone
+      phone: phoneNumber
     };
 
     console.log("Sending request to WordPress phone auth endpoint:", payload);
