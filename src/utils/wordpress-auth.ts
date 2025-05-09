@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 const API_BASE_URL = "https://khelmanch.com/wp-json";
@@ -14,7 +13,7 @@ interface JWTAuthResponse {
   user_email: string;
   user_nicename: string;
   user_display_name: string;
-  user_id: number;
+  user_id?: number; // Make user_id optional since it might not be present
   success?: boolean;
 }
 
