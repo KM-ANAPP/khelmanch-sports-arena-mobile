@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -10,9 +11,12 @@ import { loginWithGoogle } from "@/utils/wordpress-auth";
 export const useGoogleLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     try {
+      setIsLoading(true);
+
       // Sign in with Google using Capacitor Firebase Authentication plugin
       const result = await FirebaseAuthentication.signInWithGoogle();
       
@@ -64,8 +68,10 @@ export const useGoogleLogin = () => {
         description: error.message || "Could not sign in with Google",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { handleGoogleLogin };
+  return { handleGoogleLogin, isLoading };
 };
