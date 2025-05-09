@@ -8,6 +8,8 @@ const USERS_ENDPOINT = `${API_BASE_URL}/wp/v2/users/me`;
 const GOOGLE_AUTH_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/google`;
 // Endpoint for Google registration (custom endpoint from the plugin)
 const GOOGLE_REGISTER_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/google/register`;
+// Endpoint for phone authentication (custom endpoint for the plugin)
+const PHONE_AUTH_ENDPOINT = `${API_BASE_URL}/jwt-auth/v1/phone`;
 
 // We'll store the token in localStorage
 const TOKEN_STORAGE_KEY = "wp_jwt_auth_token";
@@ -228,6 +230,55 @@ export const registerWithGoogle = async (
     toast({
       title: "Registration Failed",
       description: error.message || "Failed to register with WordPress using Google",
+      variant: "destructive"
+    });
+    throw error;
+  }
+};
+
+// New function to handle phone authentication with WordPress
+export const loginWithPhone = async (phoneNumber: string): Promise<JWTAuthResponse> => {
+  try {
+    console.log(`Starting phone authentication with WordPress: ${phoneNumber}`);
+    
+    // Prepare the request payload
+    const payload = {
+      phone: phoneNumber
+    };
+
+    console.log("Sending request to WordPress phone auth endpoint:", payload);
+    
+    // Send request to the custom phone endpoint
+    const response = await fetch(PHONE_AUTH_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    // Check if the request was successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WordPress phone auth error:", errorData);
+      throw new Error(errorData.message || "Authentication failed");
+    }
+    
+    // Parse the response
+    const data = await response.json();
+    console.log("WordPress phone auth success:", data);
+    
+    // Store the token
+    if (data.token) {
+      storeAuthToken(data.token);
+    }
+    
+    return data as JWTAuthResponse;
+  } catch (error: any) {
+    console.error("Phone login with WordPress error:", error);
+    toast({
+      title: "Login Failed",
+      description: error.message || "Failed to authenticate with WordPress using phone",
       variant: "destructive"
     });
     throw error;

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
+import { PhoneLoginTab } from "@/components/auth/PhoneLoginTab";
 import { useLoginForm } from "@/hooks/useLoginForm";
 import { useState } from "react";
 
@@ -67,11 +68,22 @@ export default function Login() {
               <BiometricLoginButton />
             </motion.div>
             
-            <Tabs defaultValue="wordpress" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+            <Tabs defaultValue="phone" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="phone">Phone</TabsTrigger>
                 <TabsTrigger value="wordpress">WordPress</TabsTrigger>
                 <TabsTrigger value="google">Google</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="phone">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <PhoneLoginTab />
+                </motion.div>
+              </TabsContent>
               
               <TabsContent value="wordpress" className="space-y-4">
                 <motion.div
@@ -165,6 +177,9 @@ export default function Login() {
           </CardFooter>
         </Card>
       </motion.div>
+      
+      {/* Invisible div for reCAPTCHA */}
+      <div id="recaptcha-container" className="invisible"></div>
     </div>
   );
 }
