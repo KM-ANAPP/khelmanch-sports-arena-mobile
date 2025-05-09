@@ -3,107 +3,72 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
-
-interface LoadingState {
-  isGeneratingOTP: boolean;
-  isVerifyingOTP: boolean;
-}
+import { loginWithCredentials } from "@/utils/wordpress-auth";
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { sendOTP, verifyOTP, isRecaptchaVerifying } = useFirebaseAuth();
   
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [is2FARequired, setIs2FARequired] = useState(false);
-  const [loadingState, setLoadingState] = useState<LoadingState>({
-    isGeneratingOTP: false,
-    isVerifyingOTP: false
-  });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   
-  const handleSendOTP = async () => {
-    if (phoneNumber.length !== 10) {
+  const handleLoginWithCredentials = async () => {
+    if (!username || !password) {
       toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number",
+        title: "Missing Information",
+        description: "Please enter both username and password",
         variant: "destructive",
       });
       return;
     }
     
-    setLoadingState(prev => ({ ...prev, isGeneratingOTP: true }));
+    setIsLoggingIn(true);
     try {
-      console.log("Attempting to send OTP to", phoneNumber);
-      const success = await sendOTP(phoneNumber);
+      console.log("Attempting to log in with:", username);
+      const authResult = await loginWithCredentials(username, password);
       
-      if (success) {
-        setIs2FARequired(true);
-        setOtpSent(true);
-        console.log("OTP sent successfully");
-      } else {
-        console.log("Failed to send OTP");
-      }
-    } catch (error) {
-      console.error("Error in handleSendOTP:", error);
-    } finally {
-      setLoadingState(prev => ({ ...prev, isGeneratingOTP: false }));
-    }
-  };
-
-  const handleLoginWithOTP = async () => {
-    if (otp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setLoadingState(prev => ({ ...prev, isVerifyingOTP: true }));
-    try {
-      console.log("Verifying OTP:", otp);
-      const success = await verifyOTP(otp);
-      
-      if (success) {
-        console.log("OTP verified successfully");
-        // After Firebase verification, log in to your app
-        await login({ phone: phoneNumber });
+      if (authResult.token) {
+        console.log("Login successful");
+        // Update the app's auth context
+        await login({ 
+          // You can pass user details to your auth context
+          email: authResult.user_email,
+          username: authResult.user_nicename,
+          displayName: authResult.user_display_name,
+          userId: authResult.user_id.toString()
+        });
+        
+        toast({
+          title: "Login Successful",
+          description: `Welcome, ${authResult.user_display_name}!`,
+        });
+        
         navigate("/home");
       } else {
-        console.log("OTP verification failed");
+        console.log("Login failed");
+        toast({
+          title: "Login Failed",
+          description: "Invalid credentials",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error("Error in handleLoginWithOTP:", error);
+      console.error("Error in handleLoginWithCredentials:", error);
     } finally {
-      setLoadingState(prev => ({ ...prev, isVerifyingOTP: false }));
+      setIsLoggingIn(false);
     }
-  };
-
-  const retryOTP = async () => {
-    setOtp("");
-    setOtpSent(false);
-    // Wait a moment before allowing another attempt
-    setTimeout(() => {
-      handleSendOTP();
-    }, 1000);
   };
 
   return {
     phoneNumber,
     setPhoneNumber,
-    loadingState,
-    otpSent,
-    setOtpSent,
-    otp,
-    setOtp,
-    is2FARequired,
-    handleSendOTP,
-    handleLoginWithOTP,
-    retryOTP,
-    isRecaptchaVerifying
+    username,
+    setUsername,
+    password,
+    setPassword,
+    isLoggingIn,
+    handleLoginWithCredentials
   };
 };

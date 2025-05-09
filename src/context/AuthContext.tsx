@@ -1,10 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { auth } from '@/utils/firebase';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { toast } from '@/hooks/use-toast';
+import { 
+  getAuthToken, 
+  removeAuthToken, 
+  isAuthenticated as checkAuthentication,
+  fetchUserData 
+} from '@/utils/wordpress-auth';
 
 interface AuthContextType {
-  currentUser: User | null;
+  currentUser: UserProfile | null;
   userProfile: UserProfile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -18,8 +22,11 @@ interface AuthContextType {
 }
 
 interface UserLoginData {
+  username?: string;
   phone?: string;
   email?: string;
+  displayName?: string;
+  userId?: string;
 }
 
 interface UserRegisterData {
@@ -62,60 +69,78 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      
-      if (user) {
-        setIsAuthenticated(true);
-        // In a real app, fetch user profile from a database
-        // For demo, we'll use localStorage to mock this
-        const savedProfile = localStorage.getItem(`user_profile_${user.uid}`);
-        if (savedProfile) {
-          setUserProfile(JSON.parse(savedProfile));
+    const checkAuthStatus = async () => {
+      try {
+        const authenticated = await checkAuthentication();
+        
+        if (authenticated) {
+          try {
+            // Get user data from WordPress
+            const userData = await fetchUserData();
+            
+            const profile: UserProfile = {
+              id: userData.id.toString(),
+              name: userData.name || userData.username || 'User',
+              email: userData.email,
+              photoURL: userData.avatar_urls?.["96"] || undefined,
+              createdAt: Date.now()
+            };
+            
+            setCurrentUser(profile);
+            setUserProfile(profile);
+            setIsAuthenticated(true);
+            
+            // Save to local storage for persistence
+            localStorage.setItem(`user_profile_${profile.id}`, JSON.stringify(profile));
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            removeAuthToken();
+            setIsAuthenticated(false);
+          }
         } else {
-          // Create a basic profile if none exists
-          const newProfile: UserProfile = {
-            id: user.uid,
-            name: user.displayName || 'User',
-            phone: user.phoneNumber || undefined,
-            email: user.email || undefined,
-            photoURL: user.photoURL || undefined,
-            createdAt: Date.now()
-          };
-          
-          localStorage.setItem(`user_profile_${user.uid}`, JSON.stringify(newProfile));
-          setUserProfile(newProfile);
+          setIsAuthenticated(false);
+          setCurrentUser(null);
+          setUserProfile(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Auth check error:", error);
         setIsAuthenticated(false);
-        setUserProfile(null);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
-    });
-
-    return unsubscribe;
+    };
+    
+    checkAuthStatus();
   }, []);
 
   const login = async (userData: UserLoginData): Promise<{ requiresOTP?: boolean }> => {
     try {
-      // The actual Firebase authentication happens in useFirebaseAuth hook
-      // Here we just handle the post-authentication logic
+      // This function is mainly for post-authentication with WordPress JWT
+      // The actual authentication happens in wordpress-auth.ts
       
-      // This would typically fetch user data from a database
-      // For now, we'll just show a success message
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      });
-
-      // Return an object that might include requiresOTP flag
+      if (userData.userId) {
+        const profile: UserProfile = {
+          id: userData.userId,
+          name: userData.displayName || 'User',
+          email: userData.email,
+          phone: userData.phone,
+          createdAt: Date.now()
+        };
+        
+        setCurrentUser(profile);
+        setUserProfile(profile);
+        setIsAuthenticated(true);
+        
+        // Save to local storage for persistence
+        localStorage.setItem(`user_profile_${userData.userId}`, JSON.stringify(profile));
+      }
+      
       return { requiresOTP: false };
     } catch (error: any) {
       toast({
@@ -129,32 +154,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const register = async (userData: UserRegisterData): Promise<void> => {
     try {
-      // Normally we'd create a user in Firebase Auth here
-      // But for this demo, we assume the user is already authenticated via OTP
-      if (!currentUser) {
-        throw new Error("Authentication required before registration");
-      }
-      
-      // Create or update user profile
-      const profile: UserProfile = {
-        id: currentUser.uid,
-        name: userData.name,
-        phone: userData.phone || currentUser.phoneNumber || undefined,
-        email: userData.email || currentUser.email || undefined,
-        photoURL: currentUser.photoURL || undefined,
-        sports: userData.sports || [],
-        skillLevels: userData.skillLevels || {},
-        createdAt: Date.now()
-      };
-      
-      // Save to localStorage (in a real app, this would be a database operation)
-      localStorage.setItem(`user_profile_${currentUser.uid}`, JSON.stringify(profile));
-      setUserProfile(profile);
-      
+      // Registration would need to be implemented with a WordPress API
+      // This is a placeholder for future implementation
       toast({
-        title: "Registration Complete",
-        description: "Your account has been created successfully!",
+        title: "Registration Not Available",
+        description: "Please register on the website directly.",
+        variant: "destructive",
       });
+      throw new Error("Registration via the app is not implemented yet");
     } catch (error: any) {
       toast({
         title: "Registration Failed",
@@ -167,7 +174,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await signOut(auth);
+      // Remove the JWT token from storage
+      removeAuthToken();
+      
+      // Clear user state
+      setCurrentUser(null);
+      setUserProfile(null);
+      setIsAuthenticated(false);
+      
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out",
@@ -188,13 +202,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error("You must be logged in to update your profile");
       }
       
+      // In a real implementation, this would update the WordPress user profile
       const updatedProfile = {
         ...userProfile,
         ...data,
       };
       
-      // Save to localStorage (in a real app, this would be a database operation)
-      localStorage.setItem(`user_profile_${currentUser.uid}`, JSON.stringify(updatedProfile));
+      // Save locally for the demo
+      localStorage.setItem(`user_profile_${currentUser.id}`, JSON.stringify(updatedProfile));
       setUserProfile(updatedProfile);
       
       toast({
@@ -211,13 +226,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Add missing functions for 2FA
   const toggle2FA = async (enabled: boolean): Promise<boolean> => {
     try {
       // In a real app, this would update the user's 2FA settings in the database
       // For demo, we'll just use localStorage
       if (currentUser) {
-        localStorage.setItem(`2fa_enabled_${currentUser.uid}`, JSON.stringify(enabled));
+        localStorage.setItem(`2fa_enabled_${currentUser.id}`, JSON.stringify(enabled));
         return true;
       }
       return false;
@@ -232,7 +246,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // In a real app, this would check the user's 2FA settings in the database
       // For demo, we'll just use localStorage
       if (currentUser) {
-        const enabled = localStorage.getItem(`2fa_enabled_${currentUser.uid}`);
+        const enabled = localStorage.getItem(`2fa_enabled_${currentUser.id}`);
         return enabled ? JSON.parse(enabled) : false;
       }
       return false;

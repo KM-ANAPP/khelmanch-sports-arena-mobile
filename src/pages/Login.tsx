@@ -3,32 +3,29 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Shield, User, Lock } from "lucide-react";
+import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { PhoneLoginForm } from "@/components/auth/PhoneLoginForm";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { useLoginForm } from "@/hooks/useLoginForm";
-import { RecaptchaContainer } from "@/components/auth/RecaptchaContainer";
+import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
   const {
-    phoneNumber,
-    setPhoneNumber,
-    loadingState,
-    otpSent,
-    setOtpSent,
-    otp,
-    setOtp,
-    is2FARequired,
-    handleSendOTP,
-    handleLoginWithOTP,
-    retryOTP,
-    isRecaptchaVerifying
+    username,
+    setUsername,
+    password,
+    setPassword,
+    isLoggingIn,
+    handleLoginWithCredentials
   } = useLoginForm();
+  
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSkipLogin = () => {
     toast({
@@ -60,23 +57,6 @@ export default function Login() {
             <CardDescription className="text-center">
               Login to access all features
             </CardDescription>
-            
-            <AnimatePresence>
-              {is2FARequired && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                >
-                  <Alert className="bg-amber-50 border-amber-200">
-                    <Shield className="h-4 w-4 text-amber-500" />
-                    <AlertDescription className="text-amber-700">
-                      Two-factor authentication is enabled for your account
-                    </AlertDescription>
-                  </Alert>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </CardHeader>
           <CardContent className="space-y-4">
             <motion.div
@@ -87,43 +67,74 @@ export default function Login() {
               <BiometricLoginButton />
             </motion.div>
             
-            <Tabs defaultValue="phone" className="w-full">
+            <Tabs defaultValue="wordpress" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="phone">Phone</TabsTrigger>
+                <TabsTrigger value="wordpress">WordPress</TabsTrigger>
                 <TabsTrigger value="google">Google</TabsTrigger>
               </TabsList>
-              <AnimatePresence mode="wait">
-                <TabsContent value="phone" className="space-y-4">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                  >
-                    <PhoneLoginForm
-                      phoneNumber={phoneNumber}
-                      setPhoneNumber={setPhoneNumber}
-                      otpSent={otpSent}
-                      setOtpSent={setOtpSent}
-                      otp={otp}
-                      setOtp={setOtp}
-                      isGeneratingOTP={loadingState.isGeneratingOTP}
-                      handleSendOTP={handleSendOTP}
-                      handleLoginWithOTP={handleLoginWithOTP}
-                      retryOTP={retryOTP}
-                      isRecaptchaVerifying={isRecaptchaVerifying}
-                    />
-                  </motion.div>
-                </TabsContent>
-                <TabsContent value="google">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                  >
-                    <GoogleLoginButton />
-                  </motion.div>
-                </TabsContent>
-              </AnimatePresence>
+              
+              <TabsContent value="wordpress" className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <div className="relative">
+                        <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="username"
+                          placeholder="Enter your username"
+                          className="pl-8"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Enter your password"
+                          className="pl-8"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="w-full"
+                      onClick={handleLoginWithCredentials}
+                      disabled={isLoggingIn}
+                    >
+                      {isLoggingIn ? "Logging in..." : "Login"}
+                    </Button>
+                    
+                    <div className="text-center">
+                      <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                        Forgot password?
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="google">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <GoogleLoginButton />
+                </motion.div>
+              </TabsContent>
             </Tabs>
             
             <motion.div
@@ -154,7 +165,6 @@ export default function Login() {
           </CardFooter>
         </Card>
       </motion.div>
-      <RecaptchaContainer />
     </div>
   );
 }
