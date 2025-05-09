@@ -1,3 +1,4 @@
+
 import { toast } from "@/hooks/use-toast";
 
 const API_BASE_URL = "https://khelmanch.com/wp-json";
@@ -161,7 +162,7 @@ export const loginWithGoogle = async (
     toast({
       title: "Important Note",
       description: "You need a custom WordPress endpoint to properly authenticate Google users. Currently using a fallback method.",
-      variant: "warning"
+      variant: "default" // Change from "warning" to "default" as "warning" isn't supported
     });
     
     // Attempt to fetch users by email (requires admin privileges or custom endpoint)
