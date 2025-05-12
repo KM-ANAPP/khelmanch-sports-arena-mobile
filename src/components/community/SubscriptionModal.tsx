@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X } from "lucide-react";
 import { connectionLimitService } from "@/services/connectionLimitService";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface SubscriptionModalProps {
   open: boolean;
@@ -13,13 +14,24 @@ interface SubscriptionModalProps {
 }
 
 export function SubscriptionModal({ open, onClose }: SubscriptionModalProps) {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const handleSubscribe = () => {
-    // This would ideally integrate with a payment system
-    toast({
-      title: "Coming Soon!",
-      description: "Subscription functionality is coming soon. For now, you'll need to wait until your free connections reset.",
-    });
     onClose();
+    navigate("/checkout", {
+      state: {
+        orderDetails: {
+          amount: 19900, // ₹199 in paise
+          currency: "INR",
+          orderId: `subscription_${Date.now()}`,
+          description: "Khelmanch Premium Subscription - 1 Month",
+          type: "pass",
+          itemId: "premium-subscription",
+          itemName: "Khelmanch Premium"
+        }
+      }
+    });
   };
   
   return (

@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface TicketDialogProps {
   isOpen: boolean;
@@ -47,6 +49,8 @@ export const TicketDialog = ({
   ticketTypes
 }: TicketDialogProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -59,6 +63,45 @@ export const TicketDialog = ({
       setPhone(user.phone || '');
     }
   }, [user]);
+
+  const handleCheckout = () => {
+    // Find selected ticket type
+    const selectedTicket = ticketTypes.find(t => t.id === parseInt(selectedTicketType));
+    if (!selectedTicket) {
+      toast({ 
+        title: "Error", 
+        description: "Please select a ticket type" 
+      });
+      return;
+    }
+
+    const quantity = parseInt(ticketQuantity) || 1;
+    if (quantity < 1) {
+      toast({ 
+        title: "Error", 
+        description: "Please select a valid quantity" 
+      });
+      return;
+    }
+
+    // Close dialog
+    onOpenChange(false);
+    
+    // Navigate to checkout
+    navigate("/checkout", {
+      state: {
+        orderDetails: {
+          amount: selectedTicket.price * quantity,
+          currency: "INR",
+          orderId: `ticket_${selectedTicket.id}_${Date.now()}`,
+          description: `${quantity} x ${selectedTicket.name} - ${selectedTicket.description}`,
+          type: "tournament",
+          itemId: `ticket-${selectedTicket.id}`,
+          itemName: selectedTicket.name
+        }
+      }
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -125,7 +168,7 @@ export const TicketDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={onCheckout}>
+          <Button onClick={handleCheckout}>
             Proceed to Payment
           </Button>
         </DialogFooter>
