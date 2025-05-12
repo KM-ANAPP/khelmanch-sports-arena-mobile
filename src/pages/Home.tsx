@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { FeaturedAthletes } from "@/components/sections/featured-athletes";
@@ -11,6 +12,7 @@ import { ContactSection } from "@/components/sections/contact-section";
 import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
 import { SportsPicker } from "@/components/sections/sports-picker";
+import { KhelmanchPass } from "@/components/sections/khelmanch-pass";
 import '@/styles/main.scss';
 
 export default function Home() {
@@ -40,6 +42,7 @@ export default function Home() {
         <div className="content-section">
           <FeaturedAthletes />
           <PrimaryActions />
+          <KhelmanchPass isLoggedIn={isLoggedIn} />
           <SportsPicker />
           <PopularGrounds />
           <UpcomingTournaments />

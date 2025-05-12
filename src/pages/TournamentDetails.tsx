@@ -31,7 +31,32 @@ export default function TournamentDetails() {
   };
 
   const proceedToCheckout = () => {
-    navigate('/checkout');
+    if (!selectedTicketType) return;
+    
+    // Find selected ticket type
+    const ticketType = tournament.ticketTypes.find(
+      ticket => ticket.id === parseInt(selectedTicketType)
+    );
+    
+    if (!ticketType) return;
+    
+    const quantity = parseInt(ticketQuantity || "1");
+    const amount = ticketType.price * quantity;
+    
+    // Navigate to checkout with tournament details
+    navigate('/checkout', {
+      state: {
+        orderDetails: {
+          amount: amount * 100, // Convert to paise
+          currency: "INR",
+          orderId: `tournament_${id}_${Date.now()}`,
+          description: `${ticketType.name} for ${tournament.title} (${quantity} ticket${quantity > 1 ? 's' : ''})`,
+          type: "tournament",
+          itemId: `tournament_${id}`,
+          itemName: tournament.title
+        }
+      }
+    });
   };
 
   return (
