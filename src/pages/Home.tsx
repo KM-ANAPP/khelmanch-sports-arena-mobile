@@ -42,10 +42,10 @@ export default function Home() {
         <div className="content-section">
           <FeaturedAthletes />
           <PrimaryActions />
-          <KhelmanchPass isLoggedIn={isLoggedIn} />
           <SportsPicker />
           <PopularGrounds />
           <UpcomingTournaments />
+          <KhelmanchPass isLoggedIn={isLoggedIn} />
           <StatsSection />
           <PartnersSection />
           <SpotlightsSection />

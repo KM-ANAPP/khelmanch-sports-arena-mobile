@@ -92,7 +92,6 @@ export default function Checkout() {
   const handlePaymentSubmit = async () => {
     if (!orderDetails) {
       toast({
-        variant: "destructive",
         title: "Checkout Error",
         description: "No order details found. Please try again.",
       });
@@ -101,7 +100,6 @@ export default function Checkout() {
     
     if (!name || !email || !phone) {
       toast({
-        variant: "destructive",
         title: "Validation Error",
         description: "Please fill in all required fields.",
       });
@@ -124,7 +122,7 @@ export default function Checkout() {
         name,
         email,
         phone,
-        finalAmount, // Use the discounted amount
+        finalAmount,
         orderDetails.orderId,
         orderDetails.description,
         (response) => {
@@ -133,7 +131,12 @@ export default function Checkout() {
           
           // If this is a pass purchase, create the pass
           if (orderDetails?.type === 'pass') {
-            passService.purchasePass(response.razorpay_payment_id);
+            // Extract the pass type from the itemId
+            const passType = orderDetails.itemId.includes('-') 
+              ? orderDetails.itemId.split('-')[2] as 'basic' | 'standard' | 'premium' | 'ultimate'
+              : 'basic';
+              
+            passService.purchasePass(response.razorpay_payment_id, passType);
           } else if (hasAppliedPass && orderDetails?.type === 'tournament') {
             // Consume one use of the pass for tournament purchases
             passService.consumePass();
@@ -159,7 +162,6 @@ export default function Checkout() {
           const errorMessage = err.message || 'Payment failed. Please try again.';
           setError(errorMessage);
           toast({
-            variant: "destructive",
             title: "Payment Failed",
             description: errorMessage,
           });
@@ -170,7 +172,6 @@ export default function Checkout() {
       const errorMessage = err.message || 'Payment failed. Please try again.';
       setError(errorMessage);
       toast({
-        variant: "destructive",
         title: "Payment Error",
         description: errorMessage,
       });
