@@ -1,14 +1,15 @@
-
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/hooks/use-toast";
 import { User, MapPin, Calendar, Clock, Star, Search } from "lucide-react";
+import { connectionLimitService } from "@/services/connectionLimitService";
+import { SubscriptionModal } from "./SubscriptionModal";
 
 // Mock player data
 const mockPlayers = [
@@ -133,6 +134,15 @@ export default function PlayerMatchmaking() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSport, setSelectedSport] = useState<string>("all");
   const [selectedSkillLevel, setSelectedSkillLevel] = useState<string>("all");
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  
+  // Check for connection limit reset on component mount
+  useEffect(() => {
+    const resetTime = connectionLimitService.getResetTime();
+    if (resetTime && Date.now() >= resetTime) {
+      connectionLimitService.resetConnections();
+    }
+  }, []);
   
   const filteredPlayers = mockPlayers.filter(player => {
     const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,8 +155,16 @@ export default function PlayerMatchmaking() {
   
   const handleConnectPlayer = (playerId: string) => {
     const player = mockPlayers.find(p => p.id === playerId);
-    if (player) {
+    if (!player) return;
+
+    if (connectionLimitService.canMakeConnection()) {
+      connectionLimitService.recordConnection(playerId);
       toast(`Connection request sent to ${player.name}`);
+      
+      // Force a re-render to update the remaining connections count
+      setActiveTab(activeTab);
+    } else {
+      setShowSubscriptionModal(true);
     }
   };
   
@@ -166,6 +184,11 @@ export default function PlayerMatchmaking() {
 
   return (
     <div className="space-y-4">
+      <SubscriptionModal 
+        open={showSubscriptionModal} 
+        onClose={() => setShowSubscriptionModal(false)} 
+      />
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="matchmaking">Find Players</TabsTrigger>
@@ -174,6 +197,16 @@ export default function PlayerMatchmaking() {
         </TabsList>
         
         <TabsContent value="matchmaking" className="space-y-4">
+          {/* Limit display */}
+          <div className="flex justify-between items-center px-1">
+            <div className="text-sm text-muted-foreground">
+              Find players to connect with
+            </div>
+            <Badge variant="outline">
+              {connectionLimitService.getRemainingConnections()} connects left today
+            </Badge>
+          </div>
+          
           <div className="space-y-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
