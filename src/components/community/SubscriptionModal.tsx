@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,6 @@ export function SubscriptionModal({ open, onClose }: SubscriptionModalProps) {
         orderDetails: {
           amount: 19900, // ₹199 in paise
           currency: "INR",
-          orderId: `subscription_${Date.now()}`,
           description: "Khelmanch Premium Subscription - 1 Month",
           type: "pass",
           itemId: "premium-subscription",

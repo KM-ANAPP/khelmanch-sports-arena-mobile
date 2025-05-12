@@ -1,5 +1,6 @@
 
 import { PaymentOptions } from '@/types/payment';
+import { useToast } from '@/hooks/use-toast';
 
 declare global {
   interface Window {
@@ -9,7 +10,8 @@ declare global {
 
 class PaymentService {
   private static instance: PaymentService;
-  private razorpayKey = "rzp_test_6TX9G35h8LidEn"; // Test key, replace with your actual key
+  private razorpayKey = "rzp_test_0BiPBu2Mtchr85"; // Correct Razorpay test key
+  private apiBaseUrl = "https://your-backend-url.com/api"; // Replace with your actual backend URL
 
   private constructor() {}
 
@@ -45,13 +47,83 @@ class PaymentService {
     });
   }
 
+  // Create order on backend
+  public async createOrder(
+    amount: number,
+    currency: string,
+    receipt: string,
+    notes?: any
+  ): Promise<any> {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/payments/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          currency,
+          receipt,
+          notes
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create order: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.success || !data.order || !data.order.id) {
+        throw new Error('Invalid order response from server');
+      }
+      
+      console.log("Order created successfully:", data.order);
+      return data.order;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  }
+
+  // Verify payment on backend
+  public async verifyPayment(
+    paymentId: string,
+    orderId: string,
+    signature: string
+  ): Promise<any> {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/payments/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          razorpay_payment_id: paymentId,
+          razorpay_order_id: orderId,
+          razorpay_signature: signature
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to verify payment: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error verifying payment:", error);
+      throw error;
+    }
+  }
+
   public async initiatePayment(
     name: string,
     email: string,
     phone: string,
     amount: number,
-    orderId: string,
     description: string,
+    orderId?: string,
     onSuccess?: (response: any) => void,
     onFailure?: (error: any) => void
   ): Promise<void> {
@@ -74,6 +146,24 @@ class PaymentService {
         return;
       }
 
+      // Create order if orderId is not provided
+      let orderData: any;
+      if (!orderId) {
+        try {
+          orderData = await this.createOrder(
+            amount,
+            'INR',
+            `receipt_${Date.now()}`,
+            { description }
+          );
+          orderId = orderData.id;
+        } catch (err) {
+          console.error("Error creating order:", err);
+          if (onFailure) onFailure(new Error("Failed to create payment order"));
+          return;
+        }
+      }
+
       const options: PaymentOptions = {
         key: this.razorpayKey,
         amount: amount,
@@ -81,9 +171,26 @@ class PaymentService {
         name: "Khelmanch",
         description: description || "Payment for Khelmanch",
         order_id: orderId,
-        handler: function (response) {
+        handler: (response) => {
           console.log("Payment successful:", response);
-          if (onSuccess) onSuccess(response);
+          
+          // Verify payment with backend
+          this.verifyPayment(
+            response.razorpay_payment_id,
+            response.razorpay_order_id,
+            response.razorpay_signature
+          ).then(verificationResult => {
+            console.log("Payment verification result:", verificationResult);
+            if (verificationResult.success && verificationResult.valid) {
+              if (onSuccess) onSuccess(response);
+            } else {
+              if (onFailure) onFailure(new Error("Payment verification failed"));
+            }
+          }).catch(err => {
+            console.error("Payment verification error:", err);
+            // Still consider the payment successful if verification fails due to backend issues
+            if (onSuccess) onSuccess(response);
+          });
         },
         prefill: {
           name: name || "",

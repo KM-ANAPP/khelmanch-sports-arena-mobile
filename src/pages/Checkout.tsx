@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layouts/mobile-layout';
@@ -123,8 +122,8 @@ export default function Checkout() {
         email,
         phone,
         finalAmount,
-        orderDetails.orderId,
         orderDetails.description,
+        undefined, // Let the service create the order ID through backend
         (response) => {
           // Payment successful
           console.log("Payment successful:", response);
@@ -165,6 +164,7 @@ export default function Checkout() {
             title: "Payment Failed",
             description: errorMessage,
           });
+          setIsLoading(false);
         }
       );
     } catch (err: any) {
@@ -175,7 +175,6 @@ export default function Checkout() {
         title: "Payment Error",
         description: errorMessage,
       });
-    } finally {
       setIsLoading(false);
     }
   };
