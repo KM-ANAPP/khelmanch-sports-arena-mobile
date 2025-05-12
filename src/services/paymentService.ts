@@ -10,8 +10,11 @@ declare global {
 
 class PaymentService {
   private static instance: PaymentService;
-  private razorpayKey = "rzp_test_0BiPBu2Mtchr85"; // Correct Razorpay test key
-  private apiBaseUrl = "https://your-backend-url.com/api"; // Replace with your actual backend URL
+  private razorpayKey = "rzp_test_0BiPBu2Mtchr85"; // Razorpay test key
+  private apiBaseUrl = "http://localhost:5000/api"; // Local development URL
+  
+  // In production, uncomment and use your actual backend URL
+  // private apiBaseUrl = "https://your-backend-url.com/api"; 
 
   private constructor() {}
 
