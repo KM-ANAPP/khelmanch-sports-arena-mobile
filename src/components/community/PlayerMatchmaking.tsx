@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -159,7 +160,10 @@ export default function PlayerMatchmaking() {
 
     if (connectionLimitService.canMakeConnection()) {
       connectionLimitService.recordConnection(playerId);
-      toast(`Connection request sent to ${player.name}`);
+      toast({
+        title: "Connection Request Sent",
+        description: `Your connection request to ${player.name} has been sent.`
+      });
       
       // Force a re-render to update the remaining connections count
       setActiveTab(activeTab);
@@ -171,14 +175,20 @@ export default function PlayerMatchmaking() {
   const handleJoinMatch = (postId: string) => {
     const post = mockLookingForPlayers.find(p => p.id === postId);
     if (post) {
-      toast(`You joined ${post.userName}'s ${post.sport} match`);
+      toast({
+        title: "Match Joined",
+        description: `You joined ${post.userName}'s ${post.sport} match`
+      });
     }
   };
   
   const handleRegisterEvent = (eventId: string) => {
     const event = mockEvents.find(e => e.id === eventId);
     if (event) {
-      toast(`Registration initiated for ${event.title}`);
+      toast({
+        title: "Registration Started",
+        description: `Registration initiated for ${event.title}`
+      });
     }
   };
 
