@@ -48,8 +48,7 @@ export function AnimatedSportsSlide({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -300 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="relative min-h-screen text-white overflow-hidden"
-      style={{ backgroundColor: '#1E2539' }}
+      className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden"
     >
       {/* Animated background particles */}
       <div className="absolute inset-0">

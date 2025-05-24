@@ -22,22 +22,20 @@ export default function Home() {
   }, [isAuthenticated]);
 
   return (
-    <div style={{ backgroundColor: '#1E2539', minHeight: '100vh' }}>
-      <MobileLayout isLoggedIn={isLoggedIn}>
-        <div className="home-page">
-          <div className="content-section">
-            <FeaturedAthletes />
-            <PrimaryActions />
-            <SportsPicker />
-            <PopularGrounds />
-            <KhelmanchPass isLoggedIn={isLoggedIn} />
-            <UpcomingTournaments />
-            <StatsSection />
-            <SpotlightsSection />
-            <HelpSection />
-          </div>
+    <MobileLayout isLoggedIn={isLoggedIn}>
+      <div className="home-page">
+        <div className="content-section">
+          <FeaturedAthletes />
+          <PrimaryActions />
+          <SportsPicker />
+          <PopularGrounds />
+          <KhelmanchPass isLoggedIn={isLoggedIn} />
+          <UpcomingTournaments />
+          <StatsSection />
+          <SpotlightsSection />
+          <HelpSection />
         </div>
-      </MobileLayout>
-    </div>
+      </div>
+    </MobileLayout>
   );
 }
