@@ -33,16 +33,13 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    console.log("Next clicked, current slide:", currentSlide);
+    console.log("handleNext called - current slide:", currentSlide);
     console.log("Total slides:", onboardingData.length);
     
     if (currentSlide < onboardingData.length - 1) {
-      console.log("Moving to next slide:", currentSlide + 1);
-      setCurrentSlide(prev => {
-        const newSlide = prev + 1;
-        console.log("State updated to:", newSlide);
-        return newSlide;
-      });
+      const nextSlide = currentSlide + 1;
+      console.log("Moving to next slide:", nextSlide);
+      setCurrentSlide(nextSlide);
     } else {
       console.log("Completing onboarding, navigating to login");
       localStorage.setItem("onboardingComplete", "true");
@@ -51,25 +48,23 @@ export default function Onboarding() {
   };
 
   const handleSkip = () => {
-    console.log("Skip clicked");
+    console.log("handleSkip called");
     localStorage.setItem("onboardingComplete", "true");
     navigate("/login");
   };
 
-  console.log("Rendering slide:", currentSlide, "Data:", onboardingData[currentSlide]);
+  console.log("Onboarding component rendered - current slide:", currentSlide);
 
   return (
     <div className="min-h-screen">
-      <AnimatePresence mode="wait" initial={false}>
-        <AnimatedSportsSlide
-          key={currentSlide}
-          {...onboardingData[currentSlide]}
-          currentIndex={currentSlide}
-          totalSlides={onboardingData.length}
-          onNext={handleNext}
-          onSkip={handleSkip}
-        />
-      </AnimatePresence>
+      <AnimatedSportsSlide
+        key={`onboarding-slide-${currentSlide}`}
+        {...onboardingData[currentSlide]}
+        currentIndex={currentSlide}
+        totalSlides={onboardingData.length}
+        onNext={handleNext}
+        onSkip={handleSkip}
+      />
     </div>
   );
 }

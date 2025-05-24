@@ -26,7 +26,17 @@ export function AnimatedSportsSlide({
   onNext,
   onSkip,
 }: AnimatedSportsSlideProps) {
-  console.log("AnimatedSportsSlide rendered with index:", currentIndex);
+  console.log("AnimatedSportsSlide rendered - index:", currentIndex, "title:", title);
+  
+  const handleNextClick = () => {
+    console.log("Next button clicked - current index:", currentIndex);
+    onNext();
+  };
+
+  const handleSkipClick = () => {
+    console.log("Skip button clicked - current index:", currentIndex);
+    onSkip();
+  };
   
   return (
     <motion.div
@@ -66,11 +76,7 @@ export function AnimatedSportsSlide({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        onClick={(e) => {
-          e.preventDefault();
-          console.log("Skip button clicked");
-          onSkip();
-        }}
+        onClick={handleSkipClick}
         className="absolute top-14 right-6 text-white font-semibold z-20 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm hover:bg-white/20 transition-colors"
       >
         Skip
@@ -170,11 +176,7 @@ export function AnimatedSportsSlide({
         >
           <Button 
             className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-3 text-lg rounded-xl" 
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Next button clicked from slide:", currentIndex);
-              onNext();
-            }}
+            onClick={handleNextClick}
             type="button"
           >
             {currentIndex === totalSlides - 1 ? "Get Started" : "Next"}
