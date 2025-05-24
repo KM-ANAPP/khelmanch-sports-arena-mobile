@@ -28,9 +28,10 @@ export function AnimatedSportsSlide({
 }: AnimatedSportsSlideProps) {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, x: 300 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -300 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden"
     >
       {/* Animated background particles */}
@@ -41,12 +42,12 @@ export function AnimatedSportsSlide({
             className={`absolute w-3 h-3 rounded-full opacity-20`}
             style={{ backgroundColor: sportColor }}
             initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: window.innerHeight + 50 
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400), 
+              y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50 
             }}
             animate={{ 
               y: -50,
-              x: Math.random() * window.innerWidth,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400),
               transition: { 
                 duration: Math.random() * 4 + 3,
                 repeat: Infinity,
@@ -64,7 +65,7 @@ export function AnimatedSportsSlide({
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
         onClick={onSkip}
-        className="absolute top-14 right-6 text-white font-semibold z-20 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm"
+        className="absolute top-14 right-6 text-white font-semibold z-20 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm hover:bg-white/20 transition-colors"
       >
         Skip
       </motion.button>
@@ -163,7 +164,10 @@ export function AnimatedSportsSlide({
         >
           <Button 
             className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-3 text-lg rounded-xl" 
-            onClick={onNext}
+            onClick={() => {
+              console.log("Button clicked");
+              onNext();
+            }}
           >
             {currentIndex === totalSlides - 1 ? "Get Started" : "Next"}
           </Button>

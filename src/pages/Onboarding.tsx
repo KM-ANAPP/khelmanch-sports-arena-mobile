@@ -33,6 +33,7 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   const handleNext = () => {
+    console.log("Next clicked, current slide:", currentSlide);
     if (currentSlide < onboardingData.length - 1) {
       setCurrentSlide(prev => prev + 1);
     } else {
@@ -42,20 +43,23 @@ export default function Onboarding() {
   };
 
   const handleSkip = () => {
+    console.log("Skip clicked");
     localStorage.setItem("onboardingComplete", "true");
     navigate("/login");
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <AnimatedSportsSlide
-        key={currentSlide}
-        {...onboardingData[currentSlide]}
-        currentIndex={currentSlide}
-        totalSlides={onboardingData.length}
-        onNext={handleNext}
-        onSkip={handleSkip}
-      />
-    </AnimatePresence>
+    <div className="min-h-screen">
+      <AnimatePresence mode="wait">
+        <AnimatedSportsSlide
+          key={`slide-${currentSlide}`}
+          {...onboardingData[currentSlide]}
+          currentIndex={currentSlide}
+          totalSlides={onboardingData.length}
+          onNext={handleNext}
+          onSkip={handleSkip}
+        />
+      </AnimatePresence>
+    </div>
   );
 }
