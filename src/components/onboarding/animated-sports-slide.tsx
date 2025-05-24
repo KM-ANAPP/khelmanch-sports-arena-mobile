@@ -26,12 +26,14 @@ export function AnimatedSportsSlide({
   onNext,
   onSkip,
 }: AnimatedSportsSlideProps) {
+  console.log("AnimatedSportsSlide rendered with index:", currentIndex);
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: 300 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -300 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden"
     >
       {/* Animated background particles */}
@@ -64,7 +66,11 @@ export function AnimatedSportsSlide({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        onClick={onSkip}
+        onClick={(e) => {
+          e.preventDefault();
+          console.log("Skip button clicked");
+          onSkip();
+        }}
         className="absolute top-14 right-6 text-white font-semibold z-20 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm hover:bg-white/20 transition-colors"
       >
         Skip
@@ -164,10 +170,12 @@ export function AnimatedSportsSlide({
         >
           <Button 
             className="w-full bg-white text-black hover:bg-gray-100 font-semibold py-3 text-lg rounded-xl" 
-            onClick={() => {
-              console.log("Button clicked");
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("Next button clicked from slide:", currentIndex);
               onNext();
             }}
+            type="button"
           >
             {currentIndex === totalSlides - 1 ? "Get Started" : "Next"}
           </Button>

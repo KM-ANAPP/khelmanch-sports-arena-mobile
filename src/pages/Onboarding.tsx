@@ -34,9 +34,17 @@ export default function Onboarding() {
 
   const handleNext = () => {
     console.log("Next clicked, current slide:", currentSlide);
+    console.log("Total slides:", onboardingData.length);
+    
     if (currentSlide < onboardingData.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+      console.log("Moving to next slide:", currentSlide + 1);
+      setCurrentSlide(prev => {
+        const newSlide = prev + 1;
+        console.log("State updated to:", newSlide);
+        return newSlide;
+      });
     } else {
+      console.log("Completing onboarding, navigating to login");
       localStorage.setItem("onboardingComplete", "true");
       navigate("/login");
     }
@@ -48,11 +56,13 @@ export default function Onboarding() {
     navigate("/login");
   };
 
+  console.log("Rendering slide:", currentSlide, "Data:", onboardingData[currentSlide]);
+
   return (
     <div className="min-h-screen">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <AnimatedSportsSlide
-          key={`slide-${currentSlide}`}
+          key={currentSlide}
           {...onboardingData[currentSlide]}
           currentIndex={currentSlide}
           totalSlides={onboardingData.length}
