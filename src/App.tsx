@@ -33,7 +33,6 @@ import MyBookings from "./pages/MyBookings";
 import MyTeams from "./pages/MyTeams";
 import Messages from "./pages/Messages";
 import Community from "./pages/Community";
-import Onboarding from "./pages/Onboarding";
 import ProductDetails from "./pages/ProductDetails";
 import SportDetail from "./pages/SportDetail";
 
@@ -85,21 +84,7 @@ const App = () => {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.3 }}
                         >
-                          <Navigate to="/onboarding" replace />
-                        </motion.div>
-                      } 
-                    />
-                    
-                    <Route 
-                      path="/onboarding" 
-                      element={
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <Onboarding />
+                          <Navigate to="/login" replace />
                         </motion.div>
                       } 
                     />
