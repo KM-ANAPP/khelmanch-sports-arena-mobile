@@ -40,7 +40,7 @@ export function OnboardingSlide({
         Skip
       </motion.button>
 
-      {/* Images Section with Overlap Effect */}
+      {/* Images Section */}
       <div className="relative h-[40vh] w-full overflow-hidden">
         <motion.div 
           className="absolute inset-0 flex justify-center"

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,7 +17,6 @@ import ChatbotSupport from "./components/ai/ChatbotSupport";
 // Pages
 import NotFound from "./pages/NotFound";
 import SplashScreen from "./pages/SplashScreen";
-import SplashScreenShowcase from "./pages/SplashScreenShowcase";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -76,20 +76,6 @@ const App = () => {
               <BrowserRouter>
                 <AnimatePresence mode="wait">
                   <Routes>
-                    <Route 
-                      path="/splash-showcase" 
-                      element={
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <SplashScreenShowcase />
-                        </motion.div>
-                      } 
-                    />
-                    
                     <Route 
                       path="/" 
                       element={
