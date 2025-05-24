@@ -6,35 +6,20 @@ import { PrimaryActions } from "@/components/sections/primary-actions";
 import { PopularGrounds } from "@/components/sections/popular-grounds";
 import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments";
 import { StatsSection } from "@/components/sections/stats-section";
-import { PartnersSection } from "@/components/sections/partners-section";
 import { SpotlightsSection } from "@/components/sections/spotlights-section";
-import { ContactSection } from "@/components/sections/contact-section";
-import { LoginBottomSheet } from "@/components/auth/login-bottom-sheet";
 import { HelpSection } from "@/components/sections/help-section";
 import { SportsPicker } from "@/components/sections/sports-picker";
 import { KhelmanchPass } from "@/components/sections/khelmanch-pass";
+import { useAuth } from "@/context/AuthContext";
 import '@/styles/main.scss';
 
 export default function Home() {
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
   
   useEffect(() => {
-    const hasSeenPrompt = sessionStorage.getItem("loginPromptDismissed");
-    
-    if (!isLoggedIn && !hasSeenPrompt) {
-      const timer = setTimeout(() => {
-        setShowLoginPrompt(true);
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn]);
-  
-  const handleDismissLoginPrompt = () => {
-    setShowLoginPrompt(false);
-    sessionStorage.setItem("loginPromptDismissed", "true");
-  };
+    setIsLoggedIn(isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <MobileLayout isLoggedIn={isLoggedIn}>
@@ -44,21 +29,12 @@ export default function Home() {
           <PrimaryActions />
           <SportsPicker />
           <PopularGrounds />
-          <UpcomingTournaments />
           <KhelmanchPass isLoggedIn={isLoggedIn} />
+          <UpcomingTournaments />
           <StatsSection />
-          <PartnersSection />
           <SpotlightsSection />
           <HelpSection />
-          <ContactSection />
         </div>
-        
-        <LoginBottomSheet 
-          open={showLoginPrompt} 
-          onDismiss={handleDismissLoginPrompt}
-          onLogin={() => setIsLoggedIn(true)}
-          inSplashScreen={false}
-        />
       </div>
     </MobileLayout>
   );

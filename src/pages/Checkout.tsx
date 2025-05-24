@@ -10,15 +10,18 @@ import { OrderSummary } from '@/components/checkout/order-summary';
 import { PaymentStatus } from '@/components/checkout/payment-status';
 import { Button } from '@/components/ui/button';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
+import { LoginBottomSheet } from '@/components/auth/login-bottom-sheet';
 import paymentService from '@/services/paymentService';
 import { passService } from '@/services/passService';
 import { Badge } from '@/components/ui/badge';
+import loginPromptService from '@/services/loginPromptService';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +32,23 @@ export default function Checkout() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [hasAppliedPass, setHasAppliedPass] = useState(false);
+
+  // Check if login prompt should be shown
+  useEffect(() => {
+    if (!isAuthenticated && !loginPromptService.hasLoginPromptBeenShown()) {
+      setShowLoginPrompt(true);
+    }
+  }, [isAuthenticated]);
+
+  const handleDismissLoginPrompt = () => {
+    setShowLoginPrompt(false);
+    loginPromptService.markLoginPromptShown();
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginPrompt(false);
+    loginPromptService.markLoginPromptShown();
+  };
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -44,7 +64,6 @@ export default function Checkout() {
     if (locationState?.orderDetails) {
       setOrderDetails(locationState.orderDetails);
       
-      // If this is a tournament purchase, check for an active pass
       if (locationState.orderDetails.type === 'tournament' && passService.hasActivePass()) {
         const discount = passService.getDiscountAmount(locationState.orderDetails.amount);
         setDiscountAmount(discount);
@@ -64,7 +83,6 @@ export default function Checkout() {
   }, [location]);
 
   useEffect(() => {
-    // Load Razorpay script
     const loadRazorpay = async () => {
       try {
         const scriptLoaded = await paymentService.loadRazorpayScript();
@@ -111,7 +129,6 @@ export default function Checkout() {
     try {
       console.log("Starting payment process for order:", orderDetails);
       
-      // Calculate final amount after any discounts
       let finalAmount = orderDetails.amount;
       if (hasAppliedPass && discountAmount > 0) {
         finalAmount = finalAmount - discountAmount;
@@ -123,21 +140,17 @@ export default function Checkout() {
         phone,
         finalAmount,
         orderDetails.description,
-        undefined, // Let the service create the order ID through backend
+        undefined,
         (response) => {
-          // Payment successful
           console.log("Payment successful:", response);
           
-          // If this is a pass purchase, create the pass
           if (orderDetails?.type === 'pass') {
-            // Extract the pass type from the itemId
             const passType = orderDetails.itemId.includes('-') 
               ? orderDetails.itemId.split('-')[2] as 'basic' | 'standard' | 'premium' | 'ultimate'
               : 'basic';
               
             passService.purchasePass(response.razorpay_payment_id, passType);
           } else if (hasAppliedPass && orderDetails?.type === 'tournament') {
-            // Consume one use of the pass for tournament purchases
             passService.consumePass();
           }
           
@@ -156,7 +169,6 @@ export default function Checkout() {
           });
         },
         (err) => {
-          // Payment failed
           console.error("Payment failed:", err);
           const errorMessage = err.message || 'Payment failed. Please try again.';
           setError(errorMessage);
@@ -240,6 +252,14 @@ export default function Checkout() {
           onTermsChange={setTermsAccepted}
           onSubmit={handlePaymentSubmit}
           amount={orderDetails.amount - discountAmount}
+        />
+        
+        {/* Login Bottom Sheet - only shows when user is not authenticated and tries to checkout */}
+        <LoginBottomSheet 
+          open={showLoginPrompt} 
+          onDismiss={handleDismissLoginPrompt}
+          onLogin={handleLoginSuccess}
+          inSplashScreen={false}
         />
       </div>
     </MobileLayout>

@@ -3,30 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, User, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { BiometricLoginButton } from "@/components/auth/BiometricLoginButton";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { PhoneLoginTab } from "@/components/auth/PhoneLoginTab";
-import { useLoginForm } from "@/hooks/useLoginForm";
-import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
-  const {
-    username,
-    setUsername,
-    password,
-    setPassword,
-    isLoggingIn,
-    handleLoginWithCredentials
-  } = useLoginForm();
-  
-  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSkipLogin = () => {
     toast({
@@ -69,9 +53,8 @@ export default function Login() {
             </motion.div>
             
             <Tabs defaultValue="phone" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="phone">Phone</TabsTrigger>
-                <TabsTrigger value="wordpress">WordPress</TabsTrigger>
                 <TabsTrigger value="google">Google</TabsTrigger>
               </TabsList>
               
@@ -82,59 +65,6 @@ export default function Login() {
                   exit={{ opacity: 0, x: 20 }}
                 >
                   <PhoneLoginTab />
-                </motion.div>
-              </TabsContent>
-              
-              <TabsContent value="wordpress" className="space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                >
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <div className="relative">
-                        <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="username"
-                          placeholder="Enter your username"
-                          className="pl-8"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          className="pl-8"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      className="w-full"
-                      onClick={handleLoginWithCredentials}
-                      disabled={isLoggingIn}
-                    >
-                      {isLoggingIn ? "Logging in..." : "Login"}
-                    </Button>
-                    
-                    <div className="text-center">
-                      <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                  </div>
                 </motion.div>
               </TabsContent>
               
@@ -178,7 +108,6 @@ export default function Login() {
         </Card>
       </motion.div>
       
-      {/* Invisible div for reCAPTCHA */}
       <div id="recaptcha-container" className="invisible"></div>
     </div>
   );

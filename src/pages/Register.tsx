@@ -1,16 +1,16 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, User, ArrowRight, ChevronLeft, Check } from "lucide-react";
+import { Phone, Mail, ArrowRight, ChevronLeft, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from '@/context/AuthContext';
 import { Checkbox } from "@/components/ui/checkbox";
+import wordpressService from '@/services/wordpressService';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -78,7 +78,6 @@ export default function Register() {
       return;
     }
     
-    // For demo, we'll just proceed to the next step
     setStep(2);
   };
   
@@ -131,6 +130,16 @@ export default function Register() {
     }
     
     try {
+      // Register with WordPress first
+      await wordpressService.registerUser({
+        name,
+        phone: method === 'phone' ? phoneNumber : undefined,
+        email: method === 'email' ? email : undefined,
+        sports: selectedSports,
+        skillLevels
+      });
+
+      // Then register with local auth context
       await register({
         name,
         phone: method === 'phone' ? phoneNumber : undefined,
@@ -139,9 +148,18 @@ export default function Register() {
         skillLevels
       });
       
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been created successfully!",
+      });
+      
       navigate('/home');
-    } catch (error) {
-      // Error is already handled in the register function
+    } catch (error: any) {
+      toast({
+        title: "Registration Failed",
+        description: error.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
     }
   };
   

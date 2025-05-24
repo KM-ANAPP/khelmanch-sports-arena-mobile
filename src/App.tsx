@@ -35,6 +35,7 @@ import Messages from "./pages/Messages";
 import Community from "./pages/Community";
 import Onboarding from "./pages/Onboarding";
 import ProductDetails from "./pages/ProductDetails";
+import SportDetail from "./pages/SportDetail";
 
 const queryClient = new QueryClient();
 
@@ -148,6 +149,7 @@ const App = () => {
                       { path: "/my-tickets", element: <MyBookings /> },
                       { path: "/my-teams", element: <MyTeams /> },
                       { path: "/index", element: <Index /> },
+                      { path: "/sport/:sportId", element: <SportDetail /> },
                     ].map(({ path, element }) => (
                       <Route
                         key={path}
