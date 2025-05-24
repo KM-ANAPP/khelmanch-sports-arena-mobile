@@ -28,12 +28,16 @@ export function AnimatedSportsSlide({
 }: AnimatedSportsSlideProps) {
   console.log("AnimatedSportsSlide rendered - index:", currentIndex, "title:", title);
   
-  const handleNextClick = () => {
+  const handleNextClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log("Next button clicked - current index:", currentIndex);
     onNext();
   };
 
-  const handleSkipClick = () => {
+  const handleSkipClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log("Skip button clicked - current index:", currentIndex);
     onSkip();
   };

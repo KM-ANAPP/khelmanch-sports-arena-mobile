@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import { AnimatedSportsSlide } from "@/components/onboarding/animated-sports-slide";
 
 const onboardingData = [
