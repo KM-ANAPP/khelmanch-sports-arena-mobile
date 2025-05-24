@@ -71,7 +71,7 @@ export const PhoneLoginForm = ({
             </div>
           </div>
           <Button 
-            className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+            className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
             onClick={handleSendOTP}
             disabled={phoneNumber.length !== 10 || isLoading}
           >
@@ -110,7 +110,7 @@ export const PhoneLoginForm = ({
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-auto p-0 text-blue-300 hover:text-blue-200 hover:bg-transparent" 
+                className="h-auto p-0 text-cyan-400 hover:text-cyan-300 hover:bg-transparent" 
                 onClick={retryOTP}
                 disabled={isLoading}
               >
@@ -120,7 +120,7 @@ export const PhoneLoginForm = ({
             )}
           </div>
           <Button 
-            className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+            className="w-full h-12 mt-4 bg-emerald-600 hover:bg-emerald-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
             onClick={handleLoginWithOTP}
             disabled={otp.length !== 6 || isLoading}
           >

@@ -171,8 +171,18 @@ export default function Register() {
           <div className="space-y-4">
             <Tabs defaultValue={method} onValueChange={(v) => setMethod(v as 'phone' | 'email')} className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
-                <TabsTrigger value="phone" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Phone</TabsTrigger>
-                <TabsTrigger value="email" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Email</TabsTrigger>
+                <TabsTrigger 
+                  value="phone" 
+                  className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all hover:bg-blue-700/20"
+                >
+                  Phone
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="email" 
+                  className="text-gray-200 data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all hover:bg-purple-700/20"
+                >
+                  Email
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="phone" className="space-y-4">
@@ -193,7 +203,7 @@ export default function Register() {
                       />
                     </div>
                     <Button 
-                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+                      className="w-full h-12 mt-4 bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
                       onClick={handleSendOTP}
                       disabled={phoneNumber.length !== 10 || isGeneratingOTP}
                     >
@@ -217,7 +227,7 @@ export default function Register() {
                       OTP sent to +91 {phoneNumber}
                     </div>
                     <Button 
-                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+                      className="w-full h-12 mt-4 bg-emerald-600 hover:bg-emerald-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
                       onClick={handleVerifyOTP}
                       disabled={otp.length !== 6}
                     >
@@ -248,7 +258,7 @@ export default function Register() {
                       className="h-12 rounded-xl text-base bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
                     />
                     <Button 
-                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+                      className="w-full h-12 mt-4 bg-purple-600 hover:bg-purple-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
                       onClick={handleSendOTP}
                       disabled={!/^\S+@\S+\.\S+$/.test(email) || isGeneratingOTP}
                     >
@@ -272,7 +282,7 @@ export default function Register() {
                       OTP sent to {email}
                     </div>
                     <Button 
-                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
+                      className="w-full h-12 mt-4 bg-emerald-600 hover:bg-emerald-700 text-white border-0 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
                       onClick={handleVerifyOTP}
                       disabled={otp.length !== 6}
                     >
@@ -294,7 +304,7 @@ export default function Register() {
             <div className="pt-2">
               <Button 
                 variant="ghost" 
-                className="w-full text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
+                className="w-full text-gray-200 hover:bg-cyan-600/20 border border-cyan-500/30 hover:border-cyan-400/50 hover:text-cyan-200 transition-all"
                 onClick={() => navigate('/login')}
               >
                 Already have an account? Login
@@ -336,7 +346,7 @@ export default function Register() {
               <Button 
                 variant="ghost" 
                 onClick={() => setStep(1)}
-                className="flex-1 text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
+                className="flex-1 text-gray-200 hover:bg-slate-600/20 border border-slate-500/30 hover:border-slate-400/50 hover:text-slate-200 transition-all"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back
@@ -344,7 +354,7 @@ export default function Register() {
               <Button 
                 onClick={handleNextToSports}
                 disabled={!name.trim() || !acceptedTerms}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white border-0 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Next
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -407,7 +417,7 @@ export default function Register() {
               <Button 
                 variant="ghost" 
                 onClick={() => setStep(2)}
-                className="flex-1 text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
+                className="flex-1 text-gray-200 hover:bg-slate-600/20 border border-slate-500/30 hover:border-slate-400/50 hover:text-slate-200 transition-all"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back
@@ -415,7 +425,7 @@ export default function Register() {
               <Button 
                 onClick={handleCompleteRegistration}
                 disabled={selectedSports.length === 0}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white border-0 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Complete Registration
                 <Check className="ml-2 h-4 w-4" />

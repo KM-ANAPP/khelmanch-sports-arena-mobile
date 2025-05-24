@@ -81,8 +81,18 @@ export default function Login() {
             
             <Tabs defaultValue="phone" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
-                <TabsTrigger value="phone" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Phone</TabsTrigger>
-                <TabsTrigger value="google" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Google</TabsTrigger>
+                <TabsTrigger 
+                  value="phone" 
+                  className="text-gray-200 data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all hover:bg-blue-700/20"
+                >
+                  Phone
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="google" 
+                  className="text-gray-200 data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:bg-green-700/20"
+                >
+                  Google
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="phone">
@@ -113,7 +123,9 @@ export default function Login() {
               className="text-center text-sm"
             >
               <span className="text-gray-200">Don't have an account?</span>{" "}
-              <Link to="/register" className="text-blue-300 font-medium hover:text-blue-200 hover:underline transition-colors">Register now</Link>
+              <Link to="/register" className="text-emerald-400 font-medium hover:text-emerald-300 hover:underline transition-colors">
+                Register now
+              </Link>
             </motion.div>
           </CardContent>
           <CardFooter>
@@ -125,7 +137,7 @@ export default function Login() {
             >
               <Button 
                 variant="ghost" 
-                className="w-full text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
+                className="w-full text-gray-300 hover:bg-orange-600/20 border border-orange-500/30 hover:border-orange-400/50 hover:text-orange-200 transition-all"
                 onClick={handleSkipLogin}
               >
                 Skip Login for Now
