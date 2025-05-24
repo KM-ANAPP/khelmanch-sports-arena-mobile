@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
@@ -45,8 +44,6 @@ export default function GroundDetails() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   
-  // In a real app, you would fetch ground details based on the ID
-  // This is mock data for the demo
   const ground = {
     id: Number(id),
     name: "Victory Cricket Ground",
@@ -108,7 +105,7 @@ export default function GroundDetails() {
   };
 
   return (
-    <MobileLayout title="Ground Details" isLoggedIn={true}>
+    <MobileLayout isLoggedIn={true}>
       <div className="pb-4">
         {/* Images Carousel */}
         <Carousel className="w-full">

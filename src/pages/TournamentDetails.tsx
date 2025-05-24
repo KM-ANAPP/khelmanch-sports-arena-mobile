@@ -60,7 +60,7 @@ export default function TournamentDetails() {
   };
 
   return (
-    <MobileLayout title="Tournament Details" isLoggedIn={true}>
+    <MobileLayout isLoggedIn={true}>
       <div className="pb-4">
         <TournamentHeader 
           tournament={tournament}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,7 +102,7 @@ export default function Booking() {
   const locationOptions = ["Andheri", "Powai", "Bandra", "Juhu", "Dadar", "Malad"];
 
   return (
-    <MobileLayout title="Ground Booking" isLoggedIn={true}>
+    <MobileLayout isLoggedIn={true}>
       <div className="p-4 space-y-4">
         {/* Search and Filter */}
         <div className="flex space-x-2">
