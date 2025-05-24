@@ -55,7 +55,7 @@ export default function Login() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <Card className="backdrop-blur-xl bg-white/10 border border-white/20 text-white">
+        <Card className="backdrop-blur-xl bg-white/5 border border-white/10 text-white shadow-2xl">
           <CardHeader className="space-y-1">
             <motion.div 
               initial={{ scale: 0.8 }}
@@ -66,7 +66,7 @@ export default function Login() {
               <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" />
             </motion.div>
             <CardTitle className="text-2xl text-center text-white">Welcome to Khelmanch</CardTitle>
-            <CardDescription className="text-center text-gray-300">
+            <CardDescription className="text-center text-gray-200">
               Login to access all features
             </CardDescription>
           </CardHeader>
@@ -80,9 +80,9 @@ export default function Login() {
             </motion.div>
             
             <Tabs defaultValue="phone" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white/10 border border-white/20">
-                <TabsTrigger value="phone" className="text-white data-[state=active]:bg-white/20 data-[state=active]:text-white">Phone</TabsTrigger>
-                <TabsTrigger value="google" className="text-white data-[state=active]:bg-white/20 data-[state=active]:text-white">Google</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+                <TabsTrigger value="phone" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Phone</TabsTrigger>
+                <TabsTrigger value="google" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Google</TabsTrigger>
               </TabsList>
               
               <TabsContent value="phone">
@@ -112,8 +112,8 @@ export default function Login() {
               transition={{ delay: 0.4 }}
               className="text-center text-sm"
             >
-              <span className="text-gray-300">Don't have an account?</span>{" "}
-              <Link to="/register" className="text-white font-medium hover:underline">Register now</Link>
+              <span className="text-gray-200">Don't have an account?</span>{" "}
+              <Link to="/register" className="text-blue-300 font-medium hover:text-blue-200 hover:underline transition-colors">Register now</Link>
             </motion.div>
           </CardContent>
           <CardFooter>
@@ -125,7 +125,7 @@ export default function Login() {
             >
               <Button 
                 variant="ghost" 
-                className="w-full text-white hover:bg-white/20 border border-white/20"
+                className="w-full text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
                 onClick={handleSkipLogin}
               >
                 Skip Login for Now
