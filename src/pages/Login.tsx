@@ -137,7 +137,7 @@ export default function Login() {
             >
               <Button 
                 variant="ghost" 
-                className="w-full text-gray-300 hover:bg-orange-600/20 border border-orange-500/30 hover:border-orange-400/50 hover:text-orange-200 transition-all"
+                className="w-full text-gray-200 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-400/50 hover:text-purple-200 transition-all"
                 onClick={handleSkipLogin}
               >
                 Skip Login for Now
