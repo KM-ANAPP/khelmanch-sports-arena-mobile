@@ -78,7 +78,7 @@
     }
   }
 
-  .stats-section, .partners-section, .spotlights-section, .contact-section {
+  .stats-section, .spotlights-section, .contact-section {
     padding: $spacing-unit * 8 0;
     position: relative;
     overflow: hidden;
@@ -99,5 +99,10 @@
       margin-bottom: $spacing-unit * 6;
       text-align: center;
     }
+  }
+
+  // Hide partners section (celebrating our journey)
+  .partners-section {
+    display: none;
   }
 }

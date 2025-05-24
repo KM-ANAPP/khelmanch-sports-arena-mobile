@@ -1,122 +1,194 @@
 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Star, MapPin, Trophy, Play } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-
-interface WordPressProduct {
+interface Athlete {
   id: number;
-  title: {
-    rendered: string;
-  };
-  acf: {
-    venue_address: string;
-  };
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{
-      source_url: string;
-    }>;
-  };
+  name: string;
+  sport: string;
+  location: string;
+  rating: number;
+  achievements: string;
+  image: string;
+  isVerified: boolean;
 }
 
-const fetchWordPressProducts = async (): Promise<WordPressProduct[]> => {
-  const response = await fetch('https://khelmanch.com/wp-json/wp/v2/product?per_page=3&_embed&acf=true');
-  if (!response.ok) {
-    throw new Error('Failed to fetch WordPress products');
-  }
-  return response.json();
-};
-
 export const FeaturedAthletes = () => {
-  const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(0);
-  
-  const { data: products, isLoading, error } = useQuery({
-    queryKey: ['wp-products'],
-    queryFn: fetchWordPressProducts
-  });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const slides = products?.map(product => ({
-    id: product.id,
-    title: product.title.rendered,
-    address: product.acf?.venue_address || "Address not available",
-    image: product._embedded?.['wp:featuredmedia']?.[0]?.source_url || 
-      "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
-  })) || [];
+  const athletes: Athlete[] = [
+    {
+      id: 1,
+      name: "Rahul Sharma",
+      sport: "Cricket",
+      location: "Mumbai, India",
+      rating: 4.9,
+      achievements: "State Level Champion",
+      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1167&q=80",
+      isVerified: true
+    },
+    {
+      id: 2,
+      name: "Priya Patel",
+      sport: "Tennis",
+      location: "Bangalore, India",
+      rating: 4.8,
+      achievements: "National Tournament Winner",
+      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
+      isVerified: true
+    },
+    {
+      id: 3,
+      name: "Arjun Singh",
+      sport: "Football",
+      location: "Delhi, India",
+      rating: 4.7,
+      achievements: "District Level Captain",
+      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=735&q=80",
+      isVerified: true
+    }
+  ];
 
-  const navigateToProduct = (productId: number) => {
-    navigate(`/products/${productId}`);
+  // Auto-slide functionality
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % athletes.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, athletes.length]);
+
+  const handleDotClick = (index: number) => {
+    setCurrentSlide(index);
+    setIsAutoPlaying(false);
+    
+    // Resume auto-play after 5 seconds
+    setTimeout(() => setIsAutoPlaying(true), 5000);
   };
 
-  if (isLoading) {
-    return <div className="p-4 text-center">Loading products...</div>;
-  }
-
-  if (error) {
-    console.error('Error fetching WordPress products:', error);
-    return null;
-  }
-
   return (
-    <div className="relative">
-      <Carousel 
-        className="w-full"
-        onSelect={(index) => {
-          if (typeof index === 'number') {
-            setActiveIndex(index);
-          }
-        }}
-      >
-        <CarouselContent>
-          {slides.map((slide, index) => (
-            <CarouselItem key={slide.id}>
-              <motion.div 
-                className="relative h-64 overflow-hidden rounded-xl cursor-pointer"
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigateToProduct(slide.id)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img 
-                  src={slide.image} 
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-4">
-                  <h3 className="text-white text-xl font-bold">{slide.title}</h3>
-                  <p className="text-white/90 mt-2">{slide.address}</p>
-                  
-                  <div className="absolute top-3 right-3 bg-accent/70 text-accent-foreground text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-                    Tap to view
+    <section className="py-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-white">Featured Athletes</h2>
+        <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
+          Live Now
+        </Badge>
+      </div>
+      
+      <div className="relative overflow-hidden rounded-2xl">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="relative h-64 w-full"
+          >
+            {/* Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+              style={{ backgroundImage: `url(${athletes[currentSlide].image})` }}
+            />
+            
+            {/* Modern Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+            
+            {/* Animated Background Elements */}
+            <div className="absolute top-4 right-4 w-20 h-20 bg-accent/10 rounded-full blur-xl animate-pulse" />
+            <div className="absolute bottom-8 right-8 w-16 h-16 bg-secondary/10 rounded-full blur-lg animate-pulse delay-1000" />
+            
+            {/* Content */}
+            <div className="relative z-10 h-full flex flex-col justify-end p-6">
+              <div className="space-y-3">
+                {/* Sport Badge */}
+                <Badge className="bg-accent/90 text-black font-semibold w-fit">
+                  {athletes[currentSlide].sport}
+                </Badge>
+                
+                {/* Name and Verification */}
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-2xl font-bold text-white">
+                    {athletes[currentSlide].name}
+                  </h3>
+                  {athletes[currentSlide].isVerified && (
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Details */}
+                <div className="flex items-center space-x-4 text-sm text-gray-200">
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{athletes[currentSlide].location}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <span>{athletes[currentSlide].rating}</span>
                   </div>
                 </div>
-              </motion.div>
-            </CarouselItem>
+                
+                {/* Achievement */}
+                <div className="flex items-center space-x-2">
+                  <Trophy className="w-4 h-4 text-accent" />
+                  <span className="text-accent font-medium text-sm">
+                    {athletes[currentSlide].achievements}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Play Button Overlay */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <Button
+                size="icon"
+                className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all duration-300 hover:scale-110"
+              >
+                <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+              </Button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+        
+        {/* Navigation Dots */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {athletes.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleDotClick(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? 'bg-accent w-6'
+                  : 'bg-white/50 hover:bg-white/70'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
-      </Carousel>
-      
-      <div className="flex justify-center mt-2 space-x-1">
-        {slides.map((_, index) => (
-          <div 
-            key={index}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === activeIndex ? "w-4 bg-accent" : "w-1.5 bg-muted"
-            }`}
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+          <motion.div
+            className="h-full bg-accent"
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 4, ease: "linear" }}
+            key={currentSlide}
           />
-        ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
