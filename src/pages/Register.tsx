@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -169,17 +170,17 @@ export default function Register() {
         return (
           <div className="space-y-4">
             <Tabs defaultValue={method} onValueChange={(v) => setMethod(v as 'phone' | 'email')} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="phone">Phone</TabsTrigger>
-                <TabsTrigger value="email">Email</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+                <TabsTrigger value="phone" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Phone</TabsTrigger>
+                <TabsTrigger value="email" className="text-gray-200 data-[state=active]:bg-white/15 data-[state=active]:text-white transition-all">Email</TabsTrigger>
               </TabsList>
               
               <TabsContent value="phone" className="space-y-4">
                 {!otpSent ? (
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-medium text-gray-200">Phone Number</Label>
                     <div className="flex space-x-2">
-                      <div className="flex h-10 w-14 rounded-md border border-input bg-background px-3 py-2 text-sm items-center justify-center">
+                      <div className="flex h-12 w-14 rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm items-center justify-center font-medium text-gray-200 backdrop-blur-sm">
                         +91
                       </div>
                       <Input
@@ -188,20 +189,21 @@ export default function Register() {
                         type="tel"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                        className="h-12 rounded-xl text-base bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
                       />
                     </div>
                     <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
+                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
                       onClick={handleSendOTP}
                       disabled={phoneNumber.length !== 10 || isGeneratingOTP}
                     >
                       {isGeneratingOTP ? "Sending OTP..." : "Get OTP"}
-                      <Phone className="ml-2 h-4 w-4" />
+                      <Phone className="ml-2 h-5 w-5" />
                     </Button>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Label htmlFor="otp">Enter OTP</Label>
+                    <Label htmlFor="otp" className="text-sm font-medium text-gray-200">Enter OTP</Label>
                     <Input
                       id="otp"
                       placeholder="Enter 6-digit OTP"
@@ -209,21 +211,22 @@ export default function Register() {
                       maxLength={6}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      className="h-12 rounded-xl text-base text-center tracking-widest font-medium bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
                     />
-                    <div className="text-sm text-muted-foreground mt-2">
+                    <div className="text-sm text-gray-300 mt-2">
                       OTP sent to +91 {phoneNumber}
                     </div>
                     <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
+                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
                       onClick={handleVerifyOTP}
                       disabled={otp.length !== 6}
                     >
                       Verify & Continue
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                     <Button 
                       variant="link" 
-                      className="w-full" 
+                      className="w-full text-gray-300 hover:text-white hover:no-underline" 
                       onClick={() => setOtpSent(false)}
                     >
                       Change Phone Number
@@ -235,26 +238,27 @@ export default function Register() {
               <TabsContent value="email" className="space-y-4">
                 {!otpSent ? (
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-200">Email Address</Label>
                     <Input
                       id="email"
                       placeholder="Enter your email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      className="h-12 rounded-xl text-base bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
                     />
                     <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
+                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
                       onClick={handleSendOTP}
                       disabled={!/^\S+@\S+\.\S+$/.test(email) || isGeneratingOTP}
                     >
                       {isGeneratingOTP ? "Sending OTP..." : "Get OTP"}
-                      <Mail className="ml-2 h-4 w-4" />
+                      <Mail className="ml-2 h-5 w-5" />
                     </Button>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Label htmlFor="otp">Enter OTP</Label>
+                    <Label htmlFor="otp" className="text-sm font-medium text-gray-200">Enter OTP</Label>
                     <Input
                       id="otp"
                       placeholder="Enter 6-digit OTP"
@@ -262,21 +266,22 @@ export default function Register() {
                       maxLength={6}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      className="h-12 rounded-xl text-base text-center tracking-widest font-medium bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
                     />
-                    <div className="text-sm text-muted-foreground mt-2">
+                    <div className="text-sm text-gray-300 mt-2">
                       OTP sent to {email}
                     </div>
                     <Button 
-                      className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90" 
+                      className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
                       onClick={handleVerifyOTP}
                       disabled={otp.length !== 6}
                     >
                       Verify & Continue
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                     <Button 
                       variant="link" 
-                      className="w-full" 
+                      className="w-full text-gray-300 hover:text-white hover:no-underline" 
                       onClick={() => setOtpSent(false)}
                     >
                       Change Email
@@ -288,8 +293,8 @@ export default function Register() {
             
             <div className="pt-2">
               <Button 
-                variant="outline" 
-                className="w-full"
+                variant="ghost" 
+                className="w-full text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
                 onClick={() => navigate('/login')}
               >
                 Already have an account? Login
@@ -302,12 +307,13 @@ export default function Register() {
         return (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className="text-sm font-medium text-gray-200">Full Name</Label>
               <Input
                 id="name"
                 placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="h-12 rounded-xl text-base bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
               />
             </div>
             
@@ -316,10 +322,11 @@ export default function Register() {
                 id="terms" 
                 checked={acceptedTerms}
                 onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                className="border-white/20 data-[state=checked]:bg-white/20 data-[state=checked]:text-white"
               />
               <label
                 htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-200"
               >
                 I accept the terms and conditions
               </label>
@@ -327,9 +334,9 @@ export default function Register() {
             
             <div className="flex space-x-2 pt-4">
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 onClick={() => setStep(1)}
-                className="flex-1"
+                className="flex-1 text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back
@@ -337,7 +344,7 @@ export default function Register() {
               <Button 
                 onClick={handleNextToSports}
                 disabled={!name.trim() || !acceptedTerms}
-                className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm"
               >
                 Next
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -350,14 +357,17 @@ export default function Register() {
         return (
           <div className="space-y-4">
             <div>
-              <Label className="text-base">Select Sports You Play</Label>
+              <Label className="text-base text-gray-200">Select Sports You Play</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {availableSports.map(sport => (
                   <Button
                     key={sport}
                     type="button"
                     variant={selectedSports.includes(sport) ? "default" : "outline"}
-                    className="justify-start"
+                    className={selectedSports.includes(sport) 
+                      ? "justify-start bg-white/20 text-white hover:bg-white/30 border-white/20" 
+                      : "justify-start bg-white/5 text-gray-200 hover:bg-white/10 border border-white/20 hover:border-white/30"
+                    }
                     onClick={() => toggleSportSelection(sport)}
                   >
                     {selectedSports.includes(sport) && (
@@ -371,19 +381,19 @@ export default function Register() {
             
             {selectedSports.length > 0 && (
               <div>
-                <Label className="text-base">Your Skill Levels</Label>
+                <Label className="text-base text-gray-200">Your Skill Levels</Label>
                 <div className="space-y-2 mt-2">
                   {selectedSports.map(sport => (
                     <div key={sport} className="flex items-center space-x-2">
-                      <div className="w-1/3">{sport}:</div>
+                      <div className="w-1/3 text-gray-200">{sport}:</div>
                       <div className="w-2/3">
                         <select
-                          className="w-full h-9 rounded-md border border-input bg-background px-3 py-1"
+                          className="w-full h-10 rounded-xl border border-white/20 bg-white/5 px-3 py-1 text-white backdrop-blur-sm focus:border-white/40 focus:ring-white/20"
                           value={skillLevels[sport] || 'Beginner'}
                           onChange={(e) => setSkillLevel(sport, e.target.value)}
                         >
                           {skillOptions.map(level => (
-                            <option key={level} value={level}>{level}</option>
+                            <option key={level} value={level} className="bg-gray-800 text-white">{level}</option>
                           ))}
                         </select>
                       </div>
@@ -395,9 +405,9 @@ export default function Register() {
             
             <div className="flex space-x-2 pt-4">
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 onClick={() => setStep(2)}
-                className="flex-1"
+                className="flex-1 text-gray-200 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back
@@ -405,7 +415,7 @@ export default function Register() {
               <Button 
                 onClick={handleCompleteRegistration}
                 disabled={selectedSports.length === 0}
-                className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm"
               >
                 Complete Registration
                 <Check className="ml-2 h-4 w-4" />
@@ -417,25 +427,65 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ backgroundColor: '#1E2539' }}
+    >
+      {/* Animated background particles */}
+      <div className="absolute inset-0">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 rounded-full opacity-20 bg-white"
+            initial={{ 
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400), 
+              y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50 
+            }}
+            animate={{ 
+              y: -50,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400),
+              transition: { 
+                duration: Math.random() * 4 + 3,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 2
+              }
+            }}
+          />
+        ))}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
-        <Card>
+        <Card className="backdrop-blur-xl bg-white/5 border border-white/10 text-white shadow-2xl">
           <CardHeader className="space-y-1">
-            <div className="flex justify-center mb-6">
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
+            >
               <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" />
-            </div>
-            <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
-            <CardDescription className="text-center">
+            </motion.div>
+            <CardTitle className="text-2xl text-center text-white">Create an Account</CardTitle>
+            <CardDescription className="text-center text-gray-200">
               Step {step} of 3: {step === 1 ? "Contact Information" : step === 2 ? "Personal Details" : "Sports Preferences"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {renderStep()}
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderStep()}
+            </motion.div>
           </CardContent>
         </Card>
       </motion.div>
