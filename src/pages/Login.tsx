@@ -21,14 +21,41 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ backgroundColor: '#1E2539' }}
+    >
+      {/* Animated background particles */}
+      <div className="absolute inset-0">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 rounded-full opacity-20 bg-white"
+            initial={{ 
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400), 
+              y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50 
+            }}
+            animate={{ 
+              y: -50,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 400),
+              transition: { 
+                duration: Math.random() * 4 + 3,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 2
+              }
+            }}
+          />
+        ))}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
-        <Card>
+        <Card className="backdrop-blur-xl bg-white/10 border border-white/20 text-white">
           <CardHeader className="space-y-1">
             <motion.div 
               initial={{ scale: 0.8 }}
@@ -38,8 +65,8 @@ export default function Login() {
             >
               <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" />
             </motion.div>
-            <CardTitle className="text-2xl text-center">Welcome to Khelmanch</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-2xl text-center text-white">Welcome to Khelmanch</CardTitle>
+            <CardDescription className="text-center text-gray-300">
               Login to access all features
             </CardDescription>
           </CardHeader>
@@ -53,9 +80,9 @@ export default function Login() {
             </motion.div>
             
             <Tabs defaultValue="phone" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="phone">Phone</TabsTrigger>
-                <TabsTrigger value="google">Google</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-white/10 border border-white/20">
+                <TabsTrigger value="phone" className="text-white data-[state=active]:bg-white/20 data-[state=active]:text-white">Phone</TabsTrigger>
+                <TabsTrigger value="google" className="text-white data-[state=active]:bg-white/20 data-[state=active]:text-white">Google</TabsTrigger>
               </TabsList>
               
               <TabsContent value="phone">
@@ -85,8 +112,8 @@ export default function Login() {
               transition={{ delay: 0.4 }}
               className="text-center text-sm"
             >
-              <span className="text-muted-foreground">Don't have an account?</span>{" "}
-              <Link to="/register" className="text-primary font-medium">Register now</Link>
+              <span className="text-gray-300">Don't have an account?</span>{" "}
+              <Link to="/register" className="text-white font-medium hover:underline">Register now</Link>
             </motion.div>
           </CardContent>
           <CardFooter>
@@ -98,7 +125,7 @@ export default function Login() {
             >
               <Button 
                 variant="ghost" 
-                className="w-full"
+                className="w-full text-white hover:bg-white/20 border border-white/20"
                 onClick={handleSkipLogin}
               >
                 Skip Login for Now
