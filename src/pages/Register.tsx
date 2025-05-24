@@ -79,6 +79,11 @@ export default function Register() {
       return;
     }
     
+    // Successfully verified OTP, move to step 2
+    toast({
+      title: "OTP Verified",
+      description: "Phone number verified successfully!",
+    });
     setStep(2);
   };
   
@@ -237,7 +242,10 @@ export default function Register() {
                     <Button 
                       variant="link" 
                       className="w-full text-gray-300 hover:text-white hover:no-underline" 
-                      onClick={() => setOtpSent(false)}
+                      onClick={() => {
+                        setOtpSent(false);
+                        setOtp("");
+                      }}
                     >
                       Change Phone Number
                     </Button>
@@ -292,7 +300,10 @@ export default function Register() {
                     <Button 
                       variant="link" 
                       className="w-full text-gray-300 hover:text-white hover:no-underline" 
-                      onClick={() => setOtpSent(false)}
+                      onClick={() => {
+                        setOtpSent(false);
+                        setOtp("");
+                      }}
                     >
                       Change Email
                     </Button>
@@ -345,7 +356,11 @@ export default function Register() {
             <div className="flex space-x-2 pt-4">
               <Button 
                 variant="ghost" 
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStep(1);
+                  setOtpSent(false);
+                  setOtp("");
+                }}
                 className="flex-1 text-gray-200 hover:bg-slate-600/20 border border-slate-500/30 hover:border-slate-400/50 hover:text-slate-200 transition-all"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
@@ -483,7 +498,7 @@ export default function Register() {
             </motion.div>
             <CardTitle className="text-2xl text-center text-white">Create an Account</CardTitle>
             <CardDescription className="text-center text-gray-200">
-              Step {step} of 3: {step === 1 ? "Contact Information" : step === 2 ? "Personal Details" : "Sports Preferences"}
+              {step === 1 ? "Contact Information" : step === 2 ? "Personal Details" : "Sports Preferences"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
