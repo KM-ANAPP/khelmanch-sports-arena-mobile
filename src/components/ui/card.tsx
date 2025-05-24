@@ -9,7 +9,9 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-gradient-to-br from-card via-card/95 to-muted/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] group",
+      "rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] group",
+      // Only apply the gradient background if not using backdrop-blur
+      !className?.includes("backdrop-blur") && "bg-gradient-to-br from-card via-card/95 to-muted/50",
       className
     )}
     {...props}
