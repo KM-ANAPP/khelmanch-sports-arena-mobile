@@ -53,11 +53,11 @@ export const PhoneLoginForm = ({
       {!otpSent ? (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-foreground/80">
+            <Label htmlFor="phone" className="text-sm font-medium text-gray-200">
               Phone Number
             </Label>
             <div className="flex space-x-2">
-              <div className="flex h-12 w-14 rounded-xl border border-input bg-background px-3 py-2 text-sm items-center justify-center font-medium text-muted-foreground">
+              <div className="flex h-12 w-14 rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm items-center justify-center font-medium text-gray-200 backdrop-blur-sm">
                 +91
               </div>
               <Input
@@ -66,12 +66,12 @@ export const PhoneLoginForm = ({
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                className="h-12 rounded-xl text-base"
+                className="h-12 rounded-xl text-base bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
               />
             </div>
           </div>
           <Button 
-            className="w-full h-12 mt-4 bg-secondary hover:bg-secondary/90 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
+            className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
             onClick={handleSendOTP}
             disabled={phoneNumber.length !== 10 || isLoading}
           >
@@ -91,7 +91,7 @@ export const PhoneLoginForm = ({
       ) : (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="otp" className="text-sm font-medium text-foreground/80">
+            <Label htmlFor="otp" className="text-sm font-medium text-gray-200">
               Enter OTP
             </Label>
             <Input
@@ -101,16 +101,16 @@ export const PhoneLoginForm = ({
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              className="h-12 rounded-xl text-base text-center tracking-widest font-medium"
+              className="h-12 rounded-xl text-base text-center tracking-widest font-medium bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-white/40 focus:ring-white/20 backdrop-blur-sm"
             />
           </div>
-          <div className="text-sm text-muted-foreground mt-2 flex justify-between items-center">
+          <div className="text-sm text-gray-300 mt-2 flex justify-between items-center">
             <span>OTP sent to +91 {phoneNumber}</span>
             {retryOTP && (
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-auto p-0 text-secondary hover:text-secondary/80" 
+                className="h-auto p-0 text-blue-300 hover:text-blue-200 hover:bg-transparent" 
                 onClick={retryOTP}
                 disabled={isLoading}
               >
@@ -120,7 +120,7 @@ export const PhoneLoginForm = ({
             )}
           </div>
           <Button 
-            className="w-full h-12 mt-4 bg-secondary hover:bg-secondary/90 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg" 
+            className="w-full h-12 mt-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm" 
             onClick={handleLoginWithOTP}
             disabled={otp.length !== 6 || isLoading}
           >
@@ -138,7 +138,7 @@ export const PhoneLoginForm = ({
           </Button>
           <Button 
             variant="link" 
-            className="w-full text-muted-foreground hover:text-secondary" 
+            className="w-full text-gray-300 hover:text-white hover:no-underline" 
             onClick={() => setOtpSent(false)}
             disabled={isLoading}
           >
