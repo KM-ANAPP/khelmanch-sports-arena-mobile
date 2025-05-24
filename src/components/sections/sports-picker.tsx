@@ -122,19 +122,21 @@ export function SportsPicker() {
       {/* Hidden scrollbar container */}
       <div className="relative">
         <div 
-          className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide"
+          className="overflow-x-auto pb-4 -mx-4 px-4"
           style={{ 
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
           }}
         >
-          <style jsx>{`
-            .scrollbar-hide::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
+          <style>
+            {`
+              .sports-picker-container::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
           
-          <div className="flex gap-4" style={{ minWidth: "max-content" }}>
+          <div className="flex gap-4 sports-picker-container" style={{ minWidth: "max-content" }}>
             {sports.map((sport, index) => (
               <motion.div
                 key={sport.id}
