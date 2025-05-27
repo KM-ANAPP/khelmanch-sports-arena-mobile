@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -70,10 +71,10 @@ export default function MessageCenter() {
   }, [selectedConversation, user]);
   
   const loadUserChats = async () => {
-    if (!user?.uid) return;
+    if (!user?.id) return;
     
     try {
-      const userChats = await firestoreService.getUserChats(user.uid);
+      const userChats = await firestoreService.getUserChats(user.id);
       setConversations(userChats);
     } catch (error) {
       console.error('Error loading chats:', error);
@@ -84,10 +85,10 @@ export default function MessageCenter() {
   };
   
   const loadConnectionRequests = async () => {
-    if (!user?.uid) return;
+    if (!user?.id) return;
     
     try {
-      const requests = await firestoreService.getUserConnectionRequests(user.uid);
+      const requests = await firestoreService.getUserConnectionRequests(user.id);
       setConnectionRequests(requests);
     } catch (error) {
       console.error('Error loading connection requests:', error);
@@ -102,10 +103,10 @@ export default function MessageCenter() {
   });
   
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !selectedConversation || !user?.uid) return;
+    if (newMessage.trim() === "" || !selectedConversation || !user?.id) return;
     
     try {
-      await firestoreService.sendMessage(selectedConversation, user.uid, newMessage);
+      await firestoreService.sendMessage(selectedConversation, user.id, newMessage);
       setNewMessage("");
       toast("Message sent");
     } catch (error) {
@@ -150,7 +151,7 @@ export default function MessageCenter() {
   
   const getConversationTitle = (conversation: Chat) => {
     // Get the other participant's ID (not the current user)
-    const otherParticipant = conversation.participants.find(p => p !== user?.uid);
+    const otherParticipant = conversation.participants.find(p => p !== user?.id);
     return otherParticipant || "Unknown User";
   };
 
@@ -263,18 +264,18 @@ export default function MessageCenter() {
                 {messages.map((msg) => (
                   <div 
                     key={msg.id} 
-                    className={`flex ${msg.senderId === user?.uid ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}
                   >
                     <div 
                       className={`max-w-[80%] p-3 rounded-lg ${
-                        msg.senderId === user?.uid 
+                        msg.senderId === user?.id 
                           ? 'bg-primary text-primary-foreground' 
                           : 'bg-accent text-accent-foreground'
                       }`}
                     >
                       <p>{msg.text}</p>
                       <div className={`text-xs mt-1 ${
-                        msg.senderId === user?.uid 
+                        msg.senderId === user?.id 
                           ? 'text-primary-foreground/70' 
                           : 'text-accent-foreground/70'
                       }`}>

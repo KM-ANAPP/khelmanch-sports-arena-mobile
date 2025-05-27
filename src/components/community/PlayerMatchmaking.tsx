@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -158,7 +159,7 @@ export default function PlayerMatchmaking() {
   });
   
   const handleConnectPlayer = async (playerId: string) => {
-    if (!user?.uid) {
+    if (!user?.id) {
       toast({
         title: "Authentication Required",
         description: "Please log in to connect with players."
@@ -178,7 +179,7 @@ export default function PlayerMatchmaking() {
 
     try {
       // Check if connection already exists
-      const existingConnection = await firestoreService.checkExistingConnection(user.uid, playerId);
+      const existingConnection = await firestoreService.checkExistingConnection(user.id, playerId);
       
       if (existingConnection) {
         toast({
@@ -190,7 +191,7 @@ export default function PlayerMatchmaking() {
       }
 
       // Send connection request through Firestore
-      await firestoreService.sendConnectionRequest(user.uid, playerId);
+      await firestoreService.sendConnectionRequest(user.id, playerId);
       
       // Record in local connection limit service
       connectionLimitService.recordConnection(playerId);

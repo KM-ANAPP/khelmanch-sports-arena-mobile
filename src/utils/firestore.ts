@@ -18,7 +18,7 @@ export const auth = getAuth(app);
 
 // Initialize Firestore emulator for development (optional)
 const isDevelopment = window.location.hostname === 'localhost';
-if (isDevelopment && !db._delegate._databaseId.projectId.includes('demo')) {
+if (isDevelopment) {
   try {
     connectFirestoreEmulator(db, 'localhost', 8080);
     console.log('Connected to Firestore emulator');
