@@ -28,7 +28,7 @@ export function FeaturedAthletes() {
       id: "tournament-1",
       type: "tournament",
       title: "Mumbai Cricket Premier League",
-      subtitle: "Join the biggest cricket tournament",
+      subtitle: "Elite cricket championship with top teams competing for glory",
       image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "₹50K Prize Pool",
       stats: [
@@ -41,7 +41,7 @@ export function FeaturedAthletes() {
       id: "venue-1",
       type: "venue",
       title: "Elite Sports Complex",
-      subtitle: "Premium cricket ground with facilities",
+      subtitle: "Premium sports facility with world-class amenities and equipment",
       image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "Top Rated",
       stats: [
@@ -53,8 +53,8 @@ export function FeaturedAthletes() {
     {
       id: "community-1",
       type: "community",
-      title: "Football Community",
-      subtitle: "Connect with local football players",
+      title: "Khelmanch Sports Community",
+      subtitle: "Connect with passionate athletes and build lasting friendships",
       image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "1.2K Members",
       stats: [
@@ -66,21 +66,21 @@ export function FeaturedAthletes() {
     {
       id: "pass-1",
       type: "pass",
-      title: "KhelManch Pass",
-      subtitle: "Get exclusive discounts on tournaments",
+      title: "Khelmanch Premium Pass",
+      subtitle: "Unlock exclusive benefits and discounts across all tournaments",
       image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "30% OFF",
       stats: [
         { label: "Validity", value: "90 Days" },
-        { label: "Price", value: "₹299" }
+        { label: "Benefits", value: "10+" }
       ],
       action: "Buy Pass"
     },
     {
       id: "coupon-1",
       type: "coupon",
-      title: "First Booking Offer",
-      subtitle: "Special discount for new users",
+      title: "First Time User Special",
+      subtitle: "Special welcome discount for new Khelmanch members",
       image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "40% OFF",
       stats: [
@@ -93,7 +93,7 @@ export function FeaturedAthletes() {
       id: "tournament-2",
       type: "tournament",
       title: "Delhi Basketball Championship",
-      subtitle: "Professional basketball tournament",
+      subtitle: "Professional basketball league featuring skilled players nationwide",
       image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "₹25K Prize",
       stats: [
@@ -101,6 +101,32 @@ export function FeaturedAthletes() {
         { label: "Days Left", value: "12" }
       ],
       action: "Register Now"
+    },
+    {
+      id: "venue-2",
+      type: "venue",
+      title: "Metro Football Ground",
+      subtitle: "Professional football turf with modern facilities and lighting",
+      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "Available Today",
+      stats: [
+        { label: "Rating", value: "4.6⭐" },
+        { label: "Price", value: "₹1200/hr" }
+      ],
+      action: "Book Now"
+    },
+    {
+      id: "coupon-2",
+      type: "coupon",
+      title: "Weekend Warrior Deal",
+      subtitle: "Exclusive weekend booking discounts for all sports venues",
+      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "25% OFF",
+      stats: [
+        { label: "Valid On", value: "Weekends" },
+        { label: "Max Save", value: "₹300" }
+      ],
+      action: "Apply Coupon"
     }
   ];
 
@@ -203,14 +229,14 @@ export function FeaturedAthletes() {
                 style={{ width: `${100 / featuredItems.length}%` }}
               >
                 <Card 
-                  className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
+                  className={`h-80 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
                     selectedItem === item.id ? 'ring-2 ring-accent' : ''
                   }`}
                   onClick={() => handleItemClick(item)}
                 >
-                  <CardContent className="p-0">
+                  <CardContent className="p-0 h-full flex flex-col">
                     {/* Image Header */}
-                    <div className="relative h-32 overflow-hidden rounded-t-xl">
+                    <div className="relative h-40 overflow-hidden rounded-t-xl">
                       <img 
                         src={item.image} 
                         alt={item.title} 
@@ -234,11 +260,11 @@ export function FeaturedAthletes() {
                     </div>
                     
                     {/* Content */}
-                    <div className="p-4">
+                    <div className="p-4 flex-1 flex flex-col">
                       <h3 className="font-semibold text-white text-sm mb-1 line-clamp-1">
                         {item.title}
                       </h3>
-                      <p className="text-gray-300 text-xs mb-3 line-clamp-2">
+                      <p className="text-gray-300 text-xs mb-3 line-clamp-2 flex-1">
                         {item.subtitle}
                       </p>
                       
