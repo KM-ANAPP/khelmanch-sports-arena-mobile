@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ interface FeaturedItem {
 export function FeaturedAthletes() {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const featuredItems: FeaturedItem[] = [
     {
@@ -87,8 +88,30 @@ export function FeaturedAthletes() {
         { label: "Min Order", value: "₹500" }
       ],
       action: "Use Coupon"
+    },
+    {
+      id: "tournament-2",
+      type: "tournament",
+      title: "Delhi Basketball Championship",
+      subtitle: "Professional basketball tournament",
+      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "₹25K Prize",
+      stats: [
+        { label: "Teams", value: "16" },
+        { label: "Days Left", value: "12" }
+      ],
+      action: "Register Now"
     }
   ];
+
+  // Auto-slide functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredItems.length);
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(timer);
+  }, [featuredItems.length]);
 
   const handleItemClick = (item: FeaturedItem) => {
     setSelectedItem(item.id);
@@ -149,6 +172,10 @@ export function FeaturedAthletes() {
     }
   };
 
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <section className="py-6">
       <div className="flex justify-between items-center mb-4">
@@ -158,31 +185,25 @@ export function FeaturedAthletes() {
         </Badge>
       </div>
       
-      <div className="overflow-x-auto pb-4 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        <style>
-          {`
-            .featured-container::-webkit-scrollbar {
-              display: none;
-            }
-          `}
-        </style>
-        
-        <div className="flex gap-4 featured-container" style={{ minWidth: "max-content" }}>
+      {/* Auto-sliding Carousel */}
+      <div className="relative overflow-hidden rounded-xl">
+        <motion.div
+          className="flex"
+          animate={{ x: `-${currentSlide * 100}%` }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          style={{ width: `${featuredItems.length * 100}%` }}
+        >
           {featuredItems.map((item, index) => {
             const IconComponent = getIcon(item.type);
             
             return (
-              <motion.div
+              <div
                 key={item.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex-shrink-0"
+                className="w-full flex-shrink-0 px-2"
+                style={{ width: `${100 / featuredItems.length}%` }}
               >
                 <Card 
-                  className={`w-72 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
+                  className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
                     selectedItem === item.id ? 'ring-2 ring-accent' : ''
                   }`}
                   onClick={() => handleItemClick(item)}
@@ -240,9 +261,24 @@ export function FeaturedAthletes() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
+        </motion.div>
+        
+        {/* Slide Indicators */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {featuredItems.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                currentSlide === index 
+                  ? 'bg-accent scale-125' 
+                  : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
