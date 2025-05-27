@@ -9,6 +9,13 @@ interface ModernSportsSplashProps {
 export default function ModernSportsSplash({ onComplete }: ModernSportsSplashProps) {
   const [progress, setProgress] = useState(0);
 
+  // Array of sports icons
+  const sportsIcons = [
+    "🏏", "⚽", "🏀", "🎾", "🏸", "🏊", "🏐", "🏓",
+    "🏑", "🏈", "⚾", "🎱", "🏆", "🥇", "🎯", "🏹",
+    "🚴", "🏃", "🤾", "🏋️"
+  ];
+
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -27,25 +34,28 @@ export default function ModernSportsSplash({ onComplete }: ModernSportsSplashPro
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Animated sports icons background */}
       <div className="absolute inset-0">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white rounded-full opacity-20"
+            className="absolute text-2xl opacity-20"
             initial={{ 
               x: Math.random() * window.innerWidth, 
               y: Math.random() * window.innerHeight 
             }}
             animate={{ 
               y: -100,
+              rotate: [0, 360],
               transition: { 
                 duration: Math.random() * 3 + 2,
                 repeat: Infinity,
                 ease: "linear"
               }
             }}
-          />
+          >
+            {sportsIcons[Math.floor(Math.random() * sportsIcons.length)]}
+          </motion.div>
         ))}
       </div>
 
