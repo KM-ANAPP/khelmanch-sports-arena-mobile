@@ -9,13 +9,6 @@ interface ModernSportsSplashProps {
 export default function ModernSportsSplash({ onComplete }: ModernSportsSplashProps) {
   const [progress, setProgress] = useState(0);
 
-  // Array of sports icons
-  const sportsIcons = [
-    "🏏", "⚽", "🏀", "🎾", "🏸", "🏊", "🏐", "🏓",
-    "🏑", "🏈", "⚾", "🎱", "🏆", "🥇", "🎯", "🏹",
-    "🚴", "🏃", "🤾", "🏋️"
-  ];
-
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -34,55 +27,25 @@ export default function ModernSportsSplash({ onComplete }: ModernSportsSplashPro
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Floating sports icons background - gentle movement */}
+      {/* Animated background elements */}
       <div className="absolute inset-0">
-        {[...Array(12)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-4xl opacity-30 select-none"
-            style={{
-              left: `${10 + (i * 7)}%`,
-              top: `${15 + Math.random() * 70}%`,
+            className="absolute w-2 h-2 bg-white rounded-full opacity-20"
+            initial={{ 
+              x: Math.random() * window.innerWidth, 
+              y: Math.random() * window.innerHeight 
             }}
             animate={{ 
-              y: [0, -20, 0],
-              opacity: [0.2, 0.4, 0.2],
-              scale: [0.8, 1, 0.8],
+              y: -100,
+              transition: { 
+                duration: Math.random() * 3 + 2,
+                repeat: Infinity,
+                ease: "linear"
+              }
             }}
-            transition={{ 
-              duration: 8 + (i * 0.5),
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.8
-            }}
-          >
-            {sportsIcons[i % sportsIcons.length]}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Secondary layer with slower animation */}
-      <div className="absolute inset-0">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={`slow-${i}`}
-            className="absolute text-3xl opacity-20 select-none"
-            style={{
-              left: `${20 + (i * 12)}%`,
-              top: `${30 + Math.random() * 40}%`,
-            }}
-            animate={{ 
-              rotate: [0, 360],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ 
-              duration: 15 + (i * 2),
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          >
-            {sportsIcons[(i + 10) % sportsIcons.length]}
-          </motion.div>
+          />
         ))}
       </div>
 
