@@ -178,14 +178,14 @@ export function PopularGrounds() {
                 className="flex-shrink-0"
               >
                 <Card 
-                  className={`w-64 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
+                  className={`w-64 h-80 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
                     selectedGround === ground.id ? 'ring-2 ring-accent' : ''
                   }`}
                   onClick={() => handleGroundClick(ground)}
                 >
-                  <CardContent className="p-0">
+                  <CardContent className="p-0 h-full flex flex-col">
                     {/* Image Header */}
-                    <div className="relative h-36 overflow-hidden rounded-t-xl">
+                    <div className="relative h-40 overflow-hidden rounded-t-xl">
                       <img 
                         src={ground.image} 
                         alt={ground.name} 
@@ -219,7 +219,7 @@ export function PopularGrounds() {
                     </div>
                     
                     {/* Content */}
-                    <div className="p-4">
+                    <div className="p-4 flex-1 flex flex-col">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold text-white text-sm line-clamp-1 flex-1">
                           {ground.name}
@@ -235,8 +235,8 @@ export function PopularGrounds() {
                       </p>
                       
                       {/* Amenities */}
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {ground.amenities.slice(0, 3).map((amenity, idx) => {
+                      <div className="flex flex-wrap gap-1 mb-3 flex-1">
+                        {ground.amenities.slice(0, 2).map((amenity, idx) => {
                           const AmenityIcon = getAmenityIcon(amenity);
                           return (
                             <div key={idx} className="flex items-center space-x-1 bg-white/10 rounded-full px-2 py-1">
