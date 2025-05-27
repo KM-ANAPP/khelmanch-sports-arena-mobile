@@ -64,6 +64,22 @@ export const SpotlightsSection = () => {
       views: "723K",
       duration: "0:38",
       trending: true
+    },
+    {
+      id: "7",
+      title: "Hockey Speed Training",
+      thumbnail: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      views: "332K",
+      duration: "0:41",
+      trending: false
+    },
+    {
+      id: "8",
+      title: "Golf Perfect Swing",
+      thumbnail: "https://images.unsplash.com/photo-1587174486073-ae5e5cec4691?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      views: "287K",
+      duration: "0:35",
+      trending: true
     }
   ];
 
@@ -87,88 +103,81 @@ export const SpotlightsSection = () => {
         </Badge>
       </div>
 
-      {/* Vertical scrollable container */}
-      <div 
-        className="max-h-80 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-transparent"
-        style={{ scrollbarWidth: 'thin' }}
-      >
-        <style>
-          {`
-            .shorts-container::-webkit-scrollbar {
-              width: 6px;
-            }
-            .shorts-container::-webkit-scrollbar-track {
-              background: rgba(255, 255, 255, 0.1);
-              border-radius: 3px;
-            }
-            .shorts-container::-webkit-scrollbar-thumb {
-              background: rgba(239, 68, 68, 0.5);
-              border-radius: 3px;
-            }
-            .shorts-container::-webkit-scrollbar-thumb:hover {
-              background: rgba(239, 68, 68, 0.7);
-            }
-          `}
-        </style>
+      {/* Horizontal scrollable container */}
+      <div className="relative">
+        <div 
+          className="overflow-x-auto pb-4 -mx-4 px-4"
+          style={{ 
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
+        >
+          <style>
+            {`
+              .shorts-horizontal-container::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
 
-        <div className="shorts-container">
-          {shorts.map((video, index) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex gap-3 p-3 rounded-xl bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm border border-white/10 cursor-pointer group hover:bg-white/15 transition-all duration-300"
-              onClick={() => handleVideoClick(video.id)}
-            >
-              {/* Thumbnail */}
-              <div className="relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
-                />
-                
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <Play className="w-4 h-4 text-white" fill="currentColor" />
-                </div>
-                
-                {/* Duration */}
-                <div className="absolute bottom-1 right-1">
-                  <Badge className="bg-black/70 text-white border-0 text-xs px-1 py-0 h-auto">
-                    {video.duration}
-                  </Badge>
-                </div>
-              </div>
-              
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between">
-                  <h3 className="text-white font-medium text-sm line-clamp-2 flex-1">
-                    {video.title}
-                  </h3>
-                  {video.trending && (
-                    <Badge className="bg-red-500/20 text-red-400 border-0 text-xs ml-2 flex items-center gap-1">
-                      <TrendingUp className="h-2.5 w-2.5" />
+          <div className="flex gap-3 shorts-horizontal-container" style={{ minWidth: "max-content" }}>
+            {shorts.map((video, index) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-shrink-0 w-32 cursor-pointer group"
+                onClick={() => handleVideoClick(video.id)}
+              >
+                {/* Thumbnail */}
+                <div className="relative w-32 h-44 rounded-lg overflow-hidden mb-2">
+                  <img 
+                    src={video.thumbnail} 
+                    alt={video.title} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                  />
+                  
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <Play className="w-6 h-6 text-white" fill="currentColor" />
+                  </div>
+                  
+                  {/* Duration */}
+                  <div className="absolute bottom-2 right-2">
+                    <Badge className="bg-black/70 text-white border-0 text-xs px-1 py-0 h-auto">
+                      {video.duration}
                     </Badge>
+                  </div>
+
+                  {/* Trending Badge */}
+                  {video.trending && (
+                    <div className="absolute top-2 left-2">
+                      <Badge className="bg-red-500/80 text-white border-0 text-xs flex items-center gap-1 px-1 py-0 h-auto">
+                        <TrendingUp className="h-2 w-2" />
+                      </Badge>
+                    </div>
                   )}
                 </div>
                 
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center space-x-2 text-xs text-gray-400">
+                {/* Content */}
+                <div className="space-y-1">
+                  <h3 className="text-white font-medium text-xs line-clamp-2 leading-tight">
+                    {video.title}
+                  </h3>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-400">
                     <span>{video.views} views</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Youtube className="h-3 w-3 text-red-500" />
-                    <span className="text-xs text-gray-400">Shorts</span>
+                    <div className="flex items-center space-x-1">
+                      <Youtube className="h-2.5 w-2.5 text-red-500" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </motion.section>

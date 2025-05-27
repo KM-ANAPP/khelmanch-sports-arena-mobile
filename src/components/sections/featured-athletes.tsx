@@ -5,11 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Trophy, Users, MapPin, Star, Clock } from "lucide-react";
+import { Calendar, Trophy, Users, MapPin, Star, Clock, Ticket, Gift, Zap } from "lucide-react";
 
 interface FeaturedItem {
   id: string;
-  type: 'tournament' | 'venue' | 'community' | 'event';
+  type: 'tournament' | 'venue' | 'community' | 'event' | 'pass' | 'coupon';
   title: string;
   subtitle: string;
   image: string;
@@ -61,6 +61,32 @@ export function FeaturedAthletes() {
         { label: "Events", value: "45" }
       ],
       action: "Join Community"
+    },
+    {
+      id: "pass-1",
+      type: "pass",
+      title: "KhelManch Pass",
+      subtitle: "Get exclusive discounts on tournaments",
+      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "30% OFF",
+      stats: [
+        { label: "Validity", value: "90 Days" },
+        { label: "Price", value: "₹299" }
+      ],
+      action: "Buy Pass"
+    },
+    {
+      id: "coupon-1",
+      type: "coupon",
+      title: "First Booking Offer",
+      subtitle: "Special discount for new users",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "40% OFF",
+      stats: [
+        { label: "Valid Till", value: "7 Days" },
+        { label: "Min Order", value: "₹500" }
+      ],
+      action: "Use Coupon"
     }
   ];
 
@@ -89,6 +115,24 @@ export function FeaturedAthletes() {
       case 'community':
         navigate('/community');
         break;
+      case 'pass':
+        navigate('/checkout', {
+          state: {
+            orderDetails: {
+              amount: 29900,
+              currency: "INR",
+              orderId: `pass_basic_${Date.now()}`,
+              description: "KhelManch Pass - 30% off on tournaments",
+              type: "pass",
+              itemId: "tournament-pass-basic",
+              itemName: "KhelManch Pass"
+            }
+          }
+        });
+        break;
+      case 'coupon':
+        // Show coupon details or apply coupon logic
+        break;
       default:
         break;
     }
@@ -99,6 +143,8 @@ export function FeaturedAthletes() {
       case 'tournament': return Trophy;
       case 'venue': return MapPin;
       case 'community': return Users;
+      case 'pass': return Ticket;
+      case 'coupon': return Gift;
       default: return Star;
     }
   };
