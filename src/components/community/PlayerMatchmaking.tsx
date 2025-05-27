@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,8 @@ import { toast } from "@/hooks/use-toast";
 import { User, MapPin, Calendar, Clock, Star, Search } from "lucide-react";
 import { connectionLimitService } from "@/services/connectionLimitService";
 import { SubscriptionModal } from "./SubscriptionModal";
+import { useAuth } from "@/context/AuthContext";
+import { firestoreService } from "@/services/firestoreService";
 
 // Mock player data
 const mockPlayers = [
@@ -131,11 +132,13 @@ const mockEvents = [
 ];
 
 export default function PlayerMatchmaking() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("matchmaking");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSport, setSelectedSport] = useState<string>("all");
   const [selectedSkillLevel, setSelectedSkillLevel] = useState<string>("all");
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [sendingRequest, setSendingRequest] = useState<string | null>(null);
   
   // Check for connection limit reset on component mount
   useEffect(() => {
@@ -154,12 +157,44 @@ export default function PlayerMatchmaking() {
     return matchesSearch && matchesSport && matchesSkill;
   });
   
-  const handleConnectPlayer = (playerId: string) => {
+  const handleConnectPlayer = async (playerId: string) => {
+    if (!user?.uid) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to connect with players."
+      });
+      return;
+    }
+
     const player = mockPlayers.find(p => p.id === playerId);
     if (!player) return;
 
-    if (connectionLimitService.canMakeConnection()) {
+    if (!connectionLimitService.canMakeConnection()) {
+      setShowSubscriptionModal(true);
+      return;
+    }
+
+    setSendingRequest(playerId);
+
+    try {
+      // Check if connection already exists
+      const existingConnection = await firestoreService.checkExistingConnection(user.uid, playerId);
+      
+      if (existingConnection) {
+        toast({
+          title: "Connection Already Exists",
+          description: `You've already sent a connection request to ${player.name}.`
+        });
+        setSendingRequest(null);
+        return;
+      }
+
+      // Send connection request through Firestore
+      await firestoreService.sendConnectionRequest(user.uid, playerId);
+      
+      // Record in local connection limit service
       connectionLimitService.recordConnection(playerId);
+      
       toast({
         title: "Connection Request Sent",
         description: `Your connection request to ${player.name} has been sent.`
@@ -167,8 +202,14 @@ export default function PlayerMatchmaking() {
       
       // Force a re-render to update the remaining connections count
       setActiveTab(activeTab);
-    } else {
-      setShowSubscriptionModal(true);
+    } catch (error) {
+      console.error('Error sending connection request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send connection request. Please try again."
+      });
+    } finally {
+      setSendingRequest(null);
     }
   };
   
@@ -299,8 +340,9 @@ export default function PlayerMatchmaking() {
                       variant="outline" 
                       size="sm"
                       onClick={() => handleConnectPlayer(player.id)}
+                      disabled={sendingRequest === player.id}
                     >
-                      Connect
+                      {sendingRequest === player.id ? 'Sending...' : 'Connect'}
                     </Button>
                   </div>
                   
