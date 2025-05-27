@@ -1,15 +1,17 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, MessageSquare, Send, Search } from "lucide-react";
+import { User, MessageSquare, Send, Search, MoreVertical, UserX } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import { firestoreService, Chat, ChatMessage, ConnectionRequest } from "@/services/firestoreService";
+import { securityService } from "@/services/securityService";
+import MessageReporting from "./MessageReporting";
 
 const formatTime = (timestamp: any) => {
   if (!timestamp) return '';
@@ -96,23 +98,55 @@ export default function MessageCenter() {
   };
   
   const filteredConversations = conversations.filter(conv => {
-    // Filter based on search term - you might want to enhance this
-    // to search through participant names when you have user data
+    const otherParticipant = conv.participants.find(p => p !== user?.id);
+    
+    // Hide conversations with blocked users
+    if (otherParticipant && securityService.isUserBlocked(otherParticipant)) {
+      return false;
+    }
+    
+    // Search filter
     return conv.lastMessage?.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
            searchTerm === '';
   });
   
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !selectedConversation || !user?.id) return;
+    if (!selectedConversation || !user?.id) return;
+    
+    // Validate and sanitize message
+    const validation = securityService.validateMessage(newMessage, user.id);
+    if (!validation.isValid) {
+      toast(validation.error || "Invalid message");
+      return;
+    }
+    
+    const sanitizedMessage = securityService.sanitizeInput(newMessage);
     
     try {
-      await firestoreService.sendMessage(selectedConversation, user.id, newMessage);
+      await firestoreService.sendMessage(selectedConversation, user.id, sanitizedMessage);
       setNewMessage("");
       toast("Message sent");
     } catch (error) {
       console.error('Error sending message:', error);
       toast("Failed to send message");
     }
+  };
+  
+  const handleReportMessage = async (reportData: any) => {
+    try {
+      await securityService.reportMessage(reportData);
+    } catch (error) {
+      console.error('Error reporting message:', error);
+      throw error;
+    }
+  };
+  
+  const handleBlockUser = (userId: string) => {
+    securityService.blockUser(userId, 'User blocked via chat');
+    toast("User has been blocked");
+    
+    // Refresh conversations to hide blocked user
+    loadUserChats();
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -257,29 +291,59 @@ export default function MessageCenter() {
                        getConversationTitle(conversations.find(c => c.id === selectedConversation)!)}
                     </CardTitle>
                   </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem 
+                        onClick={() => {
+                          const conv = conversations.find(c => c.id === selectedConversation);
+                          const otherUser = conv?.participants.find(p => p !== user?.id);
+                          if (otherUser) handleBlockUser(otherUser);
+                        }}
+                      >
+                        <UserX className="h-4 w-4 mr-2" />
+                        Block User
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardHeader>
               </Card>
               
               <div className="flex-1 overflow-y-auto p-2 space-y-2 mb-2">
-                {messages.map((msg) => (
+                {messages
+                  .filter(msg => securityService.shouldDisplayMessage(msg.senderId, msg.id))
+                  .map((msg) => (
                   <div 
                     key={msg.id} 
                     className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}
                   >
                     <div 
-                      className={`max-w-[80%] p-3 rounded-lg ${
+                      className={`max-w-[80%] p-3 rounded-lg relative group ${
                         msg.senderId === user?.id 
                           ? 'bg-primary text-primary-foreground' 
                           : 'bg-accent text-accent-foreground'
                       }`}
                     >
                       <p>{msg.text}</p>
-                      <div className={`text-xs mt-1 ${
+                      <div className={`text-xs mt-1 flex items-center justify-between ${
                         msg.senderId === user?.id 
                           ? 'text-primary-foreground/70' 
                           : 'text-accent-foreground/70'
                       }`}>
-                        {formatTime(msg.timestamp)}
+                        <span>{formatTime(msg.timestamp)}</span>
+                        {msg.senderId !== user?.id && (
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <MessageReporting
+                              messageId={msg.id}
+                              senderId={msg.senderId}
+                              onReport={handleReportMessage}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -293,6 +357,7 @@ export default function MessageCenter() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="flex-1"
+                  maxLength={1000}
                 />
                 <Button 
                   onClick={handleSendMessage}
