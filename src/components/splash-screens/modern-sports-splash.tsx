@@ -36,25 +36,61 @@ export default function ModernSportsSplash({ onComplete }: ModernSportsSplashPro
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
       {/* Animated sports icons background */}
       <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-2xl opacity-20"
+            className="absolute text-3xl opacity-40 select-none"
+            style={{
+              left: `${Math.random() * 90}%`,
+              top: `${Math.random() * 90}%`,
+            }}
             initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: Math.random() * window.innerHeight 
+              scale: 0,
+              rotate: 0,
+              opacity: 0
             }}
             animate={{ 
-              y: -100,
-              rotate: [0, 360],
-              transition: { 
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                ease: "linear"
-              }
+              scale: [0, 1.2, 1],
+              rotate: [0, 180, 360],
+              opacity: [0, 0.6, 0.3, 0.6, 0],
+              y: [-20, -40, -60],
+              x: [0, Math.random() * 40 - 20, 0],
+            }}
+            transition={{ 
+              duration: 4 + Math.random() * 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 2
             }}
           >
             {sportsIcons[Math.floor(Math.random() * sportsIcons.length)]}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Floating icons with different animation */}
+      <div className="absolute inset-0">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`float-${i}`}
+            className="absolute text-4xl opacity-25 select-none"
+            style={{
+              left: `${10 + (i * 10)}%`,
+              top: `${20 + Math.random() * 60}%`,
+            }}
+            animate={{ 
+              y: [0, -30, 0],
+              rotate: [0, 10, -10, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3
+            }}
+          >
+            {sportsIcons[i % sportsIcons.length]}
           </motion.div>
         ))}
       </div>
