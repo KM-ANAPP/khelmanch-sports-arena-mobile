@@ -159,11 +159,16 @@ export default function Checkout() {
             description: `Payment ID: ${response.razorpay_payment_id}`,
           });
           
+          // Navigate to payment success with enhanced data for ticket generation
           navigate('/payment-success', { 
             state: { 
               paymentId: response.razorpay_payment_id, 
               orderId: response.razorpay_order_id,
-              orderDetails,
+              orderDetails: {
+                ...orderDetails,
+                date: new Date().toISOString().split('T')[0], // Add current date if not present
+                sport: orderDetails.type === 'tournament' ? 'Tournament' : 'Ground Booking'
+              },
               discountApplied: hasAppliedPass ? discountAmount : 0
             } 
           });

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,12 +11,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Clock, MapPin, Filter, X } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, MapPin, Filter, X, Ticket as TicketIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Link } from "react-router-dom";
+import { useTickets } from "@/hooks/useTickets";
+import { TicketDisplay } from "@/components/tickets/TicketDisplay";
+import { TicketModal } from "@/components/tickets/TicketModal";
+import { TicketData } from "@/services/ticketService";
+import { LoadingShimmer } from "@/components/ui/loading-shimmer";
+import { EmptyBookingState } from "@/components/booking/EmptyBookingState";
 
-// Mock data
+// Mock data for ground bookings
 const groundBookings = [
   {
     id: "gb1",
@@ -54,6 +59,7 @@ const groundBookings = [
   }
 ];
 
+// Mock data for tournament bookings
 const tournamentBookings = [
   {
     id: "tb1",
@@ -79,11 +85,14 @@ const tournamentBookings = [
 
 export default function MyBookings() {
   const { isAuthenticated } = useAuth();
+  const { tickets, isLoading: ticketsLoading } = useTickets();
   const [activeTab, setActiveTab] = useState("grounds");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [sportFilter, setSportFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
 
   const filteredGroundBookings = groundBookings.filter(booking => {
     if (date && booking.date.toDateString() !== date.toDateString()) return false;
@@ -97,6 +106,11 @@ export default function MyBookings() {
     if (statusFilter && booking.status !== statusFilter) return false;
     return true;
   });
+
+  const handleViewTicket = (ticket: TicketData) => {
+    setSelectedTicket(ticket);
+    setShowTicketModal(true);
+  };
 
   const clearFilters = () => {
     setDate(undefined);
@@ -147,6 +161,7 @@ export default function MyBookings() {
           </Button>
         </div>
         
+        {/* Filter Options */}
         {showFilters && (
           <Card className="p-4">
             <div className="flex justify-between items-center mb-2">
@@ -195,41 +210,59 @@ export default function MyBookings() {
           </Card>
         )}
         
-        {/* Tabs for Grounds vs Tournaments */}
+        {/* Tabs for different booking types */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="grounds">
-              Ground Bookings
-            </TabsTrigger>
-            <TabsTrigger value="tournaments">
-              Tournament Entries
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="grounds">Grounds</TabsTrigger>
+            <TabsTrigger value="tournaments">Tournaments</TabsTrigger>
+            <TabsTrigger value="tickets">Tickets</TabsTrigger>
           </TabsList>
           
           <TabsContent value="grounds" className="mt-4 space-y-4">
-            {filteredGroundBookings.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No ground bookings found{date ? ` for ${format(date, "PP")}` : ""}
-              </div>
+            {groundBookings.length === 0 ? (
+              <EmptyBookingState type="no-bookings" />
             ) : (
-              filteredGroundBookings.map(booking => (
+              groundBookings.map(booking => (
                 <GroundBookingCard key={booking.id} booking={booking} />
               ))
             )}
           </TabsContent>
           
           <TabsContent value="tournaments" className="mt-4 space-y-4">
-            {filteredTournamentBookings.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No tournament entries found{date ? ` for ${format(date, "PP")}` : ""}
-              </div>
+            {tournamentBookings.length === 0 ? (
+              <EmptyBookingState type="no-bookings" />
             ) : (
-              filteredTournamentBookings.map(booking => (
+              tournamentBookings.map(booking => (
                 <TournamentBookingCard key={booking.id} booking={booking} />
               ))
             )}
           </TabsContent>
+
+          <TabsContent value="tickets" className="mt-4 space-y-4">
+            {ticketsLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <LoadingShimmer key={i} height="120px" className="rounded-xl" />
+                ))}
+              </div>
+            ) : tickets.length === 0 ? (
+              <EmptyBookingState type="no-bookings" />
+            ) : (
+              tickets.map(ticket => (
+                <div key={ticket.id} onClick={() => handleViewTicket(ticket)}>
+                  <TicketDisplay ticket={ticket} compact />
+                </div>
+              ))
+            )}
+          </TabsContent>
         </Tabs>
+
+        {/* Ticket Modal */}
+        <TicketModal
+          open={showTicketModal}
+          onOpenChange={setShowTicketModal}
+          ticket={selectedTicket}
+        />
       </div>
     </MobileLayout>
   );
