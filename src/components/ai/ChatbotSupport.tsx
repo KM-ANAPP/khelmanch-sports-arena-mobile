@@ -1,5 +1,5 @@
-
 import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -83,6 +83,7 @@ const generateResponse = (message: string, previousMessages: Message[]): string 
 };
 
 export default function ChatbotSupport() {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -96,6 +97,9 @@ export default function ChatbotSupport() {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Only show chatbot on home page
+  const showChatbot = location.pathname === '/home' || location.pathname === '/';
   
   // Scroll to bottom of messages
   useEffect(() => {
@@ -173,6 +177,11 @@ export default function ChatbotSupport() {
   const toggleMinimize = () => {
     setIsMinimized(!isMinimized);
   };
+
+  // Don't render if not on home page
+  if (!showChatbot) {
+    return null;
+  }
 
   return (
     <>

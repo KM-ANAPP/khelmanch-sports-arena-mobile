@@ -9,6 +9,7 @@ interface Sport {
   id: string;
   name: string;
   icon: string;
+  modernIcon: string;
   color: string;
   players: number;
   venues: number;
@@ -24,7 +25,8 @@ export function SportsPicker() {
       id: "cricket",
       name: "Cricket",
       icon: "🏏",
-      color: "from-green-400 to-emerald-600",
+      modernIcon: "⚡",
+      color: "from-emerald-400 via-green-500 to-teal-600",
       players: 1247,
       venues: 89,
       events: 23
@@ -33,7 +35,8 @@ export function SportsPicker() {
       id: "football",
       name: "Football",
       icon: "⚽",
-      color: "from-orange-400 to-red-500",
+      modernIcon: "🔥",
+      color: "from-orange-400 via-red-500 to-pink-600",
       players: 2156,
       venues: 67,
       events: 31
@@ -42,7 +45,8 @@ export function SportsPicker() {
       id: "basketball",
       name: "Basketball",
       icon: "🏀",
-      color: "from-purple-400 to-pink-500",
+      modernIcon: "💫",
+      color: "from-purple-400 via-violet-500 to-indigo-600",
       players: 893,
       venues: 45,
       events: 18
@@ -51,7 +55,8 @@ export function SportsPicker() {
       id: "tennis",
       name: "Tennis",
       icon: "🎾",
-      color: "from-yellow-400 to-orange-500",
+      modernIcon: "✨",
+      color: "from-yellow-400 via-amber-500 to-orange-600",
       players: 654,
       venues: 34,
       events: 12
@@ -60,7 +65,8 @@ export function SportsPicker() {
       id: "badminton",
       name: "Badminton",
       icon: "🏸",
-      color: "from-blue-400 to-cyan-500",
+      modernIcon: "💎",
+      color: "from-cyan-400 via-blue-500 to-indigo-600",
       players: 567,
       venues: 28,
       events: 15
@@ -69,7 +75,8 @@ export function SportsPicker() {
       id: "swimming",
       name: "Swimming",
       icon: "🏊",
-      color: "from-teal-400 to-blue-500",
+      modernIcon: "🌊",
+      color: "from-teal-400 via-cyan-500 to-blue-600",
       players: 432,
       venues: 19,
       events: 8
@@ -78,7 +85,8 @@ export function SportsPicker() {
       id: "volleyball",
       name: "Volleyball",
       icon: "🏐",
-      color: "from-indigo-400 to-purple-500",
+      modernIcon: "⭐",
+      color: "from-indigo-400 via-purple-500 to-violet-600",
       players: 398,
       venues: 22,
       events: 11
@@ -87,7 +95,8 @@ export function SportsPicker() {
       id: "table-tennis",
       name: "Table Tennis",
       icon: "🏓",
-      color: "from-pink-400 to-rose-500",
+      modernIcon: "🎯",
+      color: "from-pink-400 via-rose-500 to-red-600",
       players: 321,
       venues: 31,
       events: 9
@@ -97,7 +106,6 @@ export function SportsPicker() {
   const handleSportClick = (sport: Sport) => {
     setSelectedSport(sport.id);
     
-    // Navigate to sport-specific page with options
     navigate(`/sport/${sport.id}`, {
       state: {
         sportData: sport,
@@ -119,7 +127,6 @@ export function SportsPicker() {
         </Badge>
       </div>
       
-      {/* Hidden scrollbar container */}
       <div className="relative">
         <div 
           className="overflow-x-auto pb-4 -mx-4 px-4"
@@ -154,17 +161,20 @@ export function SportsPicker() {
                   onClick={() => handleSportClick(sport)}
                 >
                   <CardContent className="p-4 text-center">
-                    {/* Sport Icon with animated background */}
                     <motion.div
-                      className={`relative w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br ${sport.color} flex items-center justify-center`}
+                      className={`relative w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br ${sport.color} flex items-center justify-center shadow-xl`}
                       whileHover={{ rotate: [0, -10, 10, 0] }}
                       transition={{ duration: 0.5 }}
                     >
-                      <span className="text-2xl filter drop-shadow-lg">
-                        {sport.icon}
-                      </span>
+                      <div className="relative z-10 flex items-center justify-center">
+                        <span className="text-2xl filter drop-shadow-lg">
+                          {sport.icon}
+                        </span>
+                        <span className="absolute -top-1 -right-1 text-lg animate-pulse">
+                          {sport.modernIcon}
+                        </span>
+                      </div>
                       
-                      {/* Pulse effect */}
                       <motion.div
                         className={`absolute inset-0 rounded-full bg-gradient-to-br ${sport.color} opacity-20`}
                         animate={{ scale: [1, 1.2, 1] }}
@@ -172,10 +182,8 @@ export function SportsPicker() {
                       />
                     </motion.div>
                     
-                    {/* Sport Name */}
                     <h3 className="font-semibold text-sm mb-2 text-white">{sport.name}</h3>
                     
-                    {/* Stats */}
                     <div className="space-y-1 text-xs text-gray-300">
                       <div className="flex justify-between">
                         <span>Players:</span>
@@ -197,7 +205,6 @@ export function SportsPicker() {
           </div>
         </div>
         
-        {/* Colored scroll indicator dots */}
         <div className="flex justify-center mt-4 space-x-2">
           {[...Array(3)].map((_, i) => (
             <motion.div 

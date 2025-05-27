@@ -1,8 +1,7 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, ExternalLink, Youtube, Zap, TrendingUp } from "lucide-react";
+import { Play, Youtube, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface VideoShort {
@@ -49,16 +48,27 @@ export const SpotlightsSection = () => {
       views: "2.1M",
       duration: "0:52",
       trending: true
+    },
+    {
+      id: "5",
+      title: "Swimming Technique Tips",
+      thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      views: "456K",
+      duration: "1:05",
+      trending: false
+    },
+    {
+      id: "6",
+      title: "Badminton Smash Compilation",
+      thumbnail: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      views: "723K",
+      duration: "0:38",
+      trending: true
     }
   ];
 
   const handleVideoClick = (videoId: string) => {
     setSelectedVideo(videoId);
-    // Open YouTube Shorts channel
-    window.open("https://www.youtube.com/@khelmanch_official/shorts", "_blank");
-  };
-
-  const handleChannelVisit = () => {
     window.open("https://www.youtube.com/@khelmanch_official/shorts", "_blank");
   };
 
@@ -67,116 +77,100 @@ export const SpotlightsSection = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="py-8"
+      className="py-6"
     >
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">Khelmanch Shorts</h2>
-          <p className="text-gray-300 text-sm">Watch our latest sports highlights and moments</p>
-        </div>
-        <Button
-          onClick={handleChannelVisit}
-          className="bg-red-600 hover:bg-red-700 text-white rounded-xl px-4 py-2 flex items-center space-x-2 transition-all duration-300"
-        >
-          <Youtube className="h-4 w-4" />
-          <span className="text-sm font-semibold">Visit Channel</span>
-          <ExternalLink className="h-3 w-3" />
-        </Button>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-white">Khelmanch Shorts</h2>
+        <Badge variant="secondary" className="text-xs bg-red-500/20 text-red-400 border-red-500/30 flex items-center gap-1">
+          <Youtube className="h-3 w-3" />
+          Trending
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {shorts.map((video, index) => (
-          <motion.div
-            key={video.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="relative group cursor-pointer"
-            onClick={() => handleVideoClick(video.id)}
-          >
-            {/* Video Container */}
-            <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+      {/* Vertical scrollable container */}
+      <div 
+        className="max-h-80 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-transparent"
+        style={{ scrollbarWidth: 'thin' }}
+      >
+        <style>
+          {`
+            .shorts-container::-webkit-scrollbar {
+              width: 6px;
+            }
+            .shorts-container::-webkit-scrollbar-track {
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 3px;
+            }
+            .shorts-container::-webkit-scrollbar-thumb {
+              background: rgba(239, 68, 68, 0.5);
+              border-radius: 3px;
+            }
+            .shorts-container::-webkit-scrollbar-thumb:hover {
+              background: rgba(239, 68, 68, 0.7);
+            }
+          `}
+        </style>
+
+        <div className="shorts-container">
+          {shorts.map((video, index) => (
+            <motion.div
+              key={video.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex gap-3 p-3 rounded-xl bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm border border-white/10 cursor-pointer group hover:bg-white/15 transition-all duration-300"
+              onClick={() => handleVideoClick(video.id)}
+            >
               {/* Thumbnail */}
-              <img 
-                src={video.thumbnail} 
-                alt={video.title} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-              />
-              
-              {/* Modern Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-              
-              {/* Trending Badge */}
-              {video.trending && (
-                <div className="absolute top-3 left-3">
-                  <Badge className="bg-red-500/90 text-white border-0 flex items-center gap-1 font-bold text-xs">
-                    <TrendingUp className="h-3 w-3" />
-                    Trending
+              <div className="relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                <img 
+                  src={video.thumbnail} 
+                  alt={video.title} 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                />
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <Play className="w-4 h-4 text-white" fill="currentColor" />
+                </div>
+                
+                {/* Duration */}
+                <div className="absolute bottom-1 right-1">
+                  <Badge className="bg-black/70 text-white border-0 text-xs px-1 py-0 h-auto">
+                    {video.duration}
                   </Badge>
                 </div>
-              )}
-              
-              {/* Duration */}
-              <div className="absolute top-3 right-3">
-                <Badge className="bg-black/70 text-white border-0 text-xs font-medium backdrop-blur-sm">
-                  {video.duration}
-                </Badge>
               </div>
               
-              {/* Play Button */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center group-hover:bg-white/30 transition-all duration-300"
-                >
-                  <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
-                </motion.div>
-              </div>
-              
-              {/* Bottom Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">
-                  {video.title}
-                </h3>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 text-xs text-gray-300">
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between">
+                  <h3 className="text-white font-medium text-sm line-clamp-2 flex-1">
+                    {video.title}
+                  </h3>
+                  {video.trending && (
+                    <Badge className="bg-red-500/20 text-red-400 border-0 text-xs ml-2 flex items-center gap-1">
+                      <TrendingUp className="h-2.5 w-2.5" />
+                    </Badge>
+                  )}
+                </div>
+                
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center space-x-2 text-xs text-gray-400">
                     <span>{video.views} views</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Youtube className="h-4 w-4 text-red-500" />
-                    <span className="text-xs text-gray-300">Shorts</span>
+                    <Youtube className="h-3 w-3 text-red-500" />
+                    <span className="text-xs text-gray-400">Shorts</span>
                   </div>
                 </div>
               </div>
-              
-              {/* Hover Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
-      
-      {/* Subscribe CTA */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="text-center mt-6"
-      >
-        <Button
-          onClick={handleChannelVisit}
-          className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl px-8 py-3 font-semibold transition-all duration-300 relative overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-          <div className="flex items-center space-x-2 relative z-10">
-            <Youtube className="h-5 w-5" />
-            <span>Subscribe to Khelmanch</span>
-            <Zap className="h-4 w-4" />
-          </div>
-        </Button>
-      </motion.div>
     </motion.section>
   );
 };

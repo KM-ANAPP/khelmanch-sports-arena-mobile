@@ -1,194 +1,204 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Trophy, Play } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Trophy, Users, MapPin, Star, Clock } from "lucide-react";
 
-interface Athlete {
-  id: number;
-  name: string;
-  sport: string;
-  location: string;
-  rating: number;
-  achievements: string;
+interface FeaturedItem {
+  id: string;
+  type: 'tournament' | 'venue' | 'community' | 'event';
+  title: string;
+  subtitle: string;
   image: string;
-  isVerified: boolean;
+  badge: string;
+  stats: { label: string; value: string }[];
+  action: string;
 }
 
-export const FeaturedAthletes = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+export function FeaturedAthletes() {
+  const navigate = useNavigate();
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
-  const athletes: Athlete[] = [
+  const featuredItems: FeaturedItem[] = [
     {
-      id: 1,
-      name: "Rahul Sharma",
-      sport: "Cricket",
-      location: "Mumbai, India",
-      rating: 4.9,
-      achievements: "State Level Champion",
-      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1167&q=80",
-      isVerified: true
+      id: "tournament-1",
+      type: "tournament",
+      title: "Mumbai Cricket Premier League",
+      subtitle: "Join the biggest cricket tournament",
+      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "₹50K Prize Pool",
+      stats: [
+        { label: "Teams", value: "32" },
+        { label: "Days Left", value: "5" }
+      ],
+      action: "Register Now"
     },
     {
-      id: 2,
-      name: "Priya Patel",
-      sport: "Tennis",
-      location: "Bangalore, India",
-      rating: 4.8,
-      achievements: "National Tournament Winner",
-      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
-      isVerified: true
+      id: "venue-1",
+      type: "venue",
+      title: "Elite Sports Complex",
+      subtitle: "Premium cricket ground with facilities",
+      image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "Top Rated",
+      stats: [
+        { label: "Rating", value: "4.8⭐" },
+        { label: "Price", value: "₹999/hr" }
+      ],
+      action: "Book Now"
     },
     {
-      id: 3,
-      name: "Arjun Singh",
-      sport: "Football",
-      location: "Delhi, India",
-      rating: 4.7,
-      achievements: "District Level Captain",
-      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=735&q=80",
-      isVerified: true
+      id: "community-1",
+      type: "community",
+      title: "Football Community",
+      subtitle: "Connect with local football players",
+      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      badge: "1.2K Members",
+      stats: [
+        { label: "Active", value: "890" },
+        { label: "Events", value: "45" }
+      ],
+      action: "Join Community"
     }
   ];
 
-  // Auto-slide functionality
-  useEffect(() => {
-    if (!isAutoPlaying) return;
+  const handleItemClick = (item: FeaturedItem) => {
+    setSelectedItem(item.id);
     
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % athletes.length);
-    }, 4000);
+    switch (item.type) {
+      case 'tournament':
+        navigate('/tournaments');
+        break;
+      case 'venue':
+        navigate('/checkout', {
+          state: {
+            orderDetails: {
+              amount: 99900,
+              currency: "INR",
+              orderId: `ground_booking_${Date.now()}`,
+              description: "Ground Booking",
+              type: "ground",
+              itemId: "ground-booking-default",
+              itemName: "Ground Booking"
+            }
+          }
+        });
+        break;
+      case 'community':
+        navigate('/community');
+        break;
+      default:
+        break;
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, athletes.length]);
-
-  const handleDotClick = (index: number) => {
-    setCurrentSlide(index);
-    setIsAutoPlaying(false);
-    
-    // Resume auto-play after 5 seconds
-    setTimeout(() => setIsAutoPlaying(true), 5000);
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'tournament': return Trophy;
+      case 'venue': return MapPin;
+      case 'community': return Users;
+      default: return Star;
+    }
   };
 
   return (
     <section className="py-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-white">Featured Athletes</h2>
+        <h2 className="text-xl font-semibold text-white">Discover Khelmanch</h2>
         <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
-          Live Now
+          Featured
         </Badge>
       </div>
       
-      <div className="relative overflow-hidden rounded-2xl">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -300 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="relative h-64 w-full"
-          >
-            {/* Background Image */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-              style={{ backgroundImage: `url(${athletes[currentSlide].image})` }}
-            />
+      <div className="overflow-x-auto pb-4 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <style>
+          {`
+            .featured-container::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
+        
+        <div className="flex gap-4 featured-container" style={{ minWidth: "max-content" }}>
+          {featuredItems.map((item, index) => {
+            const IconComponent = getIcon(item.type);
             
-            {/* Modern Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            
-            {/* Animated Background Elements */}
-            <div className="absolute top-4 right-4 w-20 h-20 bg-accent/10 rounded-full blur-xl animate-pulse" />
-            <div className="absolute bottom-8 right-8 w-16 h-16 bg-secondary/10 rounded-full blur-lg animate-pulse delay-1000" />
-            
-            {/* Content */}
-            <div className="relative z-10 h-full flex flex-col justify-end p-6">
-              <div className="space-y-3">
-                {/* Sport Badge */}
-                <Badge className="bg-accent/90 text-black font-semibold w-fit">
-                  {athletes[currentSlide].sport}
-                </Badge>
-                
-                {/* Name and Verification */}
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-2xl font-bold text-white">
-                    {athletes[currentSlide].name}
-                  </h3>
-                  {athletes[currentSlide].isVerified && (
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Details */}
-                <div className="flex items-center space-x-4 text-sm text-gray-200">
-                  <div className="flex items-center space-x-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>{athletes[currentSlide].location}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span>{athletes[currentSlide].rating}</span>
-                  </div>
-                </div>
-                
-                {/* Achievement */}
-                <div className="flex items-center space-x-2">
-                  <Trophy className="w-4 h-4 text-accent" />
-                  <span className="text-accent font-medium text-sm">
-                    {athletes[currentSlide].achievements}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Play Button Overlay */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <Button
-                size="icon"
-                className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all duration-300 hover:scale-110"
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-shrink-0"
               >
-                <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
-              </Button>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-        
-        {/* Navigation Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {athletes.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleDotClick(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-accent w-6'
-                  : 'bg-white/50 hover:bg-white/70'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-          <motion.div
-            className="h-full bg-accent"
-            initial={{ width: "0%" }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 4, ease: "linear" }}
-            key={currentSlide}
-          />
+                <Card 
+                  className={`w-72 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
+                    selectedItem === item.id ? 'ring-2 ring-accent' : ''
+                  }`}
+                  onClick={() => handleItemClick(item)}
+                >
+                  <CardContent className="p-0">
+                    {/* Image Header */}
+                    <div className="relative h-32 overflow-hidden rounded-t-xl">
+                      <img 
+                        src={item.image} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      
+                      {/* Badge */}
+                      <div className="absolute top-3 left-3">
+                        <Badge className="bg-accent text-black font-semibold text-xs border-0">
+                          {item.badge}
+                        </Badge>
+                      </div>
+                      
+                      {/* Type Icon */}
+                      <div className="absolute top-3 right-3">
+                        <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <IconComponent className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-white text-sm mb-1 line-clamp-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-300 text-xs mb-3 line-clamp-2">
+                        {item.subtitle}
+                      </p>
+                      
+                      {/* Stats */}
+                      <div className="flex justify-between items-center mb-3">
+                        {item.stats.map((stat, idx) => (
+                          <div key={idx} className="text-center">
+                            <div className="text-xs text-gray-400">{stat.label}</div>
+                            <div className="text-sm font-semibold text-white">{stat.value}</div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Action Button */}
+                      <Button 
+                        className="w-full bg-accent hover:bg-accent/90 text-black font-semibold text-xs h-8"
+                      >
+                        {item.action}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
-};
+}
