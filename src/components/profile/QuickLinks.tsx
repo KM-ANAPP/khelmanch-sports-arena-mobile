@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Bell, ArrowRight, MessageSquare } from "lucide-react";
+import { Settings, Bell, ArrowRight, MessageSquare, Phone, Instagram } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface QuickLinksProps {
@@ -53,17 +53,55 @@ export function QuickLinks({ setActiveTab }: QuickLinksProps) {
           <span>My Bookings</span>
           <ArrowRight className="h-4 w-4" />
         </Button>
-        <Button 
-          variant="outline" 
-          className="w-full justify-between" 
-          onClick={() => window.location.href = 'mailto:support@khelmanch.com'}
-        >
-          <span className="flex items-center space-x-2">
-            <MessageSquare className="h-4 w-4" />
-            <span>Contact Khelmanch</span>
-          </span>
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        
+        {/* Contact Us Section */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-muted-foreground px-2">Contact Khelmanch</h4>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between" 
+            onClick={() => window.location.href = 'mailto:support@khelmanch.com'}
+          >
+            <span className="flex items-center space-x-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>Email Support</span>
+            </span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between" 
+            onClick={() => window.location.href = 'tel:+919876543210'}
+          >
+            <span className="flex items-center space-x-2">
+              <Phone className="h-4 w-4" />
+              <span>Call Us</span>
+            </span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between" 
+            onClick={() => window.open('https://wa.me/919876543210', '_blank')}
+          >
+            <span className="flex items-center space-x-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>WhatsApp</span>
+            </span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between" 
+            onClick={() => window.open('https://instagram.com/khelmanch', '_blank')}
+          >
+            <span className="flex items-center space-x-2">
+              <Instagram className="h-4 w-4" />
+              <span>Follow on Instagram</span>
+            </span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </>
   );
