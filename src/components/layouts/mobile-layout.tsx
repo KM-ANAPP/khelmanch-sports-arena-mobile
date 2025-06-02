@@ -1,9 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
-import { Bell, Search, User, MapPin } from "lucide-react";
+import { Bell, Search, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
@@ -79,14 +78,6 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
                 2
               </Badge>
             </Button>
-            <Link to="/profile">
-              <Avatar className="h-8 w-8 border-2 border-primary/10">
-                <AvatarImage src={user?.profileImage} />
-                <AvatarFallback className="bg-primary/10">
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-            </Link>
           </div>
         </div>
         
