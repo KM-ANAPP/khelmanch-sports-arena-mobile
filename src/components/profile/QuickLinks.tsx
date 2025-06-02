@@ -1,7 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Bell, ArrowRight } from "lucide-react";
+import { Settings, Bell, ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface QuickLinksProps {
@@ -51,6 +51,17 @@ export function QuickLinks({ setActiveTab }: QuickLinksProps) {
           onClick={() => navigate('/my-bookings')}
         >
           <span>My Bookings</span>
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+        <Button 
+          variant="outline" 
+          className="w-full justify-between" 
+          onClick={() => window.location.href = 'mailto:support@khelmanch.com'}
+        >
+          <span className="flex items-center space-x-2">
+            <MessageSquare className="h-4 w-4" />
+            <span>Contact Khelmanch</span>
+          </span>
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>

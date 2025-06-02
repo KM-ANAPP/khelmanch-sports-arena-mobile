@@ -12,7 +12,6 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import notificationService from "./utils/notifications";
 import locationService from "./utils/location";
 import { AuthProvider } from "./context/AuthContext";
-import ChatbotSupport from "./components/ai/ChatbotSupport";
 
 // Pages
 import NotFound from "./pages/NotFound";
@@ -166,7 +165,6 @@ const App = () => {
                     />
                   </Routes>
                 </AnimatePresence>
-                <ChatbotSupport />
               </BrowserRouter>
             )}
           </TooltipProvider>
