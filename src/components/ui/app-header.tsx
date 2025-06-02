@@ -1,7 +1,6 @@
 
 import { AppDrawer } from "./app-drawer";
 import { Link } from "react-router-dom";
-import { UserAvatar } from "./user-avatar";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { motion } from "framer-motion";
 
@@ -26,7 +25,6 @@ export function AppHeader({ isLoggedIn }: AppHeaderProps) {
         </div>
         <div className="flex items-center space-x-3">
           <ThemeToggle />
-          <UserAvatar isLoggedIn={isLoggedIn} />
         </div>
       </div>
     </motion.header>
