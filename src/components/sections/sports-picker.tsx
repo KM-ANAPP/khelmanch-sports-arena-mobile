@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -19,6 +19,8 @@ interface Sport {
 export function SportsPicker() {
   const navigate = useNavigate();
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const sports: Sport[] = [
     {
@@ -103,6 +105,9 @@ export function SportsPicker() {
     }
   ];
 
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(sports.length / itemsPerPage);
+
   const handleSportClick = (sport: Sport) => {
     setSelectedSport(sport.id);
     
@@ -118,6 +123,20 @@ export function SportsPicker() {
     });
   };
 
+  const scrollToPage = (pageIndex: number) => {
+    if (scrollContainerRef.current) {
+      const scrollWidth = scrollContainerRef.current.scrollWidth;
+      const containerWidth = scrollContainerRef.current.clientWidth;
+      const scrollPosition = (scrollWidth / totalPages) * pageIndex;
+      
+      scrollContainerRef.current.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+      setCurrentPage(pageIndex);
+    }
+  };
+
   return (
     <section className="py-6">
       <div className="flex justify-between items-center mb-4">
@@ -129,7 +148,8 @@ export function SportsPicker() {
       
       <div className="relative">
         <div 
-          className="overflow-x-auto pb-4 -mx-4 px-4"
+          ref={scrollContainerRef}
+          className="overflow-x-auto pb-4 -mx-4 px-4 scroll-smooth"
           style={{ 
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
@@ -206,22 +226,17 @@ export function SportsPicker() {
         </div>
         
         <div className="flex justify-center mt-4 space-x-2">
-          {[...Array(3)].map((_, i) => (
-            <motion.div 
+          {[...Array(totalPages)].map((_, i) => (
+            <motion.button
               key={i}
-              className={`w-2 h-2 rounded-full ${
-                i === 0 ? 'bg-accent' : 
-                i === 1 ? 'bg-secondary' : 'bg-primary'
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                i === currentPage 
+                  ? 'bg-accent scale-125' 
+                  : 'bg-white/40 hover:bg-white/60'
               }`}
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5] 
-              }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                delay: i * 0.2 
-              }}
+              onClick={() => scrollToPage(i)}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
             />
           ))}
         </div>

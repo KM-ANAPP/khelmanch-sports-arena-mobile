@@ -5,8 +5,6 @@ import { FeaturedAthletes } from "@/components/sections/featured-athletes";
 import { PrimaryActions } from "@/components/sections/primary-actions";
 import { PopularGrounds } from "@/components/sections/popular-grounds";
 import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments";
-import { SpotlightsSection } from "@/components/sections/spotlights-section";
-import { HelpSection } from "@/components/sections/help-section";
 import { SportsPicker } from "@/components/sections/sports-picker";
 import { KhelmanchPass } from "@/components/sections/khelmanch-pass";
 import { useAuth } from "@/context/AuthContext";
@@ -89,8 +87,6 @@ export default function Home() {
             <PopularGrounds />
             <KhelmanchPass isLoggedIn={isLoggedIn} />
             <UpcomingTournaments />
-            <SpotlightsSection />
-            <HelpSection />
           </div>
         </div>
       </MobileLayout>
