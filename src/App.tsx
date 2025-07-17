@@ -24,15 +24,11 @@ import TournamentDetails from "./pages/TournamentDetails";
 import Booking from "./pages/Booking";
 import GroundDetails from "./pages/GroundDetails";
 import Profile from "./pages/Profile";
-import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookings";
-import MyTeams from "./pages/MyTeams";
-import Messages from "./pages/Messages";
 import Community from "./pages/Community";
-import ProductDetails from "./pages/ProductDetails";
 import SportDetail from "./pages/SportDetail";
 
 const queryClient = new QueryClient();
@@ -113,12 +109,9 @@ const App = () => {
                       { path: "/checkout", element: <Checkout /> },
                       { path: "/payment-success", element: <PaymentSuccess /> },
                       { path: "/settings", element: <Settings /> },
-                      { path: "/messages", element: <Messages /> },
                       { path: "/community", element: <Community /> },
                       { path: "/my-bookings", element: <MyBookings /> },
                       { path: "/my-tickets", element: <MyBookings /> },
-                      { path: "/my-teams", element: <MyTeams /> },
-                      { path: "/index", element: <Index /> },
                       { path: "/sport/:sportId", element: <SportDetail /> },
                     ].map(({ path, element }) => (
                       <Route
@@ -137,19 +130,6 @@ const App = () => {
                       />
                     ))}
                     
-                    <Route 
-                      path="/products/:id" 
-                      element={
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <ProductDetails />
-                        </motion.div>
-                      } 
-                    />
                     
                     <Route 
                       path="*" 

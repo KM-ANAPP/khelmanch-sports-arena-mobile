@@ -36,62 +36,56 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center justify-between px-4">
-          <Link to="/home" className="flex items-center space-x-2">
-            <span className="text-lg font-semibold">
-              Hi {user?.name || "USER"}
-            </span>
-          </Link>
+      <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-xl border-b border-border/50 safe-area-inset rounded-b-3xl shadow-lg">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-foreground">
+              {user?.email ? `Hi, ${user.email.split('@')[0]}!` : 'Khelmanch'}
+            </h1>
+            <div className="flex items-center mt-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-sm text-muted-foreground p-0 h-auto rounded-full">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {selectedLocation.split(',')[0]}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 rounded-2xl material-surface-elevated">
+                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">Select Location</div>
+                  {locations.map((location) => (
+                    <DropdownMenuItem
+                      key={location}
+                      onClick={() => setSelectedLocation(location)}
+                      className={`cursor-pointer rounded-xl android-ripple ${selectedLocation === location ? 'bg-primary/10 text-primary' : ''}`}
+                    >
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {location}
+                      {selectedLocation === location && (
+                        <Badge variant="secondary" className="ml-auto text-xs rounded-full">Current</Badge>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
           
           <div className="flex items-center space-x-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="flex items-center space-x-1">
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-background/95 backdrop-blur">
-                <div className="px-2 py-1 text-xs text-muted-foreground">Select Location</div>
-                {locations.map((location) => (
-                  <DropdownMenuItem
-                    key={location}
-                    onClick={() => setSelectedLocation(location)}
-                    className={`cursor-pointer ${selectedLocation === location ? 'bg-primary/10' : ''}`}
-                  >
-                    <MapPin className="h-4 w-4 mr-2" />
-                    {location}
-                    {selectedLocation === location && (
-                      <Badge variant="secondary" className="ml-auto text-xs">Current</Badge>
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button variant="ghost" size="icon">
-              <Search className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="rounded-full android-ripple">
+              <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-4 w-4" />
-              <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+            <Button variant="ghost" size="icon" className="relative rounded-full android-ripple">
+              <Bell className="h-5 w-5" />
+              <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs rounded-full">
                 2
               </Badge>
             </Button>
           </div>
         </div>
-        
-        {/* Location indicator */}
-        <div className="px-4 py-1 bg-muted/30 border-t">
-          <div className="flex items-center justify-center space-x-1 text-xs text-muted-foreground">
-            <MapPin className="h-3 w-3" />
-            <span>{selectedLocation}</span>
-          </div>
-        </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto pb-16">
+      <main className="flex-1 overflow-auto pb-24 bg-background">
         {children}
       </main>
 

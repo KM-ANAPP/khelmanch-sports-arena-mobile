@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast";
 import { User, MapPin, Calendar, Clock, Star, Search } from "lucide-react";
 import { connectionLimitService } from "@/services/connectionLimitService";
-import { SubscriptionModal } from "./SubscriptionModal";
+// Removed subscription modal - focusing on core booking functionality
 import { useAuth } from "@/context/AuthContext";
 import { firestoreService } from "@/services/firestoreService";
 
@@ -138,7 +138,7 @@ export default function PlayerMatchmaking() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSport, setSelectedSport] = useState<string>("all");
   const [selectedSkillLevel, setSelectedSkillLevel] = useState<string>("all");
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  // Removed subscription modal state
   const [sendingRequest, setSendingRequest] = useState<string | null>(null);
   
   // Check for connection limit reset on component mount
@@ -171,7 +171,7 @@ export default function PlayerMatchmaking() {
     if (!player) return;
 
     if (!connectionLimitService.canMakeConnection()) {
-      setShowSubscriptionModal(true);
+      alert("Daily connection limit reached. Try again tomorrow!");
       return;
     }
 
@@ -236,10 +236,6 @@ export default function PlayerMatchmaking() {
 
   return (
     <div className="space-y-4">
-      <SubscriptionModal 
-        open={showSubscriptionModal} 
-        onClose={() => setShowSubscriptionModal(false)} 
-      />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">

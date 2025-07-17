@@ -4,18 +4,18 @@
 
 @layer base {
   :root {
-    /* Modern Aesthetic Colors */
-    --primary: 240 5.9% 10%; /* Near black: #1a1a1c */
+    /* Android Material Design 3 Colors */
+    --primary: 142 76% 36%; /* Sports green: #16a085 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 91% 60%; /* Modern blue: #3b82f6 */
+    --secondary: 25 95% 53%; /* Orange accent: #ff6b35 */
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 43 96% 56%; /* Warm gold: #f0b429 */
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 220 91% 58%; /* Blue accent: #3498db */
+    --accent-foreground: 0 0% 100%;
 
-    --background: 0 0% 100%; /* White: #FFFFFF */
-    --foreground: 240 5.9% 10%;
+    --background: 0 0% 98%; /* Light background */
+    --foreground: 220 9% 14%;
 
     /* Additional UI Elements */
     --card: 0 0% 100%;
@@ -47,26 +47,26 @@
   }
 
   .dark {
-    --background: 240 5.9% 10%; /* Near black: #1a1a1c */
-    --foreground: 0 0% 100%;
+    --background: 220 15% 8%; /* Dark background */
+    --foreground: 0 0% 95%;
 
-    --card: 240 5.9% 10%;
-    --card-foreground: 0 0% 100%;
+    --card: 220 13% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 240 5.9% 10%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 240 5.9% 10%;
+    --primary: 142 76% 36%; /* Keep sports green */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 91% 60%; /* Modern blue: #3b82f6 */
+    --secondary: 25 95% 53%; /* Keep orange */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 43 96% 56%; /* Warm gold: #f0b429 */
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 220 91% 58%; /* Blue accent */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
@@ -98,35 +98,43 @@
 }
 
 @layer utilities {
-  .glass-morphism {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg;
+  /* Android Material Design utilities */
+  .material-surface {
+    @apply bg-card border border-border/50 rounded-2xl shadow-sm;
+  }
+  
+  .material-surface-elevated {
+    @apply bg-card border border-border/30 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+  
+  .android-button {
+    @apply rounded-full font-medium px-6 py-3 transition-all duration-200 active:scale-95;
+  }
+  
+  .android-fab {
+    @apply rounded-full shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95;
   }
   
   .text-balance {
     text-wrap: balance;
   }
   
-  .interactive-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
-  }
-  
-  .text-gradient {
-    @apply bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent;
-  }
-
-  .glass-card {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-lg hover:shadow-xl transition-all duration-300;
-  }
-  
-  .card-gradient {
-    @apply bg-gradient-to-br from-card via-card/95 to-muted/50;
-  }
-  
   .section-title {
-    @apply text-2xl font-semibold tracking-tight text-balance;
+    @apply text-xl font-semibold tracking-tight text-foreground;
   }
   
-  .interactive-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-secondary after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100;
+  .sports-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary;
+  }
+  
+  .android-ripple {
+    @apply relative overflow-hidden active:bg-muted/20 transition-colors duration-200;
+  }
+  
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }

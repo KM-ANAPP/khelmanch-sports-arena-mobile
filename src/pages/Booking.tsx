@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookingCard } from "@/components/booking/BookingCard";
+import { EnhancedBookingCard } from "@/components/booking/EnhancedBookingCard";
 import { EmptyBookingState } from "@/components/booking/EmptyBookingState";
 import { CardShimmer } from "@/components/ui/loading-shimmer";
 
@@ -265,7 +265,7 @@ export default function Booking() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <BookingCard ground={ground} />
+                    <EnhancedBookingCard ground={{...ground, reviews: 45, availability: "Available Now", distance: "2.5 km away"}} />
                   </motion.div>
                 ))}
               </div>
