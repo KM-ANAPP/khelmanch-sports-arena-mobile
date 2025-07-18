@@ -3,35 +3,52 @@ import { useState, useEffect } from "react";
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Trophy, Users, Clock, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Calendar, MapPin, Trophy, Users, Clock, Star, Zap, Target, Award, ArrowRight, Play, BookOpen, UserPlus, TrendingUp } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { SportsPicker } from "@/components/sections/sports-picker";
 import { PopularGrounds } from "@/components/sections/popular-grounds";
 import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments";
 import { FeaturedAthletes } from "@/components/sections/featured-athletes";
 import { KhelmanchPass } from "@/components/sections/khelmanch-pass";
-import { PrimaryActions } from "@/components/sections/primary-actions";
 import { StatsSection } from "@/components/sections/stats-section";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  const handleBookNow = () => {
+    navigate('/checkout', {
+      state: {
+        orderDetails: {
+          sportName: "Quick Book",
+          venueName: "Available Venues",
+          price: 999,
+          duration: "1 hour"
+        }
+      }
+    });
+  };
+
   if (isLoading) {
     return (
       <MobileLayout isLoggedIn={isAuthenticated}>
         <div className="p-4 space-y-4">
-          <div className="h-32 bg-muted animate-pulse rounded-2xl"></div>
+          <div className="h-40 bg-muted animate-pulse rounded-2xl"></div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="h-24 bg-muted animate-pulse rounded-xl"></div>
-            <div className="h-24 bg-muted animate-pulse rounded-xl"></div>
+            <div className="h-32 bg-muted animate-pulse rounded-2xl"></div>
+            <div className="h-32 bg-muted animate-pulse rounded-2xl"></div>
+          </div>
+          <div className="space-y-3">
+            <div className="h-6 bg-muted animate-pulse rounded"></div>
+            <div className="h-20 bg-muted animate-pulse rounded-xl"></div>
           </div>
         </div>
       </MobileLayout>
@@ -40,75 +57,220 @@ export default function Home() {
 
   return (
     <MobileLayout isLoggedIn={isAuthenticated}>
-      <div className="space-y-6">
+      <div className="space-y-0">
         
-        {/* Hero Section with Primary Actions */}
-        <div className="bg-gradient-to-br from-primary via-primary/90 to-secondary p-6 text-white rounded-b-3xl -mt-2">
-          <div className="space-y-4">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold mb-2">Welcome to Khelmanch</h1>
-              <p className="text-white/80">Your ultimate sports booking destination</p>
+        {/* Fitness Goal Banner */}
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/30 p-4 mx-4 mt-4 rounded-2xl border border-orange-200 dark:border-orange-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-orange-500 rounded-full">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-orange-900 dark:text-orange-100">Set your weekly sports goal</h3>
+                <p className="text-sm text-orange-700 dark:text-orange-300">Keep yourself active!</p>
+              </div>
             </div>
-            
-            {/* Primary Action Buttons */}
-            <PrimaryActions />
+            <ArrowRight className="h-5 w-5 text-orange-600" />
           </div>
         </div>
 
-        <div className="px-4 space-y-8">
+        {/* START PLAYING Section */}
+        <div className="px-4 py-6">
+          <div className="bg-card rounded-2xl p-4 border">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">START PLAYING!</h2>
+                <p className="text-sm text-muted-foreground">Create Game</p>
+                <p className="text-xs text-muted-foreground mt-1">No games in your calendar</p>
+              </div>
+              <Button size="sm" className="bg-primary text-primary-foreground">
+                Create
+              </Button>
+            </div>
+            <Button variant="outline" className="w-full" onClick={() => navigate('/my-bookings')}>
+              View My Calendar
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Action Cards */}
+        <div className="px-4 pb-6">
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="relative overflow-hidden h-48 border-0 shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600">
+                <img 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1000" 
+                  alt="Players" 
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
+                />
+              </div>
+              <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Play</h3>
+                  <p className="text-sm mb-4 text-white/90">Find players and join their activities</p>
+                  <Button size="sm" variant="secondary" onClick={() => navigate('/community')}>
+                    <Play className="h-4 w-4 mr-2" />
+                    Join Game
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden h-48 border-0 shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600">
+                <img 
+                  src="https://images.unsplash.com/photo-1544919982-b61976f0ba43?q=80&w=1000" 
+                  alt="Venue" 
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
+                />
+              </div>
+              <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Book</h3>
+                  <p className="text-sm mb-4 text-white/90">Book your slots in venues nearby</p>
+                  <Button size="sm" variant="secondary" onClick={handleBookNow}>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Book Now
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Train With Us Section */}
+        <div className="px-4 pb-6">
+          <Card className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=200" 
+                  alt="Training" 
+                  className="w-16 h-16 rounded-2xl object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-purple-900 dark:text-purple-100">Train With Us</h3>
+                <p className="text-sm text-purple-700 dark:text-purple-300">Connect with certified coaches nearby to level up your game</p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-purple-600" />
+            </div>
+          </Card>
+        </div>
+
+        <div className="px-4 space-y-6">
           
-          {/* Sports Categories - Similar to "What's on your mind" in food apps */}
+          {/* Sports Categories */}
           <div>
-            <h2 className="text-xl font-bold mb-4">What sport are you in the mood for?</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Sports Categories</h2>
+              <Badge variant="secondary">8+ Sports</Badge>
+            </div>
             <SportsPicker />
           </div>
 
-          {/* Popular Grounds - Similar to "Popular restaurants" */}
+          {/* Quick Access Grid */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">Quick Access</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Link to="/booking">
+                <Card className="p-4 hover:shadow-lg transition-all border-2 hover:border-primary/20">
+                  <CardContent className="p-0">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-primary/10 rounded-xl">
+                        <Calendar className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Bookings</h3>
+                        <p className="text-xs text-muted-foreground">Game History</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              <Link to="/community">
+                <Card className="p-4 hover:shadow-lg transition-all border-2 hover:border-secondary/20">
+                  <CardContent className="p-0">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-secondary/10 rounded-xl">
+                        <UserPlus className="h-5 w-5 text-secondary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Playpals</h3>
+                        <p className="text-xs text-muted-foreground">Manage Players</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </div>
+
+          {/* Popular Grounds */}
           <div>
             <PopularGrounds />
           </div>
 
-          {/* Upcoming Tournaments - Similar to "Offers" section */}
+          {/* Upcoming Tournaments */}
           <div>
             <UpcomingTournaments />
           </div>
 
-          {/* KhelManch Pass - Similar to membership/subscription offers */}
+          {/* Spotlight Section */}
+          <div>
+            <h2 className="text-xl font-bold mb-4 text-center">SPOTLIGHT</h2>
+            <div className="grid grid-cols-1 gap-4">
+              <Card className="relative overflow-hidden h-32 border-0 shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800">
+                  <img 
+                    src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1000" 
+                    alt="Camp" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-40"
+                  />
+                </div>
+                <CardContent className="relative z-10 p-4 h-full flex flex-col justify-end text-white">
+                  <div>
+                    <h3 className="text-lg font-bold mb-1">About the Last FlashCamp...</h3>
+                    <Button size="sm" variant="secondary" className="mt-2">
+                      Check it out!
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* KhelManch Pass */}
           <div>
             <KhelmanchPass isLoggedIn={isAuthenticated} />
           </div>
 
-          {/* Featured Athletes/Content - Similar to "Featured" content */}
+          {/* Featured Athletes */}
           <div>
             <FeaturedAthletes />
           </div>
 
-          {/* Stats Section - Similar to testimonials/social proof */}
-          <div>
-            <StatsSection />
+          {/* Referral Section */}
+          <div className="pb-6">
+            <Card className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border border-green-200 dark:border-green-800">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-green-500 rounded-2xl">
+                  <Award className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-green-900 dark:text-green-100">Refer a Sports Enthusiast</h3>
+                  <p className="text-sm text-green-700 dark:text-green-300">Earn 50 karma points by inviting your friends</p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-green-600" />
+              </div>
+            </Card>
           </div>
 
-          {/* Quick Links Section */}
-          <div className="grid grid-cols-2 gap-4 pb-6">
-            <Link to="/community">
-              <Card className="h-full hover:shadow-lg transition-shadow border-2 hover:border-accent/50">
-                <CardContent className="p-4 text-center">
-                  <Users className="h-8 w-8 text-accent mx-auto mb-2" />
-                  <h3 className="font-semibold">Community</h3>
-                  <p className="text-sm text-muted-foreground">Connect with players</p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/my-bookings">
-              <Card className="h-full hover:shadow-lg transition-shadow border-2 hover:border-secondary/50">
-                <CardContent className="p-4 text-center">
-                  <Calendar className="h-8 w-8 text-secondary mx-auto mb-2" />
-                  <h3 className="font-semibold">My Bookings</h3>
-                  <p className="text-sm text-muted-foreground">View your history</p>
-                </CardContent>
-              </Card>
-            </Link>
+          {/* Stats Section */}
+          <div>
+            <StatsSection />
           </div>
 
         </div>
