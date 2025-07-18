@@ -92,15 +92,15 @@ export const UpcomingTournaments = () => {
       transition={{ duration: 0.5 }}
       className="mt-8"
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Upcoming Tournaments</h2>
-          <p className="text-gray-300 text-sm">Join exciting competitions near you</p>
+          <h2 className="text-xl font-bold">Upcoming Tournaments</h2>
+          <p className="text-muted-foreground text-sm">Join exciting competitions near you</p>
         </div>
-        <Link to="/tournaments" className="text-accent text-sm font-medium hover:text-accent/80 transition-colors">View All</Link>
+        <Link to="/tournaments" className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">View All</Link>
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-4">
         {tournaments.map((tournament, index) => (
           <motion.div
             key={tournament.id}
@@ -110,104 +110,80 @@ export const UpcomingTournaments = () => {
             whileHover={{ scale: 1.02 }}
             className="group"
           >
-            <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
-              <div className="relative">
+            <Card className="overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex">
                 {/* Tournament Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative w-24 h-24 flex-shrink-0">
                   <img 
                     src={tournament.image} 
                     alt={tournament.title} 
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                    className="object-cover w-full h-full"
                   />
                   
-                  {/* Modern Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-                  
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                  {/* Status Badge */}
+                  <div className="absolute top-1 left-1">
                     {tournament.registrationOpen ? (
-                      <Badge className="bg-green-500/90 text-white border-0 backdrop-blur-sm">
-                        Registration Open
+                      <Badge className="bg-green-500 text-white text-xs px-1 py-0">
+                        Open
                       </Badge>
                     ) : (
-                      <Badge className="bg-gray-500/90 text-white border-0 backdrop-blur-sm">
-                        Coming Soon
+                      <Badge className="bg-gray-500 text-white text-xs px-1 py-0">
+                        Soon
                       </Badge>
                     )}
-                    
-                    {tournament.trending && (
-                      <Badge className="bg-accent/90 text-black border-0 flex items-center gap-1 font-bold">
-                        <TrendingUp className="h-3 w-3" />
-                        Trending
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  {/* Prize Pool */}
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-yellow-500/90 text-black border-0 flex items-center gap-1 font-bold backdrop-blur-sm">
-                      <Trophy className="h-3 w-3" />
-                      {tournament.prize}
-                    </Badge>
-                  </div>
-                  
-                  {/* Tournament Title on Image */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-white font-bold text-xl mb-2">{tournament.title}</h3>
-                    <Badge className="border-accent/50 text-accent bg-accent/20 backdrop-blur-sm font-semibold">
-                      {tournament.sport}
-                    </Badge>
                   </div>
                 </div>
                 
-                <CardContent className="p-4">
-                  {/* Tournament Details */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center text-sm text-gray-300">
-                      <Calendar className="h-4 w-4 mr-2 text-accent" />
-                      <span>{tournament.date}</span>
+                <CardContent className="flex-1 p-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm leading-tight">{tournament.title}</h3>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Badge variant="outline" className="text-xs px-1 py-0">{tournament.sport}</Badge>
+                        {tournament.trending && (
+                          <Badge className="bg-orange-500 text-white text-xs px-1 py-0 flex items-center gap-1">
+                            <TrendingUp className="h-2 w-2" />
+                            Hot
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center text-sm text-gray-300">
-                      <Clock className="h-4 w-4 mr-2 text-accent" />
-                      <span>{tournament.time}</span>
-                    </div>
-                    
-                    <div className="flex items-center text-sm text-gray-300">
-                      <MapPin className="h-4 w-4 mr-2 text-accent" />
-                      <span>{tournament.location}</span>
+                    <div className="text-right ml-2">
+                      <div className="text-xs text-muted-foreground">Prize</div>
+                      <div className="text-sm font-bold text-yellow-600">{tournament.prize}</div>
                     </div>
                   </div>
                   
-                  {/* Bottom Section */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-left">
-                      <div className="text-xs text-gray-400">Entry Fee</div>
-                      <div className="text-lg font-bold text-accent">₹{(tournament.price / 100).toLocaleString()}</div>
+                  <div className="space-y-1 mb-3">
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <span>{tournament.date}</span>
                     </div>
                     
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      <span className="truncate">{tournament.location}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-muted-foreground">Entry Fee</div>
+                      <div className="text-sm font-bold text-primary">₹{(tournament.price / 100).toLocaleString()}</div>
+                    </div>
+                    
+                    <Button
+                      size="sm"
+                      className={`text-xs px-3 py-1 ${
+                        tournament.registrationOpen 
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                          : 'bg-muted text-muted-foreground cursor-not-allowed'
+                      }`}
+                      disabled={!tournament.registrationOpen}
+                      onClick={() => handleTournamentRegistration(tournament)}
                     >
-                      <Button
-                        className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 relative overflow-hidden group ${
-                          tournament.registrationOpen 
-                            ? 'bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-black shadow-lg hover:shadow-xl' 
-                            : 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-500/30'
-                        }`}
-                        disabled={!tournament.registrationOpen}
-                        onClick={() => handleTournamentRegistration(tournament)}
-                      >
-                        {tournament.registrationOpen && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-                        )}
-                        <div className="flex items-center space-x-1 relative z-10">
-                          <span>{tournament.registrationOpen ? "Register Now" : "Coming Soon"}</span>
-                          {tournament.registrationOpen && <Zap className="h-4 w-4" />}
-                        </div>
-                      </Button>
-                    </motion.div>
+                      {tournament.registrationOpen ? "Register" : "Soon"}
+                    </Button>
                   </div>
                 </CardContent>
               </div>

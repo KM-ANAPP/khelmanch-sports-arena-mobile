@@ -218,11 +218,12 @@ export default function Home() {
             <UpcomingTournaments />
           </div>
 
-
-          {/* Featured Athletes */}
+          {/* KhelManch Pass */}
           <div>
-            <FeaturedAthletes />
+            <KhelmanchPass isLoggedIn={isAuthenticated} />
           </div>
+
+
 
           {/* Referral Section */}
           <div className="pb-6">
