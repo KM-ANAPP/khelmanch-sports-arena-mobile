@@ -7,6 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Trophy, Users, Clock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { SportsPicker } from "@/components/sections/sports-picker";
+import { PopularGrounds } from "@/components/sections/popular-grounds";
+import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments";
+import { FeaturedAthletes } from "@/components/sections/featured-athletes";
+import { KhelmanchPass } from "@/components/sections/khelmanch-pass";
+import { PrimaryActions } from "@/components/sections/primary-actions";
+import { StatsSection } from "@/components/sections/stats-section";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -33,101 +40,77 @@ export default function Home() {
 
   return (
     <MobileLayout isLoggedIn={isAuthenticated}>
-      <div className="p-4 space-y-6">
+      <div className="space-y-6">
         
-        {/* Hero Section */}
-        <Card className="bg-gradient-to-r from-primary to-secondary text-white overflow-hidden">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-bold mb-2">Book Your Game</h2>
-            <p className="text-white/80 mb-4">Find grounds & join tournaments</p>
-            <div className="flex gap-2">
-              <Link to="/booking">
-                <Button size="sm" variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
-                  Book Now
-                </Button>
-              </Link>
-              <Link to="/tournaments">
-                <Button size="sm" variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
-                  Tournaments
-                </Button>
-              </Link>
+        {/* Hero Section with Primary Actions */}
+        <div className="bg-gradient-to-br from-primary via-primary/90 to-secondary p-6 text-white rounded-b-3xl -mt-2">
+          <div className="space-y-4">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold mb-2">Welcome to Khelmanch</h1>
+              <p className="text-white/80">Your ultimate sports booking destination</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <Link to="/booking">
-            <Card className="h-full hover:shadow-lg transition-shadow">
-              <CardContent className="p-4 text-center">
-                <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
-                <h3 className="font-semibold">Find Grounds</h3>
-                <p className="text-sm text-muted-foreground">Book sports venues</p>
-              </CardContent>
-            </Card>
-          </Link>
-          
-          <Link to="/tournaments">
-            <Card className="h-full hover:shadow-lg transition-shadow">
-              <CardContent className="p-4 text-center">
-                <Trophy className="h-8 w-8 text-secondary mx-auto mb-2" />
-                <h3 className="font-semibold">Tournaments</h3>
-                <p className="text-sm text-muted-foreground">Join competitions</p>
-              </CardContent>
-            </Card>
-          </Link>
+            
+            {/* Primary Action Buttons */}
+            <PrimaryActions />
+          </div>
         </div>
 
-        {/* Featured */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Popular This Week</h3>
+        <div className="px-4 space-y-8">
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex gap-4">
-                <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center">
-                  <Trophy className="h-8 w-8 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold">Cricket Championship</h4>
-                  <p className="text-sm text-muted-foreground">Mumbai • This Weekend</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="secondary" className="text-xs">Registration Open</Badge>
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Users className="h-3 w-3 mr-1" />
-                      24 teams
-                    </div>
-                  </div>
-                </div>
-                <Button size="sm">Join</Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Sports Categories - Similar to "What's on your mind" in food apps */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">What sport are you in the mood for?</h2>
+            <SportsPicker />
+          </div>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex gap-4">
-                <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center">
-                  <MapPin className="h-8 w-8 text-secondary" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold">Elite Sports Complex</h4>
-                  <p className="text-sm text-muted-foreground">Andheri • Available Today</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center text-xs">
-                      <Star className="h-3 w-3 text-yellow-500 mr-1" />
-                      4.8
-                    </div>
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3 mr-1" />
-                      ₹500/hr
-                    </div>
-                  </div>
-                </div>
-                <Button size="sm">Book</Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Popular Grounds - Similar to "Popular restaurants" */}
+          <div>
+            <PopularGrounds />
+          </div>
+
+          {/* Upcoming Tournaments - Similar to "Offers" section */}
+          <div>
+            <UpcomingTournaments />
+          </div>
+
+          {/* KhelManch Pass - Similar to membership/subscription offers */}
+          <div>
+            <KhelmanchPass isLoggedIn={isAuthenticated} />
+          </div>
+
+          {/* Featured Athletes/Content - Similar to "Featured" content */}
+          <div>
+            <FeaturedAthletes />
+          </div>
+
+          {/* Stats Section - Similar to testimonials/social proof */}
+          <div>
+            <StatsSection />
+          </div>
+
+          {/* Quick Links Section */}
+          <div className="grid grid-cols-2 gap-4 pb-6">
+            <Link to="/community">
+              <Card className="h-full hover:shadow-lg transition-shadow border-2 hover:border-accent/50">
+                <CardContent className="p-4 text-center">
+                  <Users className="h-8 w-8 text-accent mx-auto mb-2" />
+                  <h3 className="font-semibold">Community</h3>
+                  <p className="text-sm text-muted-foreground">Connect with players</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link to="/my-bookings">
+              <Card className="h-full hover:shadow-lg transition-shadow border-2 hover:border-secondary/50">
+                <CardContent className="p-4 text-center">
+                  <Calendar className="h-8 w-8 text-secondary mx-auto mb-2" />
+                  <h3 className="font-semibold">My Bookings</h3>
+                  <p className="text-sm text-muted-foreground">View your history</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+
         </div>
       </div>
     </MobileLayout>
