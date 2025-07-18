@@ -213,39 +213,11 @@ export default function Home() {
             <PopularGrounds />
           </div>
 
-          {/* Upcoming Tournaments */}
+          {/* Upcoming Tournaments - Vertical Slider */}
           <div>
             <UpcomingTournaments />
           </div>
 
-          {/* Spotlight Section */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 text-center">SPOTLIGHT</h2>
-            <div className="grid grid-cols-1 gap-4">
-              <Card className="relative overflow-hidden h-32 border-0 shadow-lg">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800">
-                  <img 
-                    src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1000" 
-                    alt="Camp" 
-                    className="absolute inset-0 w-full h-full object-cover opacity-40"
-                  />
-                </div>
-                <CardContent className="relative z-10 p-4 h-full flex flex-col justify-end text-white">
-                  <div>
-                    <h3 className="text-lg font-bold mb-1">About the Last FlashCamp...</h3>
-                    <Button size="sm" variant="secondary" className="mt-2">
-                      Check it out!
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* KhelManch Pass */}
-          <div>
-            <KhelmanchPass isLoggedIn={isAuthenticated} />
-          </div>
 
           {/* Featured Athletes */}
           <div>
