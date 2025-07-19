@@ -21,16 +21,10 @@ interface MobileLayoutProps {
 export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [selectedLocation, setSelectedLocation] = useState("Mumbai, India");
+  const [selectedLocation, setSelectedLocation] = useState("Delhi, India");
   
   const locations = [
-    "Mumbai, India",
-    "Delhi, India", 
-    "Bangalore, India",
-    "Chennai, India",
-    "Kolkata, India",
-    "Pune, India",
-    "Hyderabad, India"
+    "Delhi, India"
   ];
   
   return (

@@ -140,7 +140,7 @@ export function SportsPicker() {
   return (
     <section className="py-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-white">Pick a Sport</h2>
+        <h2 className="text-xl font-semibold text-foreground">Pick a Sport</h2>
         <Badge variant="secondary" className="text-xs bg-accent/20 text-accent border-accent/30">
           {sports.length} Sports Available
         </Badge>
@@ -175,7 +175,7 @@ export function SportsPicker() {
                 className="flex-shrink-0"
               >
                 <Card 
-                  className={`w-40 cursor-pointer transition-all duration-300 hover:shadow-lg border-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm ${
+                  className={`w-40 cursor-pointer transition-all duration-300 hover:shadow-lg border bg-card ${
                     selectedSport === sport.id ? 'ring-2 ring-accent' : ''
                   }`}
                   onClick={() => handleSportClick(sport)}
@@ -202,9 +202,9 @@ export function SportsPicker() {
                       />
                     </motion.div>
                     
-                    <h3 className="font-semibold text-sm mb-2 text-white">{sport.name}</h3>
+                    <h3 className="font-semibold text-sm mb-2 text-foreground">{sport.name}</h3>
                     
-                    <div className="space-y-1 text-xs text-gray-300">
+                    <div className="space-y-1 text-xs text-muted-foreground">
                       <div className="flex justify-between">
                         <span>Players:</span>
                         <span className="font-medium">{sport.players.toLocaleString()}</span>
@@ -232,7 +232,7 @@ export function SportsPicker() {
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 i === currentPage 
                   ? 'bg-accent scale-125' 
-                  : 'bg-white/40 hover:bg-white/60'
+                  : 'bg-muted-foreground/40 hover:bg-muted-foreground/60'
               }`}
               onClick={() => scrollToPage(i)}
               whileHover={{ scale: 1.2 }}

@@ -242,36 +242,67 @@ interface TournamentCardProps {
 function TournamentCard({ tournament }: TournamentCardProps) {
   return (
     <Link to={`/tournaments/${tournament.id}`}>
-      <Card className="overflow-hidden">
-        <div className="relative h-32">
+      <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
+        <div className="relative h-48">
           <img 
             src={tournament.image} 
             alt={tournament.title} 
             className="object-cover w-full h-full"
           />
-          {tournament.registrationOpen && tournament.status === 'upcoming' && (
-            <div className="absolute top-2 right-2 bg-accent text-accent-foreground text-xs font-medium py-1 px-2 rounded">
-              Registration Open
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          
+          {/* Top tags */}
+          <div className="absolute top-3 left-3 right-3 flex justify-between">
+            <div className="flex space-x-2">
+              <div className="bg-black/50 text-white text-xs font-medium py-1.5 px-3 rounded-full backdrop-blur-sm">
+                {tournament.sport}
+              </div>
+              <div className="bg-orange-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full">
+                2.5 km away
+              </div>
             </div>
-          )}
-          <div className="absolute top-2 left-2 bg-primary/70 text-primary-foreground text-xs font-medium py-1 px-2 rounded">
-            {tournament.sport}
+            {tournament.registrationOpen && tournament.status === 'upcoming' && (
+              <div className="bg-emerald-500 text-white text-xs font-medium py-1.5 px-3 rounded-full shadow-lg">
+                Registration Open
+              </div>
+            )}
+          </div>
+
+          {/* Bottom content overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="font-bold text-white text-lg mb-2 leading-tight">{tournament.title}</h3>
+            <div className="flex items-center text-white/90 text-sm mb-1">
+              <Calendar className="h-4 w-4 mr-2" />
+              <span>{tournament.date}</span>
+            </div>
+            <div className="flex items-center text-white/90 text-sm">
+              <MapPin className="h-4 w-4 mr-2" />
+              <span>{tournament.location}</span>
+            </div>
           </div>
         </div>
-        <CardContent className="p-3">
-          <h3 className="font-semibold text-primary">{tournament.title}</h3>
-          <div className="flex items-center text-xs text-muted-foreground mt-1">
-            <Calendar className="h-3 w-3 mr-1" />
-            <span>{tournament.date}</span>
+        
+        <CardContent className="p-4">
+          {/* Venue details */}
+          <div className="mb-4">
+            <h4 className="font-semibold text-sm text-foreground mb-2">Venue Facilities</h4>
+            <div className="flex flex-wrap gap-2">
+              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Parking</div>
+              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Food Court</div>
+              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Changing Room</div>
+            </div>
           </div>
-          <div className="flex items-center text-xs text-muted-foreground mt-1">
-            <MapPin className="h-3 w-3 mr-1" />
-            <span>{tournament.location}</span>
-          </div>
-          <div className="mt-2 flex justify-between items-center">
+
+          {/* Price and booking */}
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-2xl font-bold text-foreground">₹199</span>
+              <span className="text-sm text-muted-foreground ml-1">/person</span>
+              <div className="text-xs text-emerald-600 font-medium">Available Now</div>
+            </div>
             {tournament.status === 'upcoming' ? (
-              <Button size="sm" className="w-full">
-                {tournament.registrationOpen ? "Register Now" : "View Details"}
+              <Button size="lg" className="rounded-2xl px-6 font-semibold shadow-lg">
+                {tournament.registrationOpen ? "Book Now" : "View Details"}
               </Button>
             ) : (
               <div className="flex items-center text-xs text-muted-foreground">

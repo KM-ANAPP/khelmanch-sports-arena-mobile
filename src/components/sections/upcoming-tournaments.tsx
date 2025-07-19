@@ -110,58 +110,59 @@ export const UpcomingTournaments = () => {
             whileHover={{ scale: 1.02 }}
             className="group"
           >
-            <Card className="overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="overflow-hidden border rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-card">
               <div className="flex">
                 {/* Tournament Image */}
-                <div className="relative w-24 h-24 flex-shrink-0">
+                <div className="relative w-28 h-28 flex-shrink-0 rounded-l-2xl overflow-hidden">
                   <img 
                     src={tournament.image} 
                     alt={tournament.title} 
                     className="object-cover w-full h-full"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   
                   {/* Status Badge */}
-                  <div className="absolute top-1 left-1">
+                  <div className="absolute top-2 left-2">
                     {tournament.registrationOpen ? (
-                      <Badge className="bg-green-500 text-white text-xs px-1 py-0">
+                      <Badge className="bg-emerald-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
                         Open
                       </Badge>
                     ) : (
-                      <Badge className="bg-gray-500 text-white text-xs px-1 py-0">
+                      <Badge className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
                         Soon
                       </Badge>
                     )}
                   </div>
                 </div>
                 
-                <CardContent className="flex-1 p-3">
+                <CardContent className="flex-1 p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-sm leading-tight">{tournament.title}</h3>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Badge variant="outline" className="text-xs px-1 py-0">{tournament.sport}</Badge>
+                      <h3 className="font-bold text-base leading-tight text-foreground">{tournament.title}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs px-2 py-1 rounded-full border-primary/30 text-primary">{tournament.sport}</Badge>
                         {tournament.trending && (
-                          <Badge className="bg-orange-500 text-white text-xs px-1 py-0 flex items-center gap-1">
-                            <TrendingUp className="h-2 w-2" />
+                          <Badge className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                            <TrendingUp className="h-3 w-3" />
                             Hot
                           </Badge>
                         )}
                       </div>
                     </div>
-                    <div className="text-right ml-2">
-                      <div className="text-xs text-muted-foreground">Prize</div>
-                      <div className="text-sm font-bold text-yellow-600">{tournament.prize}</div>
+                    <div className="text-right ml-3">
+                      <div className="text-xs text-muted-foreground">Prize Pool</div>
+                      <div className="text-sm font-bold text-amber-600">{tournament.prize}</div>
                     </div>
                   </div>
                   
-                  <div className="space-y-1 mb-3">
+                  <div className="space-y-1.5 mb-3">
                     <div className="flex items-center text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3 mr-1" />
+                      <Calendar className="h-3 w-3 mr-2 text-primary" />
                       <span>{tournament.date}</span>
                     </div>
                     
                     <div className="flex items-center text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3 mr-1" />
+                      <MapPin className="h-3 w-3 mr-2 text-primary" />
                       <span className="truncate">{tournament.location}</span>
                     </div>
                   </div>
@@ -169,12 +170,12 @@ export const UpcomingTournaments = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-xs text-muted-foreground">Entry Fee</div>
-                      <div className="text-sm font-bold text-primary">₹{(tournament.price / 100).toLocaleString()}</div>
+                      <div className="text-base font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</div>
                     </div>
                     
                     <Button
                       size="sm"
-                      className={`text-xs px-3 py-1 ${
+                      className={`text-xs px-4 py-2 rounded-xl font-semibold shadow-md ${
                         tournament.registrationOpen 
                           ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
                           : 'bg-muted text-muted-foreground cursor-not-allowed'

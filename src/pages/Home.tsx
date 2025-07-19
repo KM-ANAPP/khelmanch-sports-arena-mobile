@@ -139,22 +139,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Train With Us Section */}
+        {/* Tournament Organizer Section */}
         <div className="px-4 pb-6">
-          <Card className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 border border-purple-200 dark:border-purple-800">
+          <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=200" 
-                  alt="Training" 
+                  src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=200" 
+                  alt="Tournament Management" 
                   className="w-16 h-16 rounded-2xl object-cover"
                 />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-purple-900 dark:text-purple-100">Train With Us</h3>
-                <p className="text-sm text-purple-700 dark:text-purple-300">Connect with certified coaches nearby to level up your game</p>
+                <h3 className="font-bold text-blue-900 dark:text-blue-100">Organize Tournaments</h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300">Create and manage professional tournaments with ease</p>
               </div>
-              <ArrowRight className="h-5 w-5 text-purple-600" />
+              <ArrowRight className="h-5 w-5 text-blue-600" />
             </div>
           </Card>
         </div>
