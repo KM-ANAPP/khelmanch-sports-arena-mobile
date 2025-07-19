@@ -30,8 +30,8 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-xl border-b border-border/50 safe-area-inset rounded-b-3xl shadow-lg">
-        <div className="flex h-16 items-center justify-between px-6">
+      <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-xl border-b border-border/50 safe-area-inset rounded-b-3xl shadow-lg px-safe">
+        <div className="flex h-16 items-center justify-between px-4 max-w-full">
           <div className="flex-1">
             <h1 className="text-xl font-bold text-foreground">
               {user?.email ? `Hi, ${user.email.split('@')[0]}!` : 'Khelmanch'}

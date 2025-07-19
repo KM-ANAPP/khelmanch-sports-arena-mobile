@@ -110,84 +110,78 @@ export const UpcomingTournaments = () => {
             whileHover={{ scale: 1.02 }}
             className="group"
           >
-            <Card className="overflow-hidden border rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-card">
-              <div className="flex">
-                {/* Tournament Image */}
-                <div className="relative w-28 h-28 flex-shrink-0 rounded-l-2xl overflow-hidden">
-                  <img 
-                    src={tournament.image} 
-                    alt={tournament.title} 
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  
-                  {/* Status Badge */}
-                  <div className="absolute top-2 left-2">
-                    {tournament.registrationOpen ? (
-                      <Badge className="bg-emerald-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
-                        Open
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
-                        Soon
-                      </Badge>
-                    )}
+            <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
+              <div className="relative h-48">
+                <img 
+                  src={tournament.image} 
+                  alt={tournament.title} 
+                  className="object-cover w-full h-full"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                
+                {/* Top badges */}
+                <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
+                  <div className="flex space-x-2">
+                    <div className="bg-black/50 text-white text-xs font-medium py-1.5 px-3 rounded-full backdrop-blur-sm">
+                      {tournament.sport}
+                    </div>
+                    <div className="bg-orange-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full">
+                      2.5 km away
+                    </div>
+                  </div>
+                  {tournament.registrationOpen && (
+                    <div className="bg-emerald-500 text-white text-xs font-medium py-1.5 px-3 rounded-full shadow-lg">
+                      Registration Open
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom content overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <h3 className="font-bold text-white text-lg mb-2 leading-tight">{tournament.title}</h3>
+                  <div className="flex items-center text-white/90 text-sm mb-1">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span>{tournament.date}</span>
+                  </div>
+                  <div className="flex items-center text-white/90 text-sm">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <span>{tournament.location}</span>
                   </div>
                 </div>
-                
-                <CardContent className="flex-1 p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-base leading-tight text-foreground">{tournament.title}</h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs px-2 py-1 rounded-full border-primary/30 text-primary">{tournament.sport}</Badge>
-                        {tournament.trending && (
-                          <Badge className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                            <TrendingUp className="h-3 w-3" />
-                            Hot
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-right ml-3">
-                      <div className="text-xs text-muted-foreground">Prize Pool</div>
-                      <div className="text-sm font-bold text-amber-600">{tournament.prize}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-1.5 mb-3">
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3 mr-2 text-primary" />
-                      <span>{tournament.date}</span>
-                    </div>
-                    
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3 mr-2 text-primary" />
-                      <span className="truncate">{tournament.location}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-muted-foreground">Entry Fee</div>
-                      <div className="text-base font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</div>
-                    </div>
-                    
-                    <Button
-                      size="sm"
-                      className={`text-xs px-4 py-2 rounded-xl font-semibold shadow-md ${
-                        tournament.registrationOpen 
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                          : 'bg-muted text-muted-foreground cursor-not-allowed'
-                      }`}
-                      disabled={!tournament.registrationOpen}
-                      onClick={() => handleTournamentRegistration(tournament)}
-                    >
-                      {tournament.registrationOpen ? "Register" : "Soon"}
-                    </Button>
-                  </div>
-                </CardContent>
               </div>
+              
+              <CardContent className="p-4">
+                {/* Venue facilities */}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-sm text-foreground mb-2">Venue Facilities</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Parking</div>
+                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Food Court</div>
+                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Changing Room</div>
+                  </div>
+                </div>
+
+                {/* Price and booking */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-2xl font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground ml-1">/person</span>
+                    <div className="text-xs text-emerald-600 font-medium">Registration Open</div>
+                  </div>
+                  <Button
+                    size="lg"
+                    className={`rounded-2xl px-6 font-semibold shadow-lg ${
+                      tournament.registrationOpen 
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                        : 'bg-muted text-muted-foreground cursor-not-allowed'
+                    }`}
+                    disabled={!tournament.registrationOpen}
+                    onClick={() => handleTournamentRegistration(tournament)}
+                  >
+                    {tournament.registrationOpen ? "Book Now" : "Soon"}
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
           </motion.div>
         ))}
