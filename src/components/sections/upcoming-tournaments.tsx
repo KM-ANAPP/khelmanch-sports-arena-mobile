@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, TrendingUp, Clock, Trophy, Zap, Sparkles } from "lucide-react";
+import { Calendar, MapPin, TrendingUp, Clock, Trophy, Zap, Sparkles, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -100,18 +100,18 @@ export const UpcomingTournaments = () => {
         <Link to="/tournaments" className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">View All</Link>
       </div>
       
-      <div className="space-y-4">
+      {/* Horizontal scrollable tournament cards */}
+      <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
         {tournaments.map((tournament, index) => (
           <motion.div
             key={tournament.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ scale: 1.02 }}
-            className="group"
+            className="flex-shrink-0 w-72"
           >
             <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
-              <div className="relative h-48">
+              <div className="relative h-40">
                 <img 
                   src={tournament.image} 
                   alt={tournament.title} 
@@ -122,84 +122,79 @@ export const UpcomingTournaments = () => {
                 {/* Top badges */}
                 <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
                   <div className="flex space-x-2">
-                    <div className="bg-black/50 text-white text-xs font-medium py-1.5 px-3 rounded-full backdrop-blur-sm">
+                    {tournament.registrationOpen && (
+                      <div className="bg-blue-500 text-white text-xs font-medium py-1 px-2 rounded">
+                        Featured
+                      </div>
+                    )}
+                    <div className="bg-black/50 text-white text-xs font-medium py-1 px-2 rounded backdrop-blur-sm">
                       {tournament.sport}
                     </div>
-                    <div className="bg-orange-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full">
-                      2.5 km away
-                    </div>
                   </div>
-                  {tournament.registrationOpen && (
-                    <div className="bg-emerald-500 text-white text-xs font-medium py-1.5 px-3 rounded-full shadow-lg">
-                      Registration Open
-                    </div>
-                  )}
                 </div>
 
-                {/* Bottom content overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h3 className="font-bold text-white text-lg mb-2 leading-tight">{tournament.title}</h3>
-                  <div className="flex items-center text-white/90 text-sm mb-1">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span>{tournament.date}</span>
-                  </div>
-                  <div className="flex items-center text-white/90 text-sm">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <span>{tournament.location}</span>
+                {/* Distance badge */}
+                <div className="absolute top-3 right-3">
+                  <div className="bg-white/20 text-white text-xs font-medium py-1 px-2 rounded backdrop-blur-sm flex items-center">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    2.3 km
                   </div>
                 </div>
               </div>
               
               <CardContent className="p-4">
-                {/* Venue facilities */}
-                <div className="mb-4">
-                  <h4 className="font-semibold text-sm text-foreground mb-2">Venue Facilities</h4>
-                  <div className="flex flex-wrap gap-2">
-                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Parking</div>
-                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Food Court</div>
-                    <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Changing Room</div>
+                {/* Tournament name and rating */}
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-foreground text-lg">{tournament.title}</h3>
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                    <span className="text-sm font-medium ml-1">4.8</span>
                   </div>
                 </div>
 
-                {/* Price and booking */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</span>
-                    <span className="text-sm text-muted-foreground ml-1">/person</span>
-                    <div className="text-xs text-emerald-600 font-medium">Registration Open</div>
+                {/* Location */}
+                <p className="text-sm text-muted-foreground mb-3">{tournament.location}</p>
+
+                {/* Facilities */}
+                <div className="flex items-center space-x-4 mb-4 text-xs text-muted-foreground">
+                  <div className="flex items-center">
+                    <Trophy className="h-4 w-4 mr-1" />
+                    <span>Prize Pool</span>
                   </div>
-                  <Button
-                    size="lg"
-                    className={`rounded-2xl px-6 font-semibold shadow-lg ${
-                      tournament.registrationOpen 
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                        : 'bg-muted text-muted-foreground cursor-not-allowed'
-                    }`}
-                    disabled={!tournament.registrationOpen}
-                    onClick={() => handleTournamentRegistration(tournament)}
-                  >
-                    {tournament.registrationOpen ? "Book Now" : "Soon"}
-                  </Button>
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    <span>Tournament</span>
+                  </div>
                 </div>
+
+                {/* Price and availability */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="text-xl font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground ml-1">per person</span>
+                    <div className="text-xs text-emerald-600 font-medium">
+                      {tournament.registrationOpen ? "Available Today" : "Coming Soon"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Book Now Button */}
+                <Button
+                  className={`w-full rounded-2xl font-semibold py-2 ${
+                    tournament.registrationOpen 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-muted text-muted-foreground cursor-not-allowed'
+                  }`}
+                  disabled={!tournament.registrationOpen}
+                  onClick={() => handleTournamentRegistration(tournament)}
+                >
+                  {tournament.registrationOpen ? "Book Now" : "Book Now"}
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
         ))}
       </div>
-      
-      {/* View All Button */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-center mt-6"
-      >
-        <Link to="/tournaments">
-          <Button className="px-8 py-2 rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/20 transition-all duration-300">
-            View All Tournaments
-          </Button>
-        </Link>
-      </motion.div>
     </motion.section>
   );
 };

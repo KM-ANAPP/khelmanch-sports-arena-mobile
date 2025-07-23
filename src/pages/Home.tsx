@@ -78,6 +78,22 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Referral Section - Moved after EARN KHELMANCH COINS */}
+        <div className="px-4 pt-6">
+          <Card className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border border-green-200 dark:border-green-800">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-green-500 rounded-2xl">
+                <Award className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-green-900 dark:text-green-100">Refer a Sports Enthusiast</h3>
+                <p className="text-sm text-green-700 dark:text-green-300">Earn 50 karma points by inviting your friends</p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-green-600" />
+            </div>
+          </Card>
+        </div>
+
         {/* START PLAYING Section */}
         <div className="px-4 py-6">
           <div className="bg-card rounded-2xl p-4 border">
@@ -205,21 +221,6 @@ export default function Home() {
 
 
 
-          {/* Referral Section */}
-          <div className="pb-6">
-            <Card className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border border-green-200 dark:border-green-800">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-green-500 rounded-2xl">
-                  <Award className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-green-900 dark:text-green-100">Refer a Sports Enthusiast</h3>
-                  <p className="text-sm text-green-700 dark:text-green-300">Earn 50 karma points by inviting your friends</p>
-                </div>
-                <ArrowRight className="h-5 w-5 text-green-600" />
-              </div>
-            </Card>
-          </div>
 
           {/* Stats Section */}
           <div>
