@@ -29,7 +29,7 @@ export function PopularGrounds() {
     {
       id: "ground-1",
       name: "Elite Sports Complex",
-      location: "Andheri West, Mumbai",
+      location: "Connaught Place, Delhi",
       image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.8,
       price: 999,
@@ -42,7 +42,7 @@ export function PopularGrounds() {
     {
       id: "ground-2",
       name: "Champions Football Ground",
-      location: "Bandra East, Mumbai",
+      location: "Karol Bagh, Delhi",
       image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.6,
       price: 1299,
@@ -55,7 +55,7 @@ export function PopularGrounds() {
     {
       id: "ground-3",
       name: "Royal Tennis Academy",
-      location: "Juhu, Mumbai",
+      location: "Lajpat Nagar, Delhi",
       image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.9,
       price: 799,
@@ -68,7 +68,7 @@ export function PopularGrounds() {
     {
       id: "ground-4",
       name: "Slam Dunk Basketball Court",
-      location: "Powai, Mumbai",
+      location: "Dwarka, Delhi",
       image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.5,
       price: 699,
@@ -81,7 +81,7 @@ export function PopularGrounds() {
     {
       id: "ground-5",
       name: "Aqua Swimming Complex",
-      location: "Goregaon West, Mumbai",
+      location: "Rohini, Delhi",
       image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.7,
       price: 599,
@@ -94,7 +94,7 @@ export function PopularGrounds() {
     {
       id: "ground-6",
       name: "Ace Badminton Center",
-      location: "Malad West, Mumbai",
+      location: "Janakpuri, Delhi",
       image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       rating: 4.4,
       price: 499,

@@ -13,7 +13,7 @@ export function BottomNavigation() {
     { path: "/home", label: "Home", icon: Home },
     { path: "/tournaments", label: "Events", icon: Trophy },
     { path: "/booking", label: "Book", icon: Calendar },
-    { path: "/tournaments", label: "Tournaments", icon: Search },
+    { path: "/my-bookings", label: "Bookings", icon: Search },
     { path: "/profile", label: "Profile", icon: User }
   ];
 

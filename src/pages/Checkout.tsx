@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { LoginBottomSheet } from '@/components/auth/login-bottom-sheet';
 import paymentService from '@/services/paymentService';
-import { passService } from '@/services/passService';
 import { Badge } from '@/components/ui/badge';
 import loginPromptService from '@/services/loginPromptService';
 
@@ -31,7 +30,7 @@ export default function Checkout() {
   const [phone, setPhone] = useState('');
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [hasAppliedPass, setHasAppliedPass] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Check if login prompt should be shown
   useEffect(() => {
@@ -63,12 +62,6 @@ export default function Checkout() {
     
     if (locationState?.orderDetails) {
       setOrderDetails(locationState.orderDetails);
-      
-      if (locationState.orderDetails.type === 'tournament' && passService.hasActivePass()) {
-        const discount = passService.getDiscountAmount(locationState.orderDetails.amount);
-        setDiscountAmount(discount);
-        setHasAppliedPass(true);
-      }
     } else {
       setOrderDetails({
         amount: 10000,
@@ -129,10 +122,9 @@ export default function Checkout() {
     try {
       console.log("Starting payment process for order:", orderDetails);
       
-      let finalAmount = orderDetails.amount;
-      if (hasAppliedPass && discountAmount > 0) {
-        finalAmount = finalAmount - discountAmount;
-      }
+      let finalAmount = orderDetails.amount - discountAmount;
+      
+      setLoading(true);
       
       await paymentService.initiatePayment(
         name,
@@ -144,15 +136,6 @@ export default function Checkout() {
         (response) => {
           console.log("Payment successful:", response);
           
-          if (orderDetails?.type === 'pass') {
-            const passType = orderDetails.itemId.includes('-') 
-              ? orderDetails.itemId.split('-')[2] as 'basic' | 'standard' | 'premium' | 'ultimate'
-              : 'basic';
-              
-            passService.purchasePass(response.razorpay_payment_id, passType);
-          } else if (hasAppliedPass && orderDetails?.type === 'tournament') {
-            passService.consumePass();
-          }
           
           toast({
             title: "Payment Successful",
@@ -169,7 +152,7 @@ export default function Checkout() {
                 date: new Date().toISOString().split('T')[0], // Add current date if not present
                 sport: orderDetails.type === 'tournament' ? 'Tournament' : 'Ground Booking'
               },
-              discountApplied: hasAppliedPass ? discountAmount : 0
+              discountApplied: discountAmount
             } 
           });
         },
@@ -224,20 +207,6 @@ export default function Checkout() {
           isRazorpayReady={isRazorpayReady}
         />
         
-        {hasAppliedPass && discountAmount > 0 && orderDetails.type === 'tournament' && (
-          <div className="bg-secondary/10 border border-secondary/20 rounded-lg p-3 flex items-center justify-between">
-            <div className="flex items-center">
-              <Ticket className="h-5 w-5 mr-2 text-secondary" />
-              <div>
-                <p className="font-medium">KhelManch Pass Applied</p>
-                <p className="text-sm text-muted-foreground">15% discount on this tournament</p>
-              </div>
-            </div>
-            <Badge variant="secondary" className="ml-2">
-              -₹{(discountAmount / 100).toLocaleString()}
-            </Badge>
-          </div>
-        )}
         
         <OrderSummary 
           orderDetails={orderDetails}

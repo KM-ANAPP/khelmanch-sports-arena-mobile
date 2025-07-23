@@ -116,7 +116,7 @@ export function SportsPicker() {
         sportData: sport,
         options: [
           { type: 'events', label: 'Events', count: sport.events },
-          { type: 'community', label: 'Community Players', count: sport.players },
+          { type: 'nearby', label: 'Nearby Players', count: sport.players },
           { type: 'venues', label: 'Book Venue', count: sport.venues }
         ]
       }

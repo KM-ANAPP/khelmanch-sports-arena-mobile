@@ -26,10 +26,10 @@ export const UpcomingTournaments = () => {
   const tournaments: Tournament[] = [
     {
       id: 1,
-      title: "Mumbai Cricket Premier League",
+      title: "Delhi Cricket Premier League",
       date: "May 15-20, 2025",
       time: "9:00 AM - 5:00 PM",
-      location: "Khelmanch Stadium, Mumbai",
+      location: "Khelmanch Stadium, Delhi",
       image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
       price: 99900,
       registrationOpen: true,
@@ -52,10 +52,10 @@ export const UpcomingTournaments = () => {
     },
     {
       id: 3,
-      title: "Bangalore Tennis Open",
+      title: "Delhi Tennis Open",
       date: "July 12-14, 2025",
       time: "8:00 AM - 7:00 PM",
-      location: "Sports Complex, Bangalore",
+      location: "Sports Complex, Delhi",
       image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
       price: 79900,
       registrationOpen: false,

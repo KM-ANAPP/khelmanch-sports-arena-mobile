@@ -228,8 +228,8 @@ export default function Home() {
           </div>
 
           {/* Contact Us Section */}
-          <div className="pb-6">
-            <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800">
+          <div className="pb-6" onClick={() => navigate('/contact')}>
+            <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all">
               <div className="flex items-center space-x-4">
                 <div className="flex-shrink-0">
                   <img 

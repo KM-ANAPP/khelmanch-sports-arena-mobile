@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, Trophy, Calendar, Users, MessageSquare, MessageCircle, Ticket, Clock, Info, HelpCircle, LogOut, LogIn } from "lucide-react";
+import { Menu, Home, Trophy, Calendar, Users, MessageSquare, Ticket, Clock, Info, HelpCircle, LogOut, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -63,10 +63,7 @@ export function AppDrawer({
             <NavItem href="/my-tickets" icon={Ticket} label="My Tickets" />
           </motion.div>
           <motion.div variants={item}>
-            <NavItem href="/tournaments" icon={Trophy} label="Tournaments" />
-          </motion.div>
-          <motion.div variants={item}>
-            <NavItem href="/messages" icon={MessageCircle} label="Messages" />
+            <NavItem href="/activities" icon={Trophy} label="Activities" />
           </motion.div>
           
           <div className="mt-4 pt-4 border-t border-border/10">

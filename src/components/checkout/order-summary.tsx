@@ -23,7 +23,7 @@ export function OrderSummary({ orderDetails, discountAmount = 0 }: OrderSummaryP
         
         {discountAmount > 0 && (
           <div className="flex justify-between text-secondary">
-            <span>Discount (KhelManch Pass)</span>
+            <span>Discount Applied</span>
             <span>-₹{(discountAmount / 100).toLocaleString()}</span>
           </div>
         )}

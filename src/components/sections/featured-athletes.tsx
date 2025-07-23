@@ -9,7 +9,7 @@ import { Calendar, Trophy, Users, MapPin, Star, Clock, Ticket, Gift, Zap } from 
 
 interface FeaturedItem {
   id: string;
-  type: 'tournament' | 'venue' | 'community' | 'event' | 'pass' | 'coupon';
+  type: 'tournament' | 'venue' | 'event' | 'coupon';
   title: string;
   subtitle: string;
   image: string;
@@ -27,7 +27,7 @@ export function FeaturedAthletes() {
     {
       id: "tournament-1",
       type: "tournament",
-      title: "Mumbai Cricket Premier League",
+      title: "Delhi Cricket Premier League",
       subtitle: "Elite cricket championship with top teams competing for glory",
       image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       badge: "₹50K Prize Pool",
@@ -49,45 +49,6 @@ export function FeaturedAthletes() {
         { label: "Price", value: "₹999/hr" }
       ],
       action: "Book Now"
-    },
-    {
-      id: "community-1",
-      type: "community",
-      title: "Khelmanch Sports Community",
-      subtitle: "Connect with passionate athletes and build lasting friendships",
-      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      badge: "1.2K Members",
-      stats: [
-        { label: "Active", value: "890" },
-        { label: "Events", value: "45" }
-      ],
-      action: "Join Community"
-    },
-    {
-      id: "pass-1",
-      type: "pass",
-      title: "Khelmanch Premium Pass",
-      subtitle: "Unlock exclusive benefits and discounts across all tournaments",
-      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      badge: "30% OFF",
-      stats: [
-        { label: "Validity", value: "90 Days" },
-        { label: "Benefits", value: "10+" }
-      ],
-      action: "Buy Pass"
-    },
-    {
-      id: "coupon-1",
-      type: "coupon",
-      title: "First Time User Special",
-      subtitle: "Special welcome discount for new Khelmanch members",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      badge: "40% OFF",
-      stats: [
-        { label: "Valid Till", value: "7 Days" },
-        { label: "Min Order", value: "₹500" }
-      ],
-      action: "Use Coupon"
     },
     {
       id: "tournament-2",
@@ -114,19 +75,6 @@ export function FeaturedAthletes() {
         { label: "Price", value: "₹1200/hr" }
       ],
       action: "Book Now"
-    },
-    {
-      id: "coupon-2",
-      type: "coupon",
-      title: "Weekend Warrior Deal",
-      subtitle: "Exclusive weekend booking discounts for all sports venues",
-      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      badge: "25% OFF",
-      stats: [
-        { label: "Valid On", value: "Weekends" },
-        { label: "Max Save", value: "₹300" }
-      ],
-      action: "Apply Coupon"
     }
   ];
 
@@ -161,28 +109,12 @@ export function FeaturedAthletes() {
           }
         });
         break;
-      case 'community':
-        navigate('/community');
-        break;
-      case 'pass':
-        navigate('/checkout', {
-          state: {
-            orderDetails: {
-              amount: 29900,
-              currency: "INR",
-              orderId: `pass_basic_${Date.now()}`,
-              description: "KhelManch Pass - 30% off on tournaments",
-              type: "pass",
-              itemId: "tournament-pass-basic",
-              itemName: "KhelManch Pass"
-            }
-          }
-        });
-        break;
       case 'coupon':
         // Show coupon details or apply coupon logic
+        navigate('/booking');
         break;
       default:
+        navigate('/tournaments');
         break;
     }
   };
@@ -191,8 +123,6 @@ export function FeaturedAthletes() {
     switch (type) {
       case 'tournament': return Trophy;
       case 'venue': return MapPin;
-      case 'community': return Users;
-      case 'pass': return Ticket;
       case 'coupon': return Gift;
       default: return Star;
     }

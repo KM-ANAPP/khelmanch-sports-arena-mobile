@@ -29,8 +29,8 @@ export default function SportDetail() {
       case 'events':
         navigate('/tournaments', { state: { sport: sportData.name } });
         break;
-      case 'community':
-        navigate('/community', { state: { sport: sportData.name } });
+      case 'activities':
+        navigate('/activities', { state: { sport: sportData.name } });
         break;
       case 'venues':
         navigate('/booking', { state: { sport: sportData.name } });
@@ -101,14 +101,14 @@ export default function SportDetail() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       {option.type === 'events' && <Calendar className="h-5 w-5 text-primary" />}
-                      {option.type === 'community' && <Users className="h-5 w-5 text-secondary" />}
+                      {option.type === 'activities' && <Users className="h-5 w-5 text-secondary" />}
                       {option.type === 'venues' && <MapPin className="h-5 w-5 text-accent" />}
                       
                       <div>
                         <h4 className="font-semibold">{option.label}</h4>
                         <p className="text-sm text-muted-foreground">
                           {option.type === 'events' && 'Join tournaments and competitions'}
-                          {option.type === 'community' && 'Connect with other players'}
+                          {option.type === 'activities' && 'Earn coins and stay active'}
                           {option.type === 'venues' && 'Book courts and grounds'}
                         </p>
                       </div>
