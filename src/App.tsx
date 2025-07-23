@@ -28,7 +28,7 @@ import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookings";
-import Community from "./pages/Community";
+import Activities from "./pages/Activities";
 import SportDetail from "./pages/SportDetail";
 
 const queryClient = new QueryClient();
@@ -109,7 +109,7 @@ const App = () => {
                       { path: "/checkout", element: <Checkout /> },
                       { path: "/payment-success", element: <PaymentSuccess /> },
                       { path: "/settings", element: <Settings /> },
-                      { path: "/community", element: <Community /> },
+                      { path: "/activities", element: <Activities /> },
                       { path: "/my-bookings", element: <MyBookings /> },
                       { path: "/my-tickets", element: <MyBookings /> },
                       { path: "/sport/:sportId", element: <SportDetail /> },

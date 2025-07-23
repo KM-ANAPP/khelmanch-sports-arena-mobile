@@ -63,7 +63,7 @@ export function AppDrawer({
             <NavItem href="/my-tickets" icon={Ticket} label="My Tickets" />
           </motion.div>
           <motion.div variants={item}>
-            <NavItem href="/community" icon={Users} label="Community" />
+            <NavItem href="/tournaments" icon={Trophy} label="Tournaments" />
           </motion.div>
           <motion.div variants={item}>
             <NavItem href="/messages" icon={MessageCircle} label="Messages" />
