@@ -70,19 +70,7 @@ export const UpcomingTournaments = () => {
       return;
     }
     
-    navigate("/checkout", {
-      state: {
-        orderDetails: {
-          amount: tournament.price,
-          currency: "INR",
-          orderId: `tournament_${tournament.id}_${Date.now()}`,
-          description: `Registration for ${tournament.title}`,
-          type: "tournament",
-          itemId: `tournament-${tournament.id}`,
-          itemName: tournament.title
-        }
-      }
-    });
+    navigate(`/tournament-details/${tournament.id}`);
   };
 
   return (

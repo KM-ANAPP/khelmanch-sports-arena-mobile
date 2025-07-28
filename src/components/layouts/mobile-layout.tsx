@@ -12,6 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TournamentSearch } from "@/components/search/tournament-search";
+import { NotificationPopup } from "@/components/notifications/notification-popup";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -22,6 +24,7 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedLocation, setSelectedLocation] = useState("Delhi, India");
+  const [searchOpen, setSearchOpen] = useState(false);
   
   const locations = [
     "Delhi, India"
@@ -33,9 +36,18 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
       <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-xl border-b border-border/50 safe-area-inset rounded-b-3xl shadow-lg px-safe">
         <div className="flex h-16 items-center justify-between px-4 max-w-full">
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">
-              {user?.email ? `Hi, ${user.email.split('@')[0]}!` : 'Khelmanch'}
-            </h1>
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/src/assets/logos/khelmanch-logo.png" 
+                alt="Khelmanch Logo" 
+                className="h-8 object-contain" 
+              />
+              {user?.email && (
+                <h1 className="text-lg font-semibold text-foreground">
+                  Hi, {user.email.split('@')[0]}!
+                </h1>
+              )}
+            </div>
             <div className="flex items-center mt-1">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -65,15 +77,19 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" className="rounded-full android-ripple">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full android-ripple"
+              onClick={() => setSearchOpen(true)}
+            >
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="relative rounded-full android-ripple">
-              <Bell className="h-5 w-5" />
-              <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs rounded-full">
-                2
-              </Badge>
-            </Button>
+            <NotificationPopup>
+              <Button variant="ghost" size="icon" className="rounded-full android-ripple">
+                <Bell className="h-5 w-5" />
+              </Button>
+            </NotificationPopup>
           </div>
         </div>
       </header>
@@ -85,6 +101,9 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
 
       {/* Bottom Navigation */}
       <BottomNavigation />
+      
+      {/* Search Dialog */}
+      <TournamentSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 }

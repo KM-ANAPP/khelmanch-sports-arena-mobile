@@ -12,8 +12,7 @@ export function BottomNavigation() {
   const navigationItems = [
     { path: "/home", label: "Home", icon: Home },
     { path: "/tournaments", label: "Events", icon: Trophy },
-    { path: "/booking", label: "Book", icon: Calendar },
-    { path: "/my-bookings", label: "Bookings", icon: Search },
+    { path: "/my-bookings", label: "My Bookings", icon: Search },
     { path: "/profile", label: "Profile", icon: User }
   ];
 

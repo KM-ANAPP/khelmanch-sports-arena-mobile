@@ -71,146 +71,42 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-orange-900 dark:text-orange-100">Earn KHELMANCH COINS</h3>
-                <p className="text-sm text-orange-700 dark:text-orange-300">Complete fitness activities for discounts!</p>
+                <p className="text-sm text-orange-700 dark:text-orange-300">Join tournaments & refer friends!</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-orange-600" />
           </div>
         </div>
 
-        {/* Referral Section - Moved after EARN KHELMANCH COINS */}
-        <div className="px-4 pt-6">
-          <Card className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border border-green-200 dark:border-green-800">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-green-500 rounded-2xl">
-                <Award className="h-6 w-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-green-900 dark:text-green-100">Refer a Sports Enthusiast</h3>
-                <p className="text-sm text-green-700 dark:text-green-300">Earn 50 karma points by inviting your friends</p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-green-600" />
-            </div>
-          </Card>
-        </div>
-
-        {/* START PLAYING Section */}
+        {/* Main Action Card - Play Only */}
         <div className="px-4 py-6">
-          <div className="bg-card rounded-2xl p-4 border">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-bold text-foreground">START PLAYING!</h2>
-                <p className="text-sm text-muted-foreground">Create Game</p>
-                <p className="text-xs text-muted-foreground mt-1">No games in your calendar</p>
-              </div>
-              <Button size="sm" className="bg-primary text-primary-foreground">
-                Create
-              </Button>
+          <Card className="relative overflow-hidden h-48 border-0 shadow-lg w-full">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600">
+              <img 
+                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1000" 
+                alt="Players" 
+                className="absolute inset-0 w-full h-full object-cover opacity-30"
+              />
             </div>
-            <Button variant="outline" className="w-full" onClick={() => navigate('/my-bookings')}>
-              View My Calendar
-            </Button>
-          </div>
-        </div>
-
-        {/* Main Action Cards */}
-        <div className="px-4 pb-6">
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="relative overflow-hidden h-48 border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600">
-                <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1000" 
-                  alt="Players" 
-                  className="absolute inset-0 w-full h-full object-cover opacity-30"
-                />
+            <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Play</h3>
+                <p className="text-base mb-4 text-white/90">Find tournaments and compete</p>
+                <Button size="lg" variant="secondary" onClick={() => navigate('/tournaments')} className="w-full">
+                  <Trophy className="h-5 w-5 mr-2" />
+                  View Tournaments
+                </Button>
               </div>
-              <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Play</h3>
-                  <p className="text-sm mb-4 text-white/90">Find tournaments and compete</p>
-                  <Button size="sm" variant="secondary" onClick={() => navigate('/tournaments')}>
-                    <Trophy className="h-4 w-4 mr-2" />
-                    View Tournaments
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden h-48 border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600">
-                <img 
-                  src="https://images.unsplash.com/photo-1544919982-b61976f0ba43?q=80&w=1000" 
-                  alt="Venue" 
-                  className="absolute inset-0 w-full h-full object-cover opacity-30"
-                />
-              </div>
-              <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Book</h3>
-                  <p className="text-sm mb-4 text-white/90">Book your slots in venues nearby</p>
-                  <Button size="sm" variant="secondary" onClick={handleBookNow}>
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Book Now
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
 
         <div className="px-4 space-y-6">
           
-          {/* Sports Categories */}
+          {/* Pick a sport section */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Sports Categories</h2>
-              <Badge variant="secondary">8+ Sports</Badge>
-            </div>
             <SportsPicker />
-          </div>
-
-          {/* Quick Access Grid */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Quick Access</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <Link to="/booking">
-                <Card className="p-4 hover:shadow-lg transition-all border-2 hover:border-primary/20">
-                  <CardContent className="p-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 rounded-xl">
-                        <Calendar className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Bookings</h3>
-                        <p className="text-xs text-muted-foreground">Game History</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-              
-              <Link to="/tournaments">
-                <Card className="p-4 hover:shadow-lg transition-all border-2 hover:border-secondary/20">
-                  <CardContent className="p-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-secondary/10 rounded-xl">
-                        <Trophy className="h-5 w-5 text-secondary" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Tournaments</h3>
-                        <p className="text-xs text-muted-foreground">Find Competitions</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </div>
-
-          {/* Popular Grounds */}
-          <div>
-            <PopularGrounds />
           </div>
 
           {/* Upcoming Tournaments - Vertical Slider */}

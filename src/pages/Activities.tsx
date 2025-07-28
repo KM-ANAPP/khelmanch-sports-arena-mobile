@@ -25,57 +25,50 @@ export default function Activities() {
   const [activities, setActivities] = useState<Activity[]>([
     {
       id: '1',
-      title: 'Morning Run',
-      description: 'Complete a 30-minute morning run',
-      coins: 50,
-      duration: '30 min',
-      difficulty: 'Easy',
-      completed: false,
-      icon: Target
-    },
-    {
-      id: '2',
-      title: 'Play Badminton',
-      description: 'Book and play a badminton session',
+      title: 'Join 1 Tournament',
+      description: 'Participate in any sports tournament to earn coins',
       coins: 100,
-      duration: '1 hour',
+      duration: '2-3 hours',
       difficulty: 'Medium',
       completed: false,
       icon: Trophy
     },
     {
-      id: '3',
-      title: 'Join Tournament',
-      description: 'Participate in any sports tournament',
-      coins: 200,
-      duration: '2-3 hours',
+      id: '2',
+      title: 'Join 3 Tournaments',
+      description: 'Participate in 3 tournaments to earn bonus coins',
+      coins: 300,
+      duration: 'Multiple sessions',
       difficulty: 'Hard',
       completed: false,
       icon: Star
     },
     {
-      id: '4',
-      title: 'Book 3 Venues',
-      description: 'Book 3 different sports venues this week',
-      coins: 150,
-      duration: 'Weekly',
-      difficulty: 'Medium',
+      id: '3',
+      title: 'Join 5 Tournaments',
+      description: 'Participate in 5 tournaments to earn maximum coins + bonus',
+      coins: 800,
+      duration: 'Multiple sessions',
+      difficulty: 'Hard',
       completed: false,
       icon: Zap
+    },
+    {
+      id: '4',
+      title: 'Refer a Friend',
+      description: 'Refer a sports enthusiast to join Khelmanch',
+      coins: 100,
+      duration: 'One-time',
+      difficulty: 'Easy',
+      completed: false,
+      icon: Target
     }
   ]);
 
   const handleCompleteActivity = (activityId: string) => {
-    setActivities(prev => 
-      prev.map(activity => {
-        if (activity.id === activityId && !activity.completed) {
-          setUserCoins(prevCoins => prevCoins + activity.coins);
-          toast.success(`+${activity.coins} KHELMANCH COINS earned!`);
-          return { ...activity, completed: true };
-        }
-        return activity;
-      })
-    );
+    // Note: This should be handled automatically when user pays for tournaments
+    // Users cannot manually mark activities as complete
+    toast.info("Coins are earned automatically when you join tournaments or refer friends!");
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -117,15 +110,19 @@ export default function Activities() {
           <CardContent className="space-y-3">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
-              <p className="text-sm">Complete fitness & sports activities</p>
+              <p className="text-sm">Join tournaments by paying the entry fee</p>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
-              <p className="text-sm">Earn KHELMANCH COINS as rewards</p>
+              <p className="text-sm">Refer friends to join Khelmanch</p>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">3</div>
-              <p className="text-sm">Use coins for discounts on bookings</p>
+              <p className="text-sm">Earn KHELMANCH COINS automatically</p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">4</div>
+              <p className="text-sm">Use coins for discounts on future tournaments</p>
             </div>
           </CardContent>
         </Card>
@@ -172,11 +169,11 @@ export default function Activities() {
                         
                         <Button
                           size="sm"
-                          variant={activity.completed ? "outline" : "default"}
-                          disabled={activity.completed}
+                          variant="outline"
+                          disabled={true}
                           onClick={() => handleCompleteActivity(activity.id)}
                         >
-                          {activity.completed ? "Completed" : "Mark Complete"}
+                          Auto-earned
                         </Button>
                       </div>
                     </div>
