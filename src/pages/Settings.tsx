@@ -108,51 +108,6 @@ export default function Settings() {
         <h1 className="text-2xl font-bold">Settings</h1>
 
         <div className="space-y-6">
-          {/* Security Settings */}
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold flex items-center">
-              <Lock className="mr-2 h-5 w-5" />
-              Security
-            </h2>
-            <Separator className="my-2" />
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <Label htmlFor="two-factor" className="font-medium">Two-Factor Authentication</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Add an extra layer of security to your account
-                  </p>
-                </div>
-                <Switch 
-                  id="two-factor" 
-                  checked={twoFactorEnabled}
-                  onCheckedChange={handleToggle2FA}
-                  disabled={isLoading || !isAuthenticated}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <Label htmlFor="biometric" className="font-medium">Biometric Login</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Use fingerprint or face recognition to log in
-                  </p>
-                </div>
-                <Switch 
-                  id="biometric" 
-                  checked={biometricEnabled}
-                  onCheckedChange={handleToggleBiometric}
-                  disabled={biometricLoading || !biometricAvailable || !isAuthenticated}
-                />
-              </div>
-              {!biometricAvailable && (
-                <p className="text-xs text-amber-600">
-                  Biometric authentication is not available on this device.
-                </p>
-              )}
-            </div>
-          </Card>
           
           {/* Notifications Settings */}
           <Card className="p-4">
@@ -194,16 +149,6 @@ export default function Settings() {
             <Separator className="my-2" />
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <Label htmlFor="profile-visibility" className="font-medium">Profile Visibility</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Control who can see your profile
-                  </p>
-                </div>
-                <Switch id="profile-visibility" defaultChecked />
-              </div>
-              
               <div className="flex items-center justify-between py-2">
                 <div>
                   <Label htmlFor="location-tracking" className="font-medium">Location Services</Label>

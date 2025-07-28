@@ -121,13 +121,6 @@ export const UpcomingTournaments = () => {
                   </div>
                 </div>
 
-                {/* Distance badge */}
-                <div className="absolute top-3 right-3">
-                  <div className="bg-white/20 text-white text-xs font-medium py-1 px-2 rounded backdrop-blur-sm flex items-center">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    2.3 km
-                  </div>
-                </div>
               </div>
               
               <CardContent className="p-4">
@@ -158,10 +151,8 @@ export const UpcomingTournaments = () => {
                 {/* Price and availability */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-xl font-bold text-foreground">₹{(tournament.price / 100).toLocaleString()}</span>
-                    <span className="text-sm text-muted-foreground ml-1">per person</span>
-                    <div className="text-xs text-emerald-600 font-medium">
-                      {tournament.registrationOpen ? "Available Today" : "Coming Soon"}
+                    <div className="text-lg font-bold text-foreground">
+                      Cash Prize: {tournament.prize}
                     </div>
                   </div>
                 </div>

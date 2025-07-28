@@ -86,7 +86,7 @@ const tournamentBookings = [
 export default function MyBookings() {
   const { isAuthenticated } = useAuth();
   const { tickets, isLoading: ticketsLoading } = useTickets();
-  const [activeTab, setActiveTab] = useState("grounds");
+  const [activeTab, setActiveTab] = useState("tournaments");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [sportFilter, setSportFilter] = useState<string | null>(null);
@@ -212,21 +212,9 @@ export default function MyBookings() {
         
         {/* Tabs for different booking types */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="grounds">Grounds</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-1">
             <TabsTrigger value="tournaments">Tournaments</TabsTrigger>
-            <TabsTrigger value="tickets">Tickets</TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="grounds" className="mt-4 space-y-4">
-            {groundBookings.length === 0 ? (
-              <EmptyBookingState type="no-bookings" />
-            ) : (
-              groundBookings.map(booking => (
-                <GroundBookingCard key={booking.id} booking={booking} />
-              ))
-            )}
-          </TabsContent>
           
           <TabsContent value="tournaments" className="mt-4 space-y-4">
             {tournamentBookings.length === 0 ? (
@@ -234,24 +222,6 @@ export default function MyBookings() {
             ) : (
               tournamentBookings.map(booking => (
                 <TournamentBookingCard key={booking.id} booking={booking} />
-              ))
-            )}
-          </TabsContent>
-
-          <TabsContent value="tickets" className="mt-4 space-y-4">
-            {ticketsLoading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <LoadingShimmer key={i} height="120px" className="rounded-xl" />
-                ))}
-              </div>
-            ) : tickets.length === 0 ? (
-              <EmptyBookingState type="no-bookings" />
-            ) : (
-              tickets.map(ticket => (
-                <div key={ticket.id} onClick={() => handleViewTicket(ticket)}>
-                  <TicketDisplay ticket={ticket} compact />
-                </div>
               ))
             )}
           </TabsContent>
@@ -394,8 +364,21 @@ function TournamentBookingCard({ booking }: TournamentBookingProps) {
         <div className="mt-4 flex space-x-2">
           {booking.status === 'upcoming' && (
             <>
-              <Button variant="outline" size="sm" className="flex-1">
-                Team Details
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1"
+                onClick={() => {
+                  // Download fixture image
+                  const link = document.createElement('a');
+                  link.href = 'https://khelmanch.com/wp-content/uploads/2025/02/11.png';
+                  link.download = 'tournament-fixtures.png';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                View Fixtures
               </Button>
               <Link to={`/tournaments/${booking.id}`} className="flex-1">
                 <Button variant="default" size="sm" className="w-full">

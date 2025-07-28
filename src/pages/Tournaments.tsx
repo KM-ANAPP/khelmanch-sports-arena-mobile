@@ -37,7 +37,8 @@ export default function Tournaments() {
       location: "Khelmanch Stadium, Mumbai",
       status: "upcoming",
       registrationOpen: true,
-      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80"
+      image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1167&q=80",
+      cashPrize: 25000
     },
     {
       id: 2,
@@ -47,7 +48,8 @@ export default function Tournaments() {
       location: "City Ground, Delhi",
       status: "upcoming",
       registrationOpen: true,
-      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80"
+      image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80",
+      cashPrize: 50000
     },
     {
       id: 3,
@@ -57,7 +59,8 @@ export default function Tournaments() {
       location: "Sports Complex, Pune",
       status: "upcoming",
       registrationOpen: true,
-      image: "https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+      image: "https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+      cashPrize: 15000
     },
     {
       id: 4,
@@ -67,7 +70,8 @@ export default function Tournaments() {
       location: "Tennis Club, Mumbai",
       status: "upcoming",
       registrationOpen: false,
-      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+      image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+      cashPrize: 30000
     },
     {
       id: 5,
@@ -77,7 +81,8 @@ export default function Tournaments() {
       location: "Indoor Arena, Bangalore",
       status: "past",
       registrationOpen: false,
-      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1090&q=80"
+      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1090&q=80",
+      cashPrize: 40000
     },
     {
       id: 6,
@@ -87,7 +92,8 @@ export default function Tournaments() {
       location: "Beach Arena, Goa",
       status: "past",
       registrationOpen: false,
-      image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1007&q=80"
+      image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1007&q=80",
+      cashPrize: 20000
     }
   ];
 
@@ -104,23 +110,15 @@ export default function Tournaments() {
   return (
     <MobileLayout isLoggedIn={true}>
       <div className="p-4 space-y-4">
-        {/* Search and Filter */}
-        <div className="flex space-x-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search tournaments"
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
+        <h1 className="text-2xl font-bold">Tournaments</h1>
+        
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="w-full justify-start">
+              <Filter className="h-4 w-4 mr-2" />
+              Filter Tournaments
+            </Button>
+          </SheetTrigger>
             <SheetContent>
               <SheetHeader>
                 <SheetTitle>Filter Tournaments</SheetTitle>
@@ -190,7 +188,6 @@ export default function Tournaments() {
               </SheetFooter>
             </SheetContent>
           </Sheet>
-        </div>
 
         {/* Tabs for Upcoming/Past */}
         <Tabs defaultValue="upcoming" className="w-full">
@@ -198,7 +195,7 @@ export default function Tournaments() {
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
           </TabsList>
-          <TabsContent value="upcoming" className="mt-4 space-y-4">
+          <TabsContent value="upcoming" className="mt-4 space-y-6">
             {filteredTournaments('upcoming').length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 No upcoming tournaments found
@@ -209,7 +206,7 @@ export default function Tournaments() {
               ))
             )}
           </TabsContent>
-          <TabsContent value="past" className="mt-4 space-y-4">
+          <TabsContent value="past" className="mt-4 space-y-6">
             {filteredTournaments('past').length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 No past tournaments found
@@ -236,12 +233,13 @@ interface TournamentCardProps {
     status: string;
     registrationOpen: boolean;
     image: string;
+    cashPrize: number;
   };
 }
 
 function TournamentCard({ tournament }: TournamentCardProps) {
   return (
-    <Link to={`/tournaments/${tournament.id}`}>
+    <Link to={`/tournament-details/${tournament.id}`}>
       <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
         <div className="relative h-48">
           <img 
@@ -257,9 +255,12 @@ function TournamentCard({ tournament }: TournamentCardProps) {
               <div className="bg-black/50 text-white text-xs font-medium py-1.5 px-3 rounded-full backdrop-blur-sm">
                 {tournament.sport}
               </div>
-              <div className="bg-orange-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full">
-                2.5 km away
-              </div>
+              {tournament.status === 'past' && (
+                <div className="bg-green-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  Event Completed
+                </div>
+              )}
             </div>
             {tournament.registrationOpen && tournament.status === 'upcoming' && (
               <div className="bg-emerald-500 text-white text-xs font-medium py-1.5 px-3 rounded-full shadow-lg">
@@ -283,34 +284,40 @@ function TournamentCard({ tournament }: TournamentCardProps) {
         </div>
         
         <CardContent className="p-4">
-          {/* Venue details */}
-          <div className="mb-4">
-            <h4 className="font-semibold text-sm text-foreground mb-2">Venue Facilities</h4>
-            <div className="flex flex-wrap gap-2">
-              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Parking</div>
-              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Food Court</div>
-              <div className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Changing Room</div>
-            </div>
-          </div>
+          {tournament.status === 'upcoming' ? (
+            <>
+              {/* Cash Prize */}
+              <div className="mb-4">
+                <div className="text-lg font-bold text-foreground">
+                  Cash Prize: ₹{tournament.cashPrize.toLocaleString()}
+                </div>
+              </div>
 
-          {/* Price and booking */}
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-2xl font-bold text-foreground">₹199</span>
-              <span className="text-sm text-muted-foreground ml-1">/person</span>
-              <div className="text-xs text-emerald-600 font-medium">Available Now</div>
-            </div>
-            {tournament.status === 'upcoming' ? (
-              <Button size="lg" className="rounded-2xl px-6 font-semibold shadow-lg">
+              {/* Book Now Button */}
+              <Button size="lg" className="w-full rounded-2xl px-6 font-semibold shadow-lg">
                 {tournament.registrationOpen ? "Book Now" : "View Details"}
               </Button>
-            ) : (
-              <div className="flex items-center text-xs text-muted-foreground">
-                <Clock className="h-3 w-3 mr-1" />
-                <span>Event Completed</span>
+            </>
+          ) : (
+            <>
+              {/* Cash Prize for past tournaments */}
+              <div className="mb-4">
+                <div className="text-lg font-bold text-foreground">
+                  Cash Prize: ₹{tournament.cashPrize.toLocaleString()}
+                </div>
               </div>
-            )}
-          </div>
+
+              {/* Action Buttons for past tournaments */}
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm" className="flex-1 rounded-2xl">
+                  View Gallery
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1 rounded-2xl">
+                  View Highlights
+                </Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </Link>
