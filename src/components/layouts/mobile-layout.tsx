@@ -44,7 +44,8 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
               <img 
                 src={theme === 'dark' ? khelmanckLogoDark : khelmanckLogoLight}
                 alt="Khelmanch Logo" 
-                className="h-8 object-contain" 
+                className="h-8 object-contain"
+                style={{ width: '120px' }}
               />
               {user?.email && (
                 <h1 className="text-lg font-semibold text-foreground">
