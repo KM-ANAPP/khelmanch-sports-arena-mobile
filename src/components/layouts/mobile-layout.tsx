@@ -6,6 +6,7 @@ import { Bell, Search, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TournamentSearch } from "@/components/search/tournament-search";
 import { NotificationPopup } from "@/components/notifications/notification-popup";
+import khelmanckLogoDark from "@/assets/logos/khelmanch-logo-dark.png";
+import khelmanckLogoLight from "@/assets/logos/khelmanch-logo-light.png";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -23,6 +26,7 @@ interface MobileLayoutProps {
 export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [selectedLocation, setSelectedLocation] = useState("Delhi, India");
   const [searchOpen, setSearchOpen] = useState(false);
   
@@ -38,7 +42,7 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
           <div className="flex-1">
             <div className="flex items-center space-x-3">
               <img 
-                src="/src/assets/logos/khelmanch-logo.png" 
+                src={theme === 'dark' ? khelmanckLogoDark : khelmanckLogoLight}
                 alt="Khelmanch Logo" 
                 className="h-8 object-contain" 
               />
