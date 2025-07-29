@@ -123,6 +123,8 @@ export const useTournamentData = (id: string) => {
 
   const tournament = {
     id: Number(id),
+    tokenAmount: 500,
+    fullAmount: 2000,
     title: "Summer Cricket Championship",
     sport: "Cricket",
     date: "May 15-20, 2025",

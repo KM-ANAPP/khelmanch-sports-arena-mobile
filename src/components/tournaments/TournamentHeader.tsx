@@ -16,15 +16,13 @@ interface TournamentHeaderProps {
   isExpanded: boolean;
   onExpandClick: () => void;
   onRegisterClick: () => void;
-  onTicketsClick: () => void;
 }
 
 export const TournamentHeader = ({
   tournament,
   isExpanded,
   onExpandClick,
-  onRegisterClick,
-  onTicketsClick
+  onRegisterClick
 }: TournamentHeaderProps) => {
   return (
     <div>
@@ -79,13 +77,9 @@ export const TournamentHeader = ({
           </button>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button onClick={onRegisterClick} disabled={!tournament.registrationOpen}>
+        <div className="mt-4">
+          <Button onClick={onRegisterClick} disabled={!tournament.registrationOpen} className="w-full">
             Register Team
-          </Button>
-          <Button variant="outline" onClick={onTicketsClick}>
-            <Ticket className="h-4 w-4 mr-2" />
-            Get Tickets
           </Button>
         </div>
       </div>

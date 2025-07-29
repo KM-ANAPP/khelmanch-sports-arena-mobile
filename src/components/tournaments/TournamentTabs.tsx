@@ -29,11 +29,9 @@ export const TournamentTabs = ({
 }: TournamentTabsProps) => {
   return (
     <Tabs defaultValue="details" className="w-full px-4">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="details">Details</TabsTrigger>
         <TabsTrigger value="rules">Rules</TabsTrigger>
-        <TabsTrigger value="schedule">Schedule</TabsTrigger>
-        <TabsTrigger value="brackets">Brackets</TabsTrigger>
       </TabsList>
 
       <TabsContent value="details" className="space-y-4 mt-4">
@@ -42,20 +40,6 @@ export const TournamentTabs = ({
 
       <TabsContent value="rules" className="space-y-4 mt-4">
         <TournamentRulesTab rules={tournament.rules} />
-      </TabsContent>
-
-      <TabsContent value="schedule" className="mt-4">
-        <TournamentScheduleTab 
-          matches={matchesData} 
-          onMatchClick={onMatchClick}
-        />
-      </TabsContent>
-
-      <TabsContent value="brackets" className="mt-4">
-        <TournamentBracketsTab 
-          data={bracketData} 
-          onMatchClick={onMatchClick}
-        />
       </TabsContent>
     </Tabs>
   );

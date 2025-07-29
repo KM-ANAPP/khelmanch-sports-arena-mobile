@@ -3,7 +3,7 @@ import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Clock, Search, Filter } from "lucide-react";
+import { Calendar, MapPin, Clock, Search, Filter, Car, Utensils, Droplets, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import {
@@ -239,7 +239,7 @@ interface TournamentCardProps {
 
 function TournamentCard({ tournament }: TournamentCardProps) {
   return (
-    <Link to={`/tournament-details/${tournament.id}`}>
+    <Link to={`/tournaments/${tournament.id}`}>
       <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
         <div className="relative h-48">
           <img 
@@ -255,12 +255,6 @@ function TournamentCard({ tournament }: TournamentCardProps) {
               <div className="bg-black/50 text-white text-xs font-medium py-1.5 px-3 rounded-full backdrop-blur-sm">
                 {tournament.sport}
               </div>
-              {tournament.status === 'past' && (
-                <div className="bg-green-500/90 text-white text-xs font-medium py-1.5 px-3 rounded-full flex items-center">
-                  <Clock className="h-3 w-3 mr-1" />
-                  Event Completed
-                </div>
-              )}
             </div>
             {tournament.registrationOpen && tournament.status === 'upcoming' && (
               <div className="bg-emerald-500 text-white text-xs font-medium py-1.5 px-3 rounded-full shadow-lg">
@@ -286,8 +280,13 @@ function TournamentCard({ tournament }: TournamentCardProps) {
         <CardContent className="p-4">
           {tournament.status === 'upcoming' ? (
             <>
-              {/* Cash Prize */}
-              <div className="mb-4">
+              {/* Amenities and Cash Prize */}
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <Car className="h-4 w-4 text-secondary" />
+                  <Utensils className="h-4 w-4 text-secondary" />
+                  <Droplets className="h-4 w-4 text-secondary" />
+                </div>
                 <div className="text-lg font-bold text-foreground">
                   Cash Prize: ₹{tournament.cashPrize.toLocaleString()}
                 </div>
@@ -301,7 +300,11 @@ function TournamentCard({ tournament }: TournamentCardProps) {
           ) : (
             <>
               {/* Cash Prize for past tournaments */}
-              <div className="mb-4">
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-muted-foreground">Event Completed</span>
+                </div>
                 <div className="text-lg font-bold text-foreground">
                   Cash Prize: ₹{tournament.cashPrize.toLocaleString()}
                 </div>

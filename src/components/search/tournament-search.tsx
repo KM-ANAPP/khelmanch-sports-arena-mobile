@@ -68,7 +68,7 @@ export function TournamentSearch({ open, onOpenChange }: TournamentSearchProps) 
   };
 
   const handleTournamentClick = (tournamentId: string) => {
-    navigate(`/tournament-details/${tournamentId}`);
+    navigate(`/tournaments/${tournamentId}`);
     onOpenChange(false);
   };
 
@@ -76,12 +76,7 @@ export function TournamentSearch({ open, onOpenChange }: TournamentSearchProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md h-[80vh] p-0">
         <DialogHeader className="p-4 pb-2">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-semibold">Search Tournaments</DialogTitle>
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <DialogTitle className="text-lg font-semibold">Search Tournaments</DialogTitle>
         </DialogHeader>
         
         <div className="px-4 pb-2">
