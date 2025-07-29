@@ -23,9 +23,13 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TournamentFilterSheet } from "@/components/tournaments/TournamentFilterSheet";
 
 export default function Tournaments() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilters, setActiveFilters] = useState<{sports: string[]}>({
+    sports: []
+  });
   
   // Mock data - in a real app, this would come from an API
   const tournaments = [
@@ -104,7 +108,18 @@ export default function Tournaments() {
         t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.location.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      )
+      .filter(t => {
+        // Apply sport filter
+        if (activeFilters.sports.length > 0 && !activeFilters.sports.includes(t.sport)) {
+          return false;
+        }
+        return true;
+      });
+  };
+
+  const handleFiltersChange = (filters: {sports: string[]}) => {
+    setActiveFilters(filters);
   };
 
   return (
@@ -112,82 +127,7 @@ export default function Tournaments() {
       <div className="p-4 space-y-4">
         <h1 className="text-2xl font-bold">Tournaments</h1>
         
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="w-fit justify-start">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter Tournaments
-            </Button>
-          </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Filter Tournaments</SheetTitle>
-              </SheetHeader>
-              <div className="py-4 space-y-4">
-                <div className="space-y-2">
-                  <Label>Sport Type</Label>
-                  <div className="space-y-2">
-                    {["Cricket", "Football", "Badminton", "Tennis", "Basketball", "Volleyball"].map((sport) => (
-                      <div className="flex items-center space-x-2" key={sport}>
-                        <Checkbox id={`sport-${sport}`} />
-                        <label
-                          htmlFor={`sport-${sport}`}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {sport}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Time Period</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select time period" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Time</SelectItem>
-                      <SelectItem value="thisMonth">This Month</SelectItem>
-                      <SelectItem value="nextMonth">Next Month</SelectItem>
-                      <SelectItem value="next3Months">Next 3 Months</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Location</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Locations</SelectItem>
-                      <SelectItem value="mumbai">Mumbai</SelectItem>
-                      <SelectItem value="delhi">Delhi</SelectItem>
-                      <SelectItem value="bangalore">Bangalore</SelectItem>
-                      <SelectItem value="pune">Pune</SelectItem>
-                      <SelectItem value="goa">Goa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Registration Status</Label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="registration-open" />
-                    <label
-                      htmlFor="registration-open"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Registration Open
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <SheetFooter>
-                <Button>Apply Filters</Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+        <TournamentFilterSheet onFiltersChange={handleFiltersChange} />
 
         {/* Tabs for Upcoming/Past */}
         <Tabs defaultValue="upcoming" className="w-full">

@@ -21,9 +21,6 @@ import { Filter } from "lucide-react";
 
 interface FilterState {
   sports: string[];
-  timePeriod: string;
-  location: string;
-  registrationOpen: boolean;
 }
 
 interface TournamentFilterSheetProps {
@@ -32,10 +29,7 @@ interface TournamentFilterSheetProps {
 
 export const TournamentFilterSheet = ({ onFiltersChange }: TournamentFilterSheetProps) => {
   const [filters, setFilters] = useState<FilterState>({
-    sports: [],
-    timePeriod: "all",
-    location: "all",
-    registrationOpen: false
+    sports: []
   });
 
   const handleSportChange = (sport: string, checked: boolean) => {
@@ -55,10 +49,7 @@ export const TournamentFilterSheet = ({ onFiltersChange }: TournamentFilterSheet
 
   const handleResetFilters = () => {
     const resetFilters = {
-      sports: [],
-      timePeriod: "all",
-      location: "all",
-      registrationOpen: false
+      sports: []
     };
     setFilters(resetFilters);
     onFiltersChange(resetFilters);
