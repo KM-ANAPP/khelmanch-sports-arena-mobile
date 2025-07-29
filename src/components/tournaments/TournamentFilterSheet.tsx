@@ -49,6 +49,8 @@ export const TournamentFilterSheet = ({ onFiltersChange }: TournamentFilterSheet
 
   const handleApplyFilters = () => {
     onFiltersChange(filters);
+    // Close the sheet by dispatching an escape key event
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
   };
 
   const handleResetFilters = () => {
@@ -65,7 +67,7 @@ export const TournamentFilterSheet = ({ onFiltersChange }: TournamentFilterSheet
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" className="w-full justify-start">
+        <Button variant="outline" className="w-fit justify-start">
           <Filter className="h-4 w-4 mr-2" />
           Filter Tournaments
         </Button>
@@ -93,55 +95,6 @@ export const TournamentFilterSheet = ({ onFiltersChange }: TournamentFilterSheet
                   </label>
                 </div>
               ))}
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Time Period</Label>
-            <Select value={filters.timePeriod} onValueChange={(value) => setFilters({...filters, timePeriod: value})}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select time period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                <SelectItem value="thisMonth">This Month</SelectItem>
-                <SelectItem value="nextMonth">Next Month</SelectItem>
-                <SelectItem value="next3Months">Next 3 Months</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Location</Label>
-            <Select value={filters.location} onValueChange={(value) => setFilters({...filters, location: value})}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="mumbai">Mumbai</SelectItem>
-                <SelectItem value="delhi">Delhi</SelectItem>
-                <SelectItem value="bangalore">Bangalore</SelectItem>
-                <SelectItem value="pune">Pune</SelectItem>
-                <SelectItem value="goa">Goa</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Registration Status</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="registration-open" 
-                checked={filters.registrationOpen}
-                onCheckedChange={(checked) => setFilters({...filters, registrationOpen: checked as boolean})}
-              />
-              <label
-                htmlFor="registration-open"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Registration Open
-              </label>
             </div>
           </div>
         </div>

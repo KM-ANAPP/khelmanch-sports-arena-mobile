@@ -114,7 +114,7 @@ export default function Tournaments() {
         
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-fit justify-start">
               <Filter className="h-4 w-4 mr-2" />
               Filter Tournaments
             </Button>
@@ -195,25 +195,29 @@ export default function Tournaments() {
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
           </TabsList>
-          <TabsContent value="upcoming" className="mt-4 space-y-6">
+          <TabsContent value="upcoming" className="mt-4 space-y-5">
             {filteredTournaments('upcoming').length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 No upcoming tournaments found
               </div>
             ) : (
               filteredTournaments('upcoming').map((tournament) => (
-                <TournamentCard key={tournament.id} tournament={tournament} />
+                <div key={tournament.id} className="mb-5">
+                  <TournamentCard tournament={tournament} />
+                </div>
               ))
             )}
           </TabsContent>
-          <TabsContent value="past" className="mt-4 space-y-6">
+          <TabsContent value="past" className="mt-4 space-y-5">
             {filteredTournaments('past').length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 No past tournaments found
               </div>
             ) : (
               filteredTournaments('past').map((tournament) => (
-                <TournamentCard key={tournament.id} tournament={tournament} />
+                <div key={tournament.id} className="mb-5">
+                  <TournamentCard tournament={tournament} />
+                </div>
               ))
             )}
           </TabsContent>

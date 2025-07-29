@@ -35,9 +35,9 @@ export default function ModernSportsSplash({ onComplete }: ModernSportsSplashPro
         className="flex items-center justify-center"
       >
         <motion.img
-          src="/src/assets/logos/khelmanch-yellow-logo.png"
+          src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png"
           alt="KHELMANCH"
-          className="w-48 h-auto object-contain"
+          className="w-[400px] max-w-[90vw] h-auto object-contain"
           animate={{
             y: [0, -10, 0],
           }}
