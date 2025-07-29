@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { 
-  getAuthToken, 
-  removeAuthToken, 
-  isAuthenticated as checkAuthentication,
-  fetchUserData 
-} from '@/utils/wordpress-auth';
+// Authentication utilities removed - using Firebase only
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -77,32 +72,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const authenticated = await checkAuthentication();
-        
-        if (authenticated) {
-          try {
-            // Get user data from WordPress
-            const userData = await fetchUserData();
-            
-            const profile: UserProfile = {
-              id: userData.id.toString(),
-              name: userData.name || userData.username || 'User',
-              email: userData.email,
-              photoURL: userData.avatar_urls?.["96"] || undefined,
-              createdAt: Date.now()
-            };
-            
-            setCurrentUser(profile);
-            setUserProfile(profile);
-            setIsAuthenticated(true);
-            
-            // Save to local storage for persistence
-            localStorage.setItem(`user_profile_${profile.id}`, JSON.stringify(profile));
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-            removeAuthToken();
-            setIsAuthenticated(false);
-          }
+        // Check local storage for existing user session
+        const savedUser = localStorage.getItem('current_user');
+        if (savedUser) {
+          const userData = JSON.parse(savedUser);
+          setCurrentUser(userData);
+          setUserProfile(userData);
+          setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
           setCurrentUser(null);
@@ -174,8 +150,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async (): Promise<void> => {
     try {
-      // Remove the JWT token from storage
-      removeAuthToken();
+      // Clear local storage
+      localStorage.removeItem('current_user');
       
       // Clear user state
       setCurrentUser(null);

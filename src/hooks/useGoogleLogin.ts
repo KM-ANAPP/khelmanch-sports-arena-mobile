@@ -6,7 +6,6 @@ import { toast } from "@/hooks/use-toast";
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { auth } from "@/utils/firebase";
-import { loginWithGoogle } from "@/utils/wordpress-auth";
 
 export const useGoogleLogin = () => {
   const navigate = useNavigate();
@@ -29,31 +28,20 @@ export const useGoogleLogin = () => {
           displayName: "Test User"
         };
         
-        try {
-          // Call WordPress authentication with mock Google data
-          const wpAuthResult = await loginWithGoogle(
-            mockUserData.email,
-            mockUserData.displayName
-          );
-          
-          // Handle app-specific login with the WordPress token
-          await login({ 
-            email: mockUserData.email,
-            username: wpAuthResult.user_nicename || mockUserData.displayName,
-            displayName: wpAuthResult.user_display_name || mockUserData.displayName,
-            userId: wpAuthResult.user_id?.toString() || ''
-          });
-          
-          toast({
-            title: "Development Login",
-            description: "You have been logged in with test credentials",
-          });
-          
-          navigate("/home");
-        } catch (wpError) {
-          console.error("WordPress Authentication Error:", wpError);
-          throw new Error("Could not authenticate with WordPress");
-        }
+        // Handle app-specific login with mock data
+        await login({ 
+          email: mockUserData.email,
+          username: mockUserData.displayName,
+          displayName: mockUserData.displayName,
+          userId: Date.now().toString() // Generate unique ID
+        });
+        
+        toast({
+          title: "Development Login",
+          description: "You have been logged in with test credentials",
+        });
+        
+        navigate("/home");
         
         return;
       }
@@ -73,33 +61,21 @@ export const useGoogleLogin = () => {
       // Sign in to Firebase with the credential
       await signInWithCredential(auth, credential);
       
-      // Authenticate with WordPress using the Google email
+      // Handle app-specific login with Google data
       if (result.user?.email) {
-        try {
-          // Call WordPress authentication with Google email and display name
-          const wpAuthResult = await loginWithGoogle(
-            result.user.email,
-            result.user.displayName || undefined
-          );
-          
-          // Handle app-specific login with the WordPress token
-          await login({ 
-            email: result.user.email,
-            username: wpAuthResult.user_nicename || result.user.displayName || '',
-            displayName: wpAuthResult.user_display_name || result.user.displayName || '',
-            userId: wpAuthResult.user_id?.toString() || ''
-          });
-          
-          toast({
-            title: "Login Successful",
-            description: "You have been successfully logged in with Google",
-          });
-          
-          navigate("/home");
-        } catch (wpError) {
-          console.error("WordPress Authentication Error:", wpError);
-          throw new Error("Could not authenticate with WordPress");
-        }
+        await login({ 
+          email: result.user.email,
+          username: result.user.displayName || result.user.email,
+          displayName: result.user.displayName || '',
+          userId: result.user.uid || Date.now().toString()
+        });
+        
+        toast({
+          title: "Login Successful",
+          description: "You have been successfully logged in with Google",
+        });
+        
+        navigate("/home");
       } else {
         throw new Error("No email provided from Google sign in");
       }

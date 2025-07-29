@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from '@/context/AuthContext';
 import { Checkbox } from "@/components/ui/checkbox";
-import wordpressService from '@/services/wordpressService';
+// WordPress service removed
 
 export default function Register() {
   const navigate = useNavigate();
@@ -136,16 +136,7 @@ export default function Register() {
     }
     
     try {
-      // Register with WordPress first
-      await wordpressService.registerUser({
-        name,
-        phone: method === 'phone' ? phoneNumber : undefined,
-        email: method === 'email' ? email : undefined,
-        sports: selectedSports,
-        skillLevels
-      });
-
-      // Then register with local auth context
+      // Register with local auth context
       await register({
         name,
         phone: method === 'phone' ? phoneNumber : undefined,

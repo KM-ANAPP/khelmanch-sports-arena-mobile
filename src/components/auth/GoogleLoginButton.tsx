@@ -7,7 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 import { auth } from "@/utils/firebase";
-import { loginWithGoogle } from "@/utils/wordpress-auth";
 import { useGoogleLogin } from "@/hooks/useGoogleLogin";
 
 export function GoogleLoginButton() {

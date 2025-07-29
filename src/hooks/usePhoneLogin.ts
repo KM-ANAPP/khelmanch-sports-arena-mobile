@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
-import { loginWithPhone } from "@/utils/wordpress-auth";
+// WordPress authentication removed
 
 export const usePhoneLogin = () => {
   const navigate = useNavigate();
@@ -69,34 +69,20 @@ export const usePhoneLogin = () => {
       const verified = await verifyOTP(otp);
       
       if (verified) {
-        // Send phone number without additional country code prefix
-        // The phone number is already formatted with country code by Firebase
-        try {
-          // Authenticate with WordPress - send only phoneNumber with 91 prefix
-          const wpAuthResult = await loginWithPhone(phoneNumber);
-          
-          // Set user data in local auth context
-          await login({ 
-            phone: phoneNumber,
-            username: wpAuthResult.user_nicename || phoneNumber,
-            displayName: wpAuthResult.user_display_name || "User",
-            userId: wpAuthResult.user_id?.toString() || ''
-          });
-          
-          toast({
-            title: "Login Successful",
-            description: "You have been successfully logged in",
-          });
-          
-          navigate("/home");
-        } catch (wpError) {
-          console.error("WordPress Authentication Error:", wpError);
-          toast({
-            title: "Login Failed",
-            description: "Could not authenticate with WordPress",
-            variant: "destructive",
-          });
-        }
+        // Set user data in local auth context
+        await login({ 
+          phone: phoneNumber,
+          username: phoneNumber,
+          displayName: "User",
+          userId: Date.now().toString()
+        });
+        
+        toast({
+          title: "Login Successful",
+          description: "You have been successfully logged in",
+        });
+        
+        navigate("/home");
       } else {
         toast({
           title: "Verification Failed",

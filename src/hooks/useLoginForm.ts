@@ -1,71 +1,52 @@
-
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { loginWithCredentials, fetchUserData } from "@/utils/wordpress-auth";
+// WordPress authentication removed
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (field: 'username' | 'password') => (value: string) => {
+    if (field === 'username') {
+      setUsername(value);
+    } else {
+      setPassword(value);
+    }
+  };
+
   const handleLoginWithCredentials = async () => {
-    if (!username || !password) {
+    if (!username.trim()) {
       toast({
-        title: "Missing Information",
-        description: "Please enter both username and password",
+        title: "Username Required",
+        description: "Please enter your username",
         variant: "destructive",
       });
       return;
     }
-    
-    setIsLoggingIn(true);
+
+    setIsLoading(true);
     try {
-      console.log("Attempting to log in with:", username);
-      const authResult = await loginWithCredentials(username, password);
+      console.log("Mock login with credentials:", username);
       
-      if (authResult.token) {
-        console.log("Login successful");
-        
-        // Fetch additional user data to get the user ID if needed
-        let userId = null;
-        try {
-          // Try to get user data with the token
-          const userData = await fetchUserData();
-          if (userData && userData.id) {
-            userId = userData.id.toString();
-          }
-        } catch (error) {
-          console.warn("Could not fetch user ID, proceeding with login anyway", error);
-        }
-        
-        // Update the app's auth context
-        await login({ 
-          email: authResult.user_email,
-          username: authResult.user_nicename,
-          displayName: authResult.user_display_name,
-          userId: userId || authResult.user_nicename // Fallback to username if ID isn't available
-        });
-        
-        toast({
-          title: "Login Successful",
-          description: `Welcome, ${authResult.user_display_name}!`,
-        });
-        
-        navigate("/home");
-      } else {
-        console.log("Login failed");
-        toast({
-          title: "Login Failed",
-          description: "Invalid credentials",
-          variant: "destructive",
-        });
-      }
+      // Mock authentication for demo purposes
+      await login({ 
+        email: `${username}@example.com`,
+        username: username,
+        displayName: username,
+        userId: Date.now().toString()
+      });
+      
+      toast({
+        title: "Login Successful",
+        description: `Welcome, ${username}!`,
+      });
+      
+      navigate("/home");
     } catch (error) {
       console.error("Error in handleLoginWithCredentials:", error);
       toast({
@@ -74,18 +55,15 @@ export const useLoginForm = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoggingIn(false);
+      setIsLoading(false);
     }
   };
 
   return {
-    phoneNumber,
-    setPhoneNumber,
     username,
-    setUsername,
     password,
-    setPassword,
-    isLoggingIn,
+    isLoading,
+    handleInputChange,
     handleLoginWithCredentials
   };
 };
