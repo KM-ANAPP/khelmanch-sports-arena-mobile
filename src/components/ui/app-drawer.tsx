@@ -39,7 +39,7 @@ export function AppDrawer({
       <SheetContent side="left" className="w-80 p-0 bg-background border-r border-border/50">
         <SheetHeader className="text-left p-6 border-b border-border/10">
           <SheetTitle className="flex justify-center py-2">
-            <img alt="Khelmanch Logo" className="h-12" src="/lovable-uploads/a7e3e853-4d7c-473e-9a8c-b2c88e143176.png" />
+            <img alt="Khelmanch Logo" className="h-12" src="/lovable-uploads/a7e3e853-4d7c-473e-9a8c-b2c88e143176.png" loading="eager" decoding="async" />
           </SheetTitle>
         </SheetHeader>
         <motion.div 

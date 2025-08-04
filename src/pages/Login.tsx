@@ -63,7 +63,7 @@ export default function Login() {
               transition={{ delay: 0.2 }}
               className="flex justify-center mb-6"
             >
-              <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" />
+              <img src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png" alt="Khelmanch Logo" className="h-8" loading="eager" decoding="async" />
             </motion.div>
             <CardTitle className="text-2xl text-center text-white">Welcome to Khelmanch</CardTitle>
             <CardDescription className="text-center text-gray-200">

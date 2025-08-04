@@ -86,6 +86,8 @@ export default function Home() {
                 src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1000" 
                 alt="Players" 
                 className="absolute inset-0 w-full h-full object-cover opacity-30"
+                loading="eager"
+                decoding="async"
               />
             </div>
             <CardContent className="relative z-10 p-6 h-full flex flex-col justify-end text-white">
@@ -133,6 +135,8 @@ export default function Home() {
                     src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=200" 
                     alt="Partner 1" 
                     className="h-12 object-contain opacity-70"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
@@ -140,6 +144,8 @@ export default function Home() {
                     src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=200" 
                     alt="Partner 2" 
                     className="h-12 object-contain opacity-70"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
@@ -147,6 +153,8 @@ export default function Home() {
                     src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=200" 
                     alt="Partner 3" 
                     className="h-12 object-contain opacity-70"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
@@ -154,6 +162,8 @@ export default function Home() {
                     src="https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?q=80&w=200" 
                     alt="Partner 4" 
                     className="h-12 object-contain opacity-70"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>

@@ -38,6 +38,8 @@ export default function ModernSportsSplash({ onComplete }: ModernSportsSplashPro
           src="/lovable-uploads/cba4a2dc-5021-4756-98a0-b154222d7523.png"
           alt="KHELMANCH"
           className="w-[400px] max-w-[90vw] h-auto object-contain"
+          loading="eager"
+          decoding="async"
           animate={{
             y: [0, -10, 0],
           }}

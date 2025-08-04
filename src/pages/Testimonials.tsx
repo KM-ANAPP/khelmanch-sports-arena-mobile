@@ -52,6 +52,8 @@ export default function Testimonials() {
                     src={testimonial.image}
                     alt={testimonial.name}
                     className="w-12 h-12 rounded-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">

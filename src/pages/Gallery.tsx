@@ -58,6 +58,8 @@ export default function Gallery() {
                   src={image.image}
                   alt={image.title}
                   className="w-full h-32 object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-2 left-2 right-2">

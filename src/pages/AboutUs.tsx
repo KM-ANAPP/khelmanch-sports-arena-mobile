@@ -15,6 +15,8 @@ export default function AboutUs() {
                 src="/lovable-uploads/a7e3e853-4d7c-473e-9a8c-b2c88e143176.png" 
                 alt="Khelmanch Logo" 
                 className="h-16 mx-auto mb-4"
+                loading="eager"
+                decoding="async"
               />
               <h2 className="text-xl font-bold mb-2">Welcome to Khelmanch</h2>
               <p className="text-muted-foreground">Your Ultimate Sports Platform</p>
