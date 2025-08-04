@@ -55,13 +55,7 @@ export function AppDrawer({
             <NavItem href="/tournaments" icon={Trophy} label="Tournaments" />
           </motion.div>
           <motion.div variants={item}>
-            <NavItem href="/booking" icon={Calendar} label="Ground Booking" />
-          </motion.div>
-          <motion.div variants={item}>
             <NavItem href="/my-bookings" icon={Clock} label="My Bookings" />
-          </motion.div>
-          <motion.div variants={item}>
-            <NavItem href="/my-tickets" icon={Ticket} label="My Tickets" />
           </motion.div>
           <motion.div variants={item}>
             <NavItem href="/activities" icon={Trophy} label="Activities" />
