@@ -73,7 +73,7 @@ export function AppDrawer({
             <NavItem href="/testimonials" icon={Star} label="Testimonials" />
           </motion.div>
           <motion.div variants={item}>
-            <NavItem href="/about" icon={Info} label="About Us" />
+            <NavItem href="/about-us" icon={Info} label="About Us" />
           </motion.div>
           <motion.div variants={item}>
             <NavItem href="/gallery" icon={Image} label="Gallery" />
@@ -103,10 +103,10 @@ export function AppDrawer({
             {/* Legal Links */}
             <motion.div variants={item}>
               <div className="px-4 space-y-2 text-xs text-foreground/60">
-                <a href="/cookie-policy" className="block hover:text-primary transition-colors">Cookie Policy</a>
-                <a href="/privacy-policy" className="block hover:text-primary transition-colors">Privacy Policy</a>
-                <a href="/refund-policy" className="block hover:text-primary transition-colors">Refund Policy</a>
-                <a href="/terms-conditions" className="block hover:text-primary transition-colors">Terms & Conditions</a>
+                <Link to="/cookie-policy" className="block hover:text-primary transition-colors">Cookie Policy</Link>
+                <Link to="/privacy-policy" className="block hover:text-primary transition-colors">Privacy Policy</Link>
+                <Link to="/refund-policy" className="block hover:text-primary transition-colors">Refund Policy</Link>
+                <Link to="/terms-conditions" className="block hover:text-primary transition-colors">Terms & Conditions</Link>
               </div>
             </motion.div>
 
