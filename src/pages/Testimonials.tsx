@@ -1,6 +1,7 @@
 import { MobileLayout } from "@/components/layouts/mobile-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import { ReviewForm } from "@/components/testimonials/ReviewForm";
 
 export default function Testimonials() {
   const testimonials = [
@@ -69,6 +70,11 @@ export default function Testimonials() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Review Form Section */}
+        <div className="mt-8">
+          <ReviewForm />
         </div>
       </div>
     </MobileLayout>
