@@ -123,6 +123,43 @@ export default function Home() {
             <StatsSection />
           </div>
 
+          {/* Our Valued Partners Section */}
+          <div className="pb-6">
+            <h2 className="text-xl font-bold mb-4">Our Valued Partners</h2>
+            <Card className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 border border-purple-200 dark:border-purple-800">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
+                  <img 
+                    src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=200" 
+                    alt="Partner 1" 
+                    className="h-12 object-contain opacity-70"
+                  />
+                </div>
+                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
+                  <img 
+                    src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=200" 
+                    alt="Partner 2" 
+                    className="h-12 object-contain opacity-70"
+                  />
+                </div>
+                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
+                  <img 
+                    src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=200" 
+                    alt="Partner 3" 
+                    className="h-12 object-contain opacity-70"
+                  />
+                </div>
+                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
+                  <img 
+                    src="https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?q=80&w=200" 
+                    alt="Partner 4" 
+                    className="h-12 object-contain opacity-70"
+                  />
+                </div>
+              </div>
+            </Card>
+          </div>
+
           {/* Contact Us Section */}
           <div className="pb-6" onClick={() => navigate('/contact')}>
             <Card className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 cursor-pointer hover:shadow-lg transition-all">

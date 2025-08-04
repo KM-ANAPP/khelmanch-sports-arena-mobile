@@ -1,9 +1,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, Trophy, Calendar, Users, MessageSquare, Ticket, Clock, Info, HelpCircle, LogOut, LogIn } from "lucide-react";
+import { Menu, Home, Trophy, Calendar, Users, MessageSquare, Ticket, Clock, Info, HelpCircle, LogOut, LogIn, Star, Image, Zap, Instagram, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Separator } from "@/components/ui/separator";
 
 interface AppDrawerProps {
   isLoggedIn: boolean;
@@ -38,7 +39,7 @@ export function AppDrawer({
       <SheetContent side="left" className="w-80 p-0 bg-background border-r border-border/50">
         <SheetHeader className="text-left p-6 border-b border-border/10">
           <SheetTitle className="flex justify-center py-2">
-            <img alt="Khelmanch Logo" className="h-10" src="/lovable-uploads/a7e3e853-4d7c-473e-9a8c-b2c88e143176.png" />
+            <img alt="Khelmanch Logo" className="h-12" src="/lovable-uploads/a7e3e853-4d7c-473e-9a8c-b2c88e143176.png" />
           </SheetTitle>
         </SheetHeader>
         <motion.div 
@@ -66,19 +67,51 @@ export function AppDrawer({
             <NavItem href="/activities" icon={Trophy} label="Activities" />
           </motion.div>
           
-          <div className="mt-4 pt-4 border-t border-border/10">
-            <motion.div variants={item}>
-              <NavItem href="/about" icon={Info} label="About Us" />
-            </motion.div>
-            <motion.div variants={item}>
-              <NavItem href="/contact" icon={MessageSquare} label="Contact Us" />
-            </motion.div>
-            <motion.div variants={item}>
-              <NavItem href="/faq" icon={HelpCircle} label="FAQ" />
-            </motion.div>
-          </div>
+          <Separator className="my-4" />
           
-          <div className="mt-auto pt-4 border-t border-border/10">
+          <motion.div variants={item}>
+            <NavItem href="/testimonials" icon={Star} label="Testimonials" />
+          </motion.div>
+          <motion.div variants={item}>
+            <NavItem href="/about" icon={Info} label="About Us" />
+          </motion.div>
+          <motion.div variants={item}>
+            <NavItem href="/gallery" icon={Image} label="Gallery" />
+          </motion.div>
+          <motion.div variants={item}>
+            <NavItem href="/faq" icon={HelpCircle} label="FAQ" />
+          </motion.div>
+          
+          <div className="mt-auto pt-4 space-y-4">
+            <Separator />
+            
+            {/* Social Media */}
+            <motion.div variants={item}>
+              <div className="px-4">
+                <p className="text-sm font-medium text-foreground/80 mb-3">Follow Us</p>
+                <div className="flex items-center space-x-4">
+                  <a href="https://instagram.com/khelmanch" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors">
+                    <Instagram className="h-5 w-5" />
+                  </a>
+                  <a href="https://youtube.com/@khelmanch" target="_blank" rel="noopener noreferrer" className="text-foreground/60 hover:text-primary transition-colors">
+                    <Youtube className="h-5 w-5" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Legal Links */}
+            <motion.div variants={item}>
+              <div className="px-4 space-y-2 text-xs text-foreground/60">
+                <a href="/cookie-policy" className="block hover:text-primary transition-colors">Cookie Policy</a>
+                <a href="/privacy-policy" className="block hover:text-primary transition-colors">Privacy Policy</a>
+                <a href="/refund-policy" className="block hover:text-primary transition-colors">Refund Policy</a>
+                <a href="/terms-conditions" className="block hover:text-primary transition-colors">Terms & Conditions</a>
+              </div>
+            </motion.div>
+
+            <Separator />
+            
             {isLoggedIn ? (
               <motion.div variants={item}>
                 <NavItem href="/logout" icon={LogOut} label="Logout" className="text-destructive" />

@@ -30,6 +30,10 @@ import Settings from "./pages/Settings";
 import MyBookings from "./pages/MyBookings";
 import Activities from "./pages/Activities";
 import SportDetail from "./pages/SportDetail";
+import Testimonials from "./pages/Testimonials";
+import AboutUs from "./pages/AboutUs";
+import Gallery from "./pages/Gallery";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +117,10 @@ const App = () => {
                       { path: "/my-bookings", element: <MyBookings /> },
                       { path: "/my-tickets", element: <MyBookings /> },
                       { path: "/sport/:sportId", element: <SportDetail /> },
+                      { path: "/testimonials", element: <Testimonials /> },
+                      { path: "/about", element: <AboutUs /> },
+                      { path: "/gallery", element: <Gallery /> },
+                      { path: "/faq", element: <FAQ /> },
                     ].map(({ path, element }) => (
                       <Route
                         key={path}

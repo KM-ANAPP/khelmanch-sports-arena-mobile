@@ -125,7 +125,12 @@ export default function Tournaments() {
   return (
     <MobileLayout isLoggedIn={true}>
       <div className="p-4 space-y-4">
-        <h1 className="text-2xl font-bold">Tournaments</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Tournaments</h1>
+          <Button variant="outline" size="sm" className="rounded-full">
+            Coupons
+          </Button>
+        </div>
         
         <TournamentFilterSheet onFiltersChange={handleFiltersChange} />
 
