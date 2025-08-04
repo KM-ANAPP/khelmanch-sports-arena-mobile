@@ -6,34 +6,41 @@ export default function Testimonials() {
   const testimonials = [
     {
       id: 1,
-      name: "Arjun Sharma",
-      location: "Mumbai",
+      name: "Eshaan",
       rating: 5,
-      text: "Amazing platform for organizing tournaments. The booking process is seamless and the ground quality is excellent!",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150"
+      text: "💗We enjoyed ur tournament thank you:) We couldn't qualify to next round due to goal difference but it was 💗one of the best tournament ..",
+      image: "https://khelmanch.com/wp-content/uploads/2024/07/Eshaan.jpg"
     },
     {
       id: 2,
-      name: "Priya Patel",
-      location: "Delhi",
+      name: "Gaurav",
       rating: 5,
-      text: "Khelmanch has revolutionized how we book sports venues. Highly recommended for all sports enthusiasts!",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b977?q=80&w=150"
+      text: "Great overall experience for our team. Plus, the organizers are always quick to respond to any questions or concerns I have",
+      image: "https://khelmanch.com/wp-content/uploads/2024/07/Gaurav.jpg"
     },
     {
       id: 3,
-      name: "Raj Kumar",
-      location: "Bangalore",
-      rating: 4,
-      text: "Great variety of sports and venues. The tournament organization is top-notch.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150"
+      name: "Ritik",
+      rating: 5,
+      text: "Overall, Khel Manch has made it so much easier for me to stay active and engaged in the local sports community and would highly recommend it to any athlete looking to connect with others and participate in exciting events.",
+      image: "https://khelmanch.com/wp-content/uploads/2024/07/Ritik-Rawat.jpg"
+    },
+    {
+      id: 4,
+      name: "Mustafa",
+      rating: 5,
+      text: "It was a wonderful experience in Enthusia tournament with KhelManch! Thank You",
+      image: "https://khelmanch.com/wp-content/uploads/2024/07/Mustafa.jpg"
     }
   ];
 
   return (
     <MobileLayout isLoggedIn={true}>
       <div className="p-4 space-y-6">
-        <h1 className="text-2xl font-bold">Testimonials</h1>
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold mb-2">Testimonials</h1>
+          <h2 className="text-lg text-muted-foreground">Hear the roar of the champs 🦁</h2>
+        </div>
         
         <div className="space-y-4">
           {testimonials.map((testimonial) => (
@@ -49,7 +56,6 @@ export default function Testimonials() {
                     <div className="flex items-center justify-between mb-2">
                       <div>
                         <h3 className="font-semibold">{testimonial.name}</h3>
-                        <p className="text-sm text-muted-foreground">{testimonial.location}</p>
                       </div>
                       <div className="flex items-center">
                         {Array.from({ length: testimonial.rating }).map((_, i) => (

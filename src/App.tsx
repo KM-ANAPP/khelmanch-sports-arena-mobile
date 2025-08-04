@@ -34,6 +34,10 @@ import Testimonials from "./pages/Testimonials";
 import AboutUs from "./pages/AboutUs";
 import Gallery from "./pages/Gallery";
 import FAQ from "./pages/FAQ";
+import CookiePolicy from "./pages/CookiePolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 const queryClient = new QueryClient();
 
@@ -118,9 +122,13 @@ const App = () => {
                       { path: "/my-tickets", element: <MyBookings /> },
                       { path: "/sport/:sportId", element: <SportDetail /> },
                       { path: "/testimonials", element: <Testimonials /> },
-                      { path: "/about", element: <AboutUs /> },
+                      { path: "/about-us", element: <AboutUs /> },
                       { path: "/gallery", element: <Gallery /> },
                       { path: "/faq", element: <FAQ /> },
+                      { path: "/cookie-policy", element: <CookiePolicy /> },
+                      { path: "/privacy-policy", element: <PrivacyPolicy /> },
+                      { path: "/refund-policy", element: <RefundPolicy /> },
+                      { path: "/terms-conditions", element: <TermsConditions /> },
                     ].map(({ path, element }) => (
                       <Route
                         key={path}
