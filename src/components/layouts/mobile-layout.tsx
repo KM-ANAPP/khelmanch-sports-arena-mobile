@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TournamentSearch } from "@/components/search/tournament-search";
 import { NotificationPopup } from "@/components/notifications/notification-popup";
-import khelmanckLogoDark from "@/assets/logos/khelmanch-logo-dark.png";
-import khelmanckLogoLight from "@/assets/logos/khelmanch-logo-light.png";
+import { AppDrawer } from "@/components/ui/app-drawer";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -31,7 +30,11 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
   const [searchOpen, setSearchOpen] = useState(false);
   
   const locations = [
-    "Delhi, India"
+    "Delhi, India",
+    "Mumbai, India", 
+    "Bangalore, India",
+    "Chennai, India",
+    "Pune, India"
   ];
   
   return (
@@ -39,46 +42,32 @@ export function MobileLayout({ children, isLoggedIn = false }: MobileLayoutProps
       {/* Header */}
       <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-xl border-b border-border/50 safe-area-inset rounded-b-3xl shadow-lg px-safe">
         <div className="flex h-16 items-center justify-between px-4 max-w-full">
-          <div className="flex-1">
-            <div className="flex items-center space-x-3">
-              <img 
-                src={theme === 'dark' ? khelmanckLogoDark : khelmanckLogoLight}
-                alt="Khelmanch Logo" 
-                className="h-8 object-contain"
-                style={{ width: '120px' }}
-              />
-              {user?.email && (
-                <h1 className="text-lg font-semibold text-foreground">
-                  Hi, {user.email.split('@')[0]}!
-                </h1>
-              )}
-            </div>
-            <div className="flex items-center mt-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-sm text-muted-foreground p-0 h-auto rounded-full">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {selectedLocation.split(',')[0]}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 rounded-2xl material-surface-elevated">
-                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground">Select Location</div>
-                  {locations.map((location) => (
-                    <DropdownMenuItem
-                      key={location}
-                      onClick={() => setSelectedLocation(location)}
-                      className={`cursor-pointer rounded-xl android-ripple ${selectedLocation === location ? 'bg-primary/10 text-primary' : ''}`}
-                    >
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {location}
-                      {selectedLocation === location && (
-                        <Badge variant="secondary" className="ml-auto text-xs rounded-full">Current</Badge>
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <div className="flex items-center space-x-3">
+            <AppDrawer isLoggedIn={isLoggedIn} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-sm text-muted-foreground p-2 h-auto rounded-full">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {selectedLocation.split(',')[0]}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 rounded-2xl">
+                <div className="px-3 py-2 text-xs font-medium text-muted-foreground">Select Location</div>
+                {locations.map((location) => (
+                  <DropdownMenuItem
+                    key={location}
+                    onClick={() => setSelectedLocation(location)}
+                    className={`cursor-pointer rounded-xl ${selectedLocation === location ? 'bg-primary/10 text-primary' : ''}`}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {location}
+                    {selectedLocation === location && (
+                      <Badge variant="secondary" className="ml-auto text-xs rounded-full">Current</Badge>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           
           <div className="flex items-center space-x-2">
