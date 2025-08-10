@@ -24,6 +24,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TournamentFilterSheet } from "@/components/tournaments/TournamentFilterSheet";
+import { PastResultsSlider } from "@/components/tournaments/PastResultsSlider";
 
 export default function Tournaments() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,7 +87,21 @@ export default function Tournaments() {
       status: "past",
       registrationOpen: false,
       image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1090&q=80",
-      cashPrize: 40000
+      cashPrize: 40000,
+      results: [
+        {
+          position: "Winner",
+          name: "Raptors",
+          imageUrl:
+            "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1200&q=60",
+        },
+        {
+          position: "Runner Up",
+          name: "Falcons",
+          imageUrl:
+            "https://images.unsplash.com/photo-1604639688593-20f65b0e39cd?auto=format&fit=crop&w=1200&q=60",
+        },
+      ],
     },
     {
       id: 6,
@@ -97,7 +112,21 @@ export default function Tournaments() {
       status: "past",
       registrationOpen: false,
       image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1007&q=80",
-      cashPrize: 20000
+      cashPrize: 20000,
+      results: [
+        {
+          position: "Winner",
+          name: "Wave Riders",
+          imageUrl:
+            "https://images.unsplash.com/photo-1503342452485-86ff0a5f0e99?auto=format&fit=crop&w=1200&q=60",
+        },
+        {
+          position: "Runner Up",
+          name: "Sand Kings",
+          imageUrl:
+            "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=1200&q=60",
+        },
+      ],
     }
   ];
 
@@ -183,6 +212,7 @@ interface TournamentCardProps {
     registrationOpen: boolean;
     image: string;
     cashPrize: number;
+    results?: { position: string; name: string; imageUrl: string }[];
   };
 }
 
@@ -191,11 +221,17 @@ function TournamentCard({ tournament }: TournamentCardProps) {
     <Link to={`/tournaments/${tournament.id}`}>
       <Card className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border bg-card">
         <div className="relative h-48">
-          <img 
-            src={tournament.image} 
-            alt={tournament.title} 
-            className="object-cover w-full h-full"
-          />
+          {tournament.status === 'past' && Array.isArray(tournament.results) && tournament.results.length > 0 ? (
+            <PastResultsSlider results={tournament.results} />
+          ) : (
+            <img
+              src={tournament.image}
+              alt={tournament.title}
+              className="object-cover w-full h-full"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           
           {/* Top tags */}
