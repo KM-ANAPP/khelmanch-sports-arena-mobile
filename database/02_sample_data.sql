@@ -173,3 +173,49 @@ INSERT INTO connection_requests (id, sender_id, receiver_id, status, message) VA
 ('conn_001', 'user_001', 'user_003', 'accepted', 'Would like to connect for future games'),
 ('conn_002', 'user_002', 'user_004', 'pending', 'Great player! Let\'s stay connected'),
 ('conn_003', 'user_005', 'user_001', 'accepted', 'Looking forward to playing together');
+
+-- Insert coin packages
+INSERT INTO coin_packages (name, coins_amount, price, bonus_coins, description, display_order) VALUES
+('Starter Pack', 100, 99.00, 10, 'Perfect for beginners - 100 coins + 10 bonus', 1),
+('Value Pack', 500, 449.00, 75, 'Best value - 500 coins + 75 bonus', 2),
+('Premium Pack', 1000, 849.00, 200, 'For serious players - 1000 coins + 200 bonus', 3),
+('Mega Pack', 2500, 1999.00, 600, 'Ultimate package - 2500 coins + 600 bonus', 4),
+('Elite Pack', 5000, 3799.00, 1500, 'Elite status - 5000 coins + 1500 bonus', 5);
+
+-- Insert coin earning rules
+INSERT INTO coin_earning_rules (action_type, coins_awarded, description, max_per_day) VALUES
+('booking_complete', 50, 'Earn coins for completing a booking', 3),
+('review_submit', 25, 'Earn coins for submitting a review', 5),
+('referral_signup', 200, 'Earn coins when referred user signs up', 10),
+('tournament_participation', 100, 'Earn coins for participating in tournaments', NULL),
+('tournament_win', 500, 'Earn coins for winning tournaments', NULL),
+('daily_login', 10, 'Daily login bonus', 1),
+('profile_complete', 150, 'One-time bonus for completing profile', 1),
+('first_booking', 100, 'Bonus for first booking', 1),
+('social_share', 15, 'Earn coins for sharing on social media', 3);
+
+-- Insert sample user coins wallets
+INSERT INTO user_coins (user_id, balance, total_earned, total_spent) VALUES
+('user_001', 850, 1200, 350),
+('user_002', 1250, 1500, 250),
+('user_003', 420, 670, 250),
+('user_004', 1800, 2100, 300),
+('user_005', 95, 345, 250);
+
+-- Insert sample coin transactions
+INSERT INTO coin_transactions (id, user_id, transaction_type, amount, balance_after, source_type, source_id, description) VALUES
+('tx_001', 'user_001', 'earn', 100, 950, 'booking', 'booking_001', 'Earned coins for completing cricket ground booking'),
+('tx_002', 'user_001', 'spend', 200, 750, 'booking', 'booking_002', 'Used coins for discount on football ground booking'),
+('tx_003', 'user_001', 'earn', 25, 775, 'review', 'rev_001', 'Earned coins for submitting ground review'),
+('tx_004', 'user_001', 'earn', 500, 1275, 'tournament', 'tournament_001', 'Won cricket championship tournament'),
+('tx_005', 'user_001', 'spend', 150, 1125, 'tournament', 'tournament_002', 'Used coins for tournament entry fee discount'),
+('tx_006', 'user_002', 'purchase', 1000, 1000, 'purchase', 'pay_001', 'Purchased Premium Pack coins'),
+('tx_007', 'user_002', 'earn', 200, 1200, 'bonus', 'pay_001', 'Bonus coins from Premium Pack purchase'),
+('tx_008', 'user_002', 'earn', 200, 1400, 'referral', 'user_006', 'Referral bonus for new user signup'),
+('tx_009', 'user_002', 'spend', 150, 1250, 'booking', 'booking_003', 'Used coins for badminton court booking discount'),
+('tx_010', 'user_003', 'earn', 150, 150, 'achievement', 'profile_complete', 'Profile completion bonus'),
+('tx_011', 'user_003', 'earn', 100, 250, 'booking', 'booking_004', 'First booking bonus'),
+('tx_012', 'user_003', 'earn', 50, 300, 'booking', 'booking_005', 'Completed tennis court booking'),
+('tx_013', 'user_003', 'earn', 25, 325, 'review', 'rev_002', 'Submitted facility review'),
+('tx_014', 'user_003', 'earn', 100, 425, 'tournament', 'tournament_003', 'Participated in badminton tournament'),
+('tx_015', 'user_003', 'spend', 5, 420, 'social_share', 'share_001', 'Shared tournament on social media');
