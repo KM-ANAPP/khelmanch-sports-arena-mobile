@@ -13,6 +13,7 @@ import { UpcomingTournaments } from "@/components/sections/upcoming-tournaments"
 import { FeaturedAthletes } from "@/components/sections/featured-athletes";
 
 import { StatsSection } from "@/components/sections/stats-section";
+import { PartnersSection } from "@/components/sections/partners-section";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -127,47 +128,7 @@ export default function Home() {
 
           {/* Our Valued Partners Section */}
           <div className="pb-6">
-            <h2 className="text-xl font-bold mb-4">Our Valued Partners</h2>
-            <Card className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 border border-purple-200 dark:border-purple-800">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=200" 
-                    alt="Partner 1" 
-                    className="h-12 object-contain opacity-70"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=200" 
-                    alt="Partner 2" 
-                    className="h-12 object-contain opacity-70"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=200" 
-                    alt="Partner 3" 
-                    className="h-12 object-contain opacity-70"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="flex items-center justify-center p-4 bg-white/50 rounded-xl">
-                  <img 
-                    src="https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?q=80&w=200" 
-                    alt="Partner 4" 
-                    className="h-12 object-contain opacity-70"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-            </Card>
+            <PartnersSection />
           </div>
 
           {/* Contact Us Section */}
