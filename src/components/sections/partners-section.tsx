@@ -19,8 +19,8 @@ export const PartnersSection = () => {
   }, [api]);
 
   const partners = [
-    { id: "hudle", name: "HUDLE", role: "Community Partner", logo: "/lovable-uploads/12a483af-fa01-41fc-9600-0a0685b8e776.png" },
-    { id: "sportvot", name: "SPORTVOT", role: "Media Partner", logo: "/lovable-uploads/3b9b1e94-d0fb-4674-856b-0fa74dc0ceb4.png" },
+    { id: "hudle", name: "HUDLE", role: "Community Partner", logo: "/lovable-uploads/168e5a6d-81e7-4de9-8dc2-e87ea7264b0b.png" },
+    { id: "sportvot", name: "SPORTVOT", role: "Media Partner", logo: "/lovable-uploads/15ea7b4b-4881-4e53-9e5a-b96115406343.png" },
   ];
 
   // Duplicate to ensure smooth sliding when exactly 2 items are visible
