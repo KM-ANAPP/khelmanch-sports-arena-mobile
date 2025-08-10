@@ -14,7 +14,7 @@ export const PartnersSection = () => {
 
   useEffect(() => {
     if (!api) return;
-    const id = setInterval(() => api.scrollNext(), 2500);
+    const id = setInterval(() => api.scrollNext(), 2000);
     return () => clearInterval(id);
   }, [api]);
 
@@ -23,6 +23,9 @@ export const PartnersSection = () => {
     { id: "sportvot", name: "SPORTVOT", role: "Media Partner", logo: "/lovable-uploads/3b9b1e94-d0fb-4674-856b-0fa74dc0ceb4.png" },
   ];
 
+  // Duplicate to ensure smooth sliding when exactly 2 items are visible
+  const itemsToRender = partners.length < 4 ? [...partners, ...partners, ...partners] : partners;
+
   if (partners.length === 0) return null;
 
   return (
@@ -30,8 +33,8 @@ export const PartnersSection = () => {
       <h2 id="partners-heading" className="text-2xl font-bold mb-4">Our Valued Partners</h2>
       <Carousel opts={{ align: "start", loop: true }} setApi={setApi} className="w-full">
         <CarouselContent className="-ml-2">
-          {partners.map((p) => (
-            <CarouselItem key={p.id} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
+          {itemsToRender.map((p, idx) => (
+            <CarouselItem key={`${p.id}-${idx}`} className="pl-2 basis-1/2">
               <article className="rounded-xl border bg-card text-card-foreground shadow-sm h-32 md:h-40 flex flex-col items-center justify-center gap-2">
                 <h3 className="text-sm font-semibold">{p.role}</h3>
                 <img
