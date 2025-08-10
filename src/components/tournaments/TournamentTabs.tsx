@@ -6,6 +6,7 @@ import { TournamentRulesTab } from "./TournamentRulesTab";
 import { TournamentScheduleTab } from "./TournamentScheduleTab";
 import { TournamentBracketsTab } from "./TournamentBracketsTab";
 import { Match } from "./TournamentBracket";
+import { TournamentResultsTab } from "./TournamentResultsTab";
 
 interface TournamentTabsProps {
   tournament: {
@@ -16,6 +17,8 @@ interface TournamentTabsProps {
     organizerContact: string;
     rules: string[];
   };
+  status: string;
+  results?: { position: string; name: string; imageUrl: string }[];
   matchesData: Match[];
   bracketData: any;
   onMatchClick: (match: Match) => void;
@@ -23,15 +26,20 @@ interface TournamentTabsProps {
 
 export const TournamentTabs = ({
   tournament,
+  status,
+  results,
   matchesData,
   bracketData,
   onMatchClick
 }: TournamentTabsProps) => {
   return (
     <Tabs defaultValue="details" className="w-full px-4">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className={`grid w-full ${status === 'past' && results && results.length > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
         <TabsTrigger value="details">Details</TabsTrigger>
         <TabsTrigger value="rules">Rules</TabsTrigger>
+        {status === 'past' && results && results.length > 0 && (
+          <TabsTrigger value="results">Winners</TabsTrigger>
+        )}
       </TabsList>
 
       <TabsContent value="details" className="space-y-4 mt-4">
@@ -41,6 +49,12 @@ export const TournamentTabs = ({
       <TabsContent value="rules" className="space-y-4 mt-4">
         <TournamentRulesTab rules={tournament.rules} />
       </TabsContent>
+
+      {status === 'past' && results && results.length > 0 && (
+        <TabsContent value="results" className="space-y-4 mt-4">
+          <TournamentResultsTab results={results} />
+        </TabsContent>
+      )}
     </Tabs>
   );
 };

@@ -29,6 +29,8 @@ export default function TournamentDetails() {
       <div className="pb-4">
         <TournamentHeader 
           tournament={tournament}
+          status={tournament.status}
+          results={tournament.results}
           isExpanded={isExpanded}
           onExpandClick={() => setIsExpanded(!isExpanded)}
           onRegisterClick={registrationHandler}
@@ -36,21 +38,26 @@ export default function TournamentDetails() {
 
         <TournamentTabs 
           tournament={tournament}
+          status={tournament.status}
+          results={tournament.results}
           matchesData={matchesData}
           bracketData={bracketData}
           onMatchClick={() => {}}
         />
 
-        <RegisterTeamDialog
-          isOpen={isRegisterDialogOpen}
-          onOpenChange={setIsRegisterDialogOpen}
-          tournament={{
-            id: id!,
-            title: tournament.title,
-            tokenAmount: tournament.tokenAmount || 500,
-            fullAmount: tournament.fullAmount || 2000
-          }}
-        />
+        {tournament.status !== 'past' && tournament.registrationOpen && (
+          <RegisterTeamDialog
+            isOpen={isRegisterDialogOpen}
+            onOpenChange={setIsRegisterDialogOpen}
+            tournament={{
+              id: id!,
+              title: tournament.title,
+              tokenAmount: tournament.tokenAmount || 500,
+              fullAmount: tournament.fullAmount || 2000
+            }}
+          />
+        )}
+
       </div>
     </MobileLayout>
   );

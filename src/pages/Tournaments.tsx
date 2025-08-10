@@ -288,7 +288,7 @@ function TournamentCard({ tournament }: TournamentCardProps) {
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-1">
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span className="text-sm text-muted-foreground">Event Completed</span>
+                  <span className="text-sm text-muted-foreground">Booked</span>
                 </div>
                 <div className="text-lg font-bold text-foreground">
                   Cash Prize: ₹{tournament.cashPrize.toLocaleString()}

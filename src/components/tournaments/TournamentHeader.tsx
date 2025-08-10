@@ -1,5 +1,6 @@
 import { Calendar, MapPin, Clock, ChevronUp, ChevronDown, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PastResultsSlider } from "./PastResultsSlider";
 
 interface TournamentHeaderProps {
   tournament: {
@@ -13,6 +14,8 @@ interface TournamentHeaderProps {
     registrationDeadline: string;
     description: string;
   };
+  status: string;
+  results?: { position: string; name: string; imageUrl: string }[];
   isExpanded: boolean;
   onExpandClick: () => void;
   onRegisterClick: () => void;
@@ -20,6 +23,8 @@ interface TournamentHeaderProps {
 
 export const TournamentHeader = ({
   tournament,
+  status,
+  results,
   isExpanded,
   onExpandClick,
   onRegisterClick
@@ -27,15 +32,21 @@ export const TournamentHeader = ({
   return (
     <div>
       <div className="relative h-48">
-        <img 
-          src={tournament.image} 
-          alt={tournament.title} 
-          className="object-cover w-full h-full"
-        />
+        {status === 'past' && results && results.length > 0 ? (
+          <PastResultsSlider results={results} />
+        ) : (
+          <img 
+            src={tournament.image} 
+            alt={tournament.title} 
+            className="object-cover w-full h-full"
+            loading="lazy"
+            decoding="async"
+          />
+        )}
         <div className="absolute top-2 left-2 bg-primary/70 text-primary-foreground text-xs font-medium py-1 px-2 rounded">
           {tournament.sport}
         </div>
-        {tournament.registrationOpen && (
+        {tournament.registrationOpen && status !== 'past' && (
           <div className="absolute top-2 right-2 bg-accent text-accent-foreground text-xs font-medium py-1 px-2 rounded">
             Registration Open
           </div>
@@ -77,11 +88,14 @@ export const TournamentHeader = ({
           </button>
         </div>
 
-        <div className="mt-4">
-          <Button onClick={onRegisterClick} disabled={!tournament.registrationOpen} className="w-full">
-            Register Team
-          </Button>
-        </div>
+        {status !== 'past' && (
+          <div className="mt-4">
+            <Button onClick={onRegisterClick} disabled={!tournament.registrationOpen} className="w-full">
+              Register Team
+            </Button>
+          </div>
+        )}
+
       </div>
     </div>
   );
