@@ -70,7 +70,7 @@ export const UpcomingTournaments = () => {
       return;
     }
     
-    navigate(`/tournament-details/${tournament.id}`);
+    navigate(`/tournaments/${tournament.id}`);
   };
 
   return (
